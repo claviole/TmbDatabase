@@ -29,6 +29,8 @@ $customers = $result->fetch_all(MYSQLI_ASSOC);
     </form>
     <div id="customer_info"></div>
     <div id="invoices"></div>
+    <div id="invoice_details"></div>
+    <div id="line_items"></div>
 
     <script>
     $(document).ready(function(){
@@ -57,12 +59,12 @@ $customers = $result->fetch_all(MYSQLI_ASSOC);
                     data: {customerName:customerName},
                     success: function(data) {
                         var invoices = JSON.parse(data);
-                        var html = '<h2>Invoices</h2><ul>';
-                        invoices.forEach(function(invoice) {
-                            html += '<li>Invoice ID: ' + invoice.invoice_id + ', Date: ' + invoice.invoice_date + '</li>';
-                        });
-                        html += '</ul>';
-                        $('#invoices').html(html);
+var html = '<h2>Invoices</h2><ul>';
+invoices.forEach(function(invoice) {
+    html += '<li><a href="#" onclick="fetchInvoiceDetails(' + invoice.invoice_id + ')">Invoice ID: ' + invoice.invoice_id + ', Date: ' + invoice.invoice_date + '</a></li>';
+});
+html += '</ul>';
+$('#invoices').html(html);
                     }
                 });
             } else {
@@ -71,6 +73,70 @@ $customers = $result->fetch_all(MYSQLI_ASSOC);
             }
         });
     });
+    function fetchInvoiceDetails(invoiceId) {
+    $.ajax({
+        url: 'fetch_invoice.php',
+        method: 'POST',
+        data: {invoiceId:invoiceId},
+        success: function(data) {
+            var invoiceData = JSON.parse(data);
+            var html = '<h2>Invoice Details</h2><ul>';
+            for (var key in invoiceData.invoice) {
+                if (invoiceData.invoice.hasOwnProperty(key) && key != 'invoice_id') {
+                    html += '<li>' + key + ': ' + invoiceData.invoice[key] + '</li>';
+                }
+            }
+            html += '</ul>';
+            $('#invoice_details').html(html);
+
+            // Handle line items data
+            html = '<h2>Line Items</h2>';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th>Part Number</th>';
+                    html += '<th>Volume</th>';
+                    html += '<th>Width</th>';
+                    html += '<th>Pitch</th>';
+                    html += '<th>Gauge</th>';
+                    html += '<th># Outputs</th>';
+                    html += '<th>Line Produced</th>';
+                    html += '<th>Uptime</th>';
+                    html += '<th>Parts Per Hour</th>';
+                    html += '<th>Pcs per Skid</th>';
+                    html += '<th>Skids per Truck</th>';
+                    html += '<th>Blanking Per Piece Cost</th>';
+                    html += '<th>Packaging Per Piece Cost</th>';
+                    html += '<th>Total Cost per Piece</th>';
+                    html += '</tr>';
+
+            // Add more columns as needed...
+
+            invoiceData.line_items.forEach(function(item) {
+    html += '<tr>';
+    html += '<td>' + item['Part#'] + '</td>';
+    html += '<td>' + item['Volume'] + '</td>';
+    html += '<td>' + item['Width(mm)'] + '</td>';
+    html += '<td>' + item['Pitch(mm)'] + '</td>';
+    html += '<td>' + item['Gauge(mm)'] + '</td>';
+    html += '<td>' + item['# Outputs'] + '</td>';
+    html += '<td>' + item['Line_Location'] + ' (' + item['Line_Name'] + ')' + '</td>';
+    html += '<td>' + item['Uptime'] + '</td>';
+    html += '<td>' + item['PPH'] + '</td>';
+    html += '<td>' + item['Pcs per Skid'] + '</td>';
+    html += '<td>' + item['Skids per Truck'] + '</td>';
+    html += '<td>' + item['Blanking per piece cost'] + '</td>';
+    html += '<td>' + item['Packaging Per Piece Cost'] + '</td>';
+    html += '<td>' + item['Total Cost per Piece'] + '</td>';
+    html += '</tr>';
+});
+
+            html += '</table>';
+            $('#line_items').html(html);
+        }
+    });
+}
+
+</script>
     </script>
 </body>
 </html>
