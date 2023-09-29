@@ -1,0 +1,32 @@
+<?php
+session_start();
+
+// Check if the user is logged in and is an admin
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'admin'){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../login.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Admin Dashboard</h1>
+    <div>
+        <button onclick="window.location.href='start_new_invoice.php'">Start New Quote</button>
+        <button onclick="window.location.href='add_new_part.php'">Add New Part</button>
+        <button onclick="window.location.href='add_new_customer.php'">Add New Customer</button>
+        <button onclick="window.location.href='lookup_customer.php'">Look Up Customer</button>
+        <button onclick="window.location.href='lookup_invoice.php'">Look Up Invoice</button>
+        <button onclick="window.location.href='manage_customers.php'">Manage Customers</button>
+        <button onclick="window.location.href='manage_parts.php'">Manage Parts</button>
+    </div>
+</body>
+</html>
