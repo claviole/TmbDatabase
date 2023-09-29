@@ -36,7 +36,7 @@ function addPart() {
     {
         blankWeight=gaugeIN*widthIN*pitchIN*.2833;
     }
-    else
+    else if(metal_type=="Aluminum")
     {
         blankWeight=gaugeIN*widthIN*pitchIN*.0968;
     }
@@ -72,7 +72,7 @@ function addPart() {
  var stackHeight=gaugeIN*pcsPerLift;
  var skidsPerTruck=partData['Skids per Truck'];
  var pcsPerTruck=skidsPerTruck*pcsPerSkid;
-var weightPerTruck=skidsPerTruck*liftWeight;
+ var weightPerTruck = (skidsPerTruck * liftWeight).toFixed(3);
 var annualTruckLoads=volume/pcsPerTruck;
 var fiveUseSkidPcs= pcsPerSkid*5;
 var skidCostPerPc=palletCost/fiveUseSkidPcs;
@@ -183,7 +183,7 @@ var row = document.createElement('tr');
 
 // Check if the table already has a header row
 if (document.getElementById('parts_table').rows.length === 0) {
-    var headers = ['Invoice Id','Part Number', 'Volume', 'Width', 'Pitch', 'Gauge', '# Out', 'Line Produced', 'Uptime', 'Parts Per Hour', 'Pcs Per Skid', 'Skids Per Truck', 'Blanking Per Piece Cost', 'Packaging Per Piece Cost', 'Total Per Piece'];
+    var headers = ['Invoice Id','Part Number', 'Volume', 'Width', 'Pitch', 'Gauge', '# Out', 'Line Produced', 'Uptime', 'Parts Per Hour', 'Pcs Per Skid', 'Skids Per Truck','Weight Per Truck', 'Blanking Per Piece Cost', 'Packaging Per Piece Cost', 'Total Per Piece'];
     var headerRow = document.createElement('tr');
     for (var i = 0; i < headers.length; i++) {
         var headerCell = document.createElement('th');
@@ -193,7 +193,7 @@ if (document.getElementById('parts_table').rows.length === 0) {
     document.getElementById('parts_table').appendChild(headerRow);
 }
 
-var cells = [invoiceId, partNumber, volume, width, pitch, gauge, numOutputs,lineProducedName, uptime, partsPerHour,pcsPerSkid,skidsPerTruck,blankingPerPieceCost,packagingPerPieceCost,totalPerPiece,];
+var cells = [invoiceId, partNumber, volume, width, pitch, gauge, numOutputs,lineProducedName, uptime, partsPerHour,pcsPerSkid,skidsPerTruck,weightPerTruck ,blankingPerPieceCost,packagingPerPieceCost,totalPerPiece,];
 for (var i = 0; i < cells.length; i++) {
     var cell = document.createElement('td');
     cell.textContent = cells[i];

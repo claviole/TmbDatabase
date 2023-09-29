@@ -18,6 +18,7 @@ $customer = $database->real_escape_string($data['customer']);
 $invoiceDate = $database->real_escape_string($data['invoiceDate']);
 $customerId = $database->real_escape_string($data['customerId']);
 
+
 // Start a transaction
 $database->begin_transaction();
 

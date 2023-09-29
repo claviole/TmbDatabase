@@ -18,7 +18,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'admin'){
     <title>Admin Dashboard</title>
 </head>
 <body>
-    <h1>Welcome to the Admin Dashboard</h1>
+    <h1>TMB Quotes Database</h1>
     <div>
         <button onclick="window.location.href='New_Quote/start_new_invoice.php'">Start New Quote</button>
         <button onclick="window.location.href='add_new_part/add_new_part.php'">Add New Part</button>
