@@ -1,5 +1,5 @@
 <?php
-include '../connection.php';
+include '../../connection.php';
 
 $customerName = $database->real_escape_string($_POST['customerName']);
 $customerAddress = $database->real_escape_string($_POST['customerAddress']);

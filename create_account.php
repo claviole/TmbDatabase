@@ -51,13 +51,13 @@ $cpassword=$_POST['cpassword'];
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>';
         }
         else{
-            $database->query("INSERT INTO `users`(`username`, `email`, `password`, `usertype`) VALUES ('$name','$email','$new_password','user')");
+            $database->query("INSERT INTO `users`(`username`, `email`, `password`, `user_type`) VALUES ('$name','$email','$new_password','user')");
 
             $_SESSION["user"]=$email;
             $_SESSION["usertype"]="user";
             $_SESSION["name"]=$name;
 
-            header('location: User/user.php');
+            header('location: User/index.php');
             $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>';
 
             

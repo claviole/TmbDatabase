@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../connection.php'; // Assuming you have a db_connection.php file for database connection
 
 // Fetch invoices for dropdown
 $result = $database->query("SELECT invoice_id FROM invoice");
@@ -14,14 +14,14 @@ $invoices = $result->fetch_all(MYSQLI_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <title>Lookup Invoice</title>
+    <title>Lookup Quote</title>
 </head>
 <body>
-    <h1>Lookup Invoice</h1>
+    <h1>Lookup Quote</h1>
     <form method="post">
-        <label for="invoice">Invoice:</label>
+        <label for="invoice">Quote:</label>
         <select id="invoice" name="invoice">
-        <option value="">Select an invoice</option>
+        <option value="">Select an Quote</option>
             <?php foreach($invoices as $invoice): ?>
                 <option value="<?= $invoice['invoice_id'] ?>"><?= $invoice['invoice_id'] ?></option>
             <?php endforeach; ?>
@@ -29,6 +29,7 @@ $invoices = $result->fetch_all(MYSQLI_ASSOC);
     </form>
     <div id="invoice_info"></div>
     <div id="line_items"></div>
+    <button id="delete-invoice">Delete Quote</button>
 
     <script>
     $(document).ready(function(){
@@ -41,7 +42,7 @@ $invoices = $result->fetch_all(MYSQLI_ASSOC);
                 data: {invoiceId:invoiceId},
                 success: function(data) {
                     var invoiceData = JSON.parse(data);
-                    var html = '<h2>Invoice Info</h2><ul>';
+                    var html = '<h2>Quote</h2><ul>';
                     for (var key in invoiceData.invoice) {
                         if (invoiceData.invoice.hasOwnProperty(key) && key != 'invoice_id') {
                             html += '<li>' + key + ': ' + invoiceData.invoice[key] + '</li>';
@@ -78,7 +79,7 @@ $invoices = $result->fetch_all(MYSQLI_ASSOC);
                         html += '<td>' + invoiceData.line_items[i]['Pitch(mm)'] + '</td>';
                         html += '<td>' + invoiceData.line_items[i]['Gauge(mm)'] + '</td>';
                         html += '<td>' + invoiceData.line_items[i]['# Outputs'] + '</td>';
-                        html += '<td>' + invoiceData.line_items[i]['Line Produced on'] + '</td>';
+                        html += '<td>' + invoiceData.line_items[i]['Line_Location'] + ' (' + invoiceData.line_items[i]['Line_Name'] + ')' + '</td>';
                         html += '<td>' + invoiceData.line_items[i]['Uptime'] + '</td>';
                         html += '<td>' + invoiceData.line_items[i]['PPH'] + '</td>';
                         html += '<td>' + invoiceData.line_items[i]['Pcs per Skid'] + '</td>';
@@ -98,7 +99,30 @@ $invoices = $result->fetch_all(MYSQLI_ASSOC);
             $('#line_items').html('');
         }
     });
+    
 });
     </script>
+    <script>
+        $("#delete-invoice").click(function(){
+        var invoiceId = $("#invoice").val();
+        if (invoiceId != "") {
+            var confirmDelete = confirm("Are you sure you want to delete this invoice?");
+            if (confirmDelete) {
+                $.ajax({
+                    url: 'delete_invoice.php',
+                    method: 'POST',
+                    data: {invoiceId:invoiceId},
+                    success: function(data) {
+                        alert("Invoice deleted successfully");
+                        location.reload();
+                    }
+                });
+            }
+        } else {
+            alert("Please select an invoice to delete");
+        }
+    });;
+    </script>
+
 </body>
 </html>

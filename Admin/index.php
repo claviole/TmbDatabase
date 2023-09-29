@@ -20,11 +20,11 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'admin'){
 <body>
     <h1>Welcome to the Admin Dashboard</h1>
     <div>
-        <button onclick="window.location.href='start_new_invoice.php'">Start New Quote</button>
-        <button onclick="window.location.href='add_new_part.php'">Add New Part</button>
-        <button onclick="window.location.href='add_new_customer.php'">Add New Customer</button>
-        <button onclick="window.location.href='lookup_customer.php'">Look Up Customer</button>
-        <button onclick="window.location.href='lookup_invoice.php'">Look Up Invoice</button>
+        <button onclick="window.location.href='New_Quote/start_new_invoice.php'">Start New Quote</button>
+        <button onclick="window.location.href='add_new_part/add_new_part.php'">Add New Part</button>
+        <button onclick="window.location.href='add_new_customer/add_new_customer.php'">Add New Customer</button>
+        <button onclick="window.location.href='Lookup_customer/lookup_customer.php'">Look Up Customer</button>
+        <button onclick="window.location.href='lookup_invoice/lookup_invoice.php'">Look Up Quote</button>
         <button onclick="window.location.href='manage_customers.php'">Manage Customers</button>
         <button onclick="window.location.href='manage_parts.php'">Manage Parts</button>
     </div>

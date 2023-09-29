@@ -1,5 +1,5 @@
 <?php
-include '../connection.php';
+include '../../connection.php';
 
 $partNumber = $database->real_escape_string($_POST['partNumber']);
 $partName = $database->real_escape_string($_POST['partName']);

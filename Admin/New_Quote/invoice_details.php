@@ -1,5 +1,5 @@
 <?php
-include '../connection.php';
+include '../../connection.php';
 
 $result = $database->query("SELECT MAX(invoice_id) as max_invoice_id FROM invoice");
 $row = $result->fetch_assoc();
@@ -10,7 +10,7 @@ $result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id
 $invoice = $result->fetch_assoc();
 
 // Fetch the line items for the invoice
-$result = $database->query("SELECT * FROM Line_Item WHERE invoice_id = $invoice_id");
+$result = $database->query("SELECT Line_Item.*, `lines`.Line_Name, `lines`.Line_Location FROM Line_Item INNER JOIN `lines` ON Line_Item.`Line Produced on` = `lines`.line_id WHERE Line_Item.invoice_id = $invoice_id");
 $line_items = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
@@ -33,6 +33,7 @@ $line_items = $result->fetch_all(MYSQLI_ASSOC);
         <tr>
             <th>Part#</th>
             <th>Part Name</th>
+            <th>Line Produced</th>
             <th>Volume</th>
             <th>Material Type</th>
             <th>Width(mm)</th>
@@ -54,6 +55,7 @@ $line_items = $result->fetch_all(MYSQLI_ASSOC);
             <tr>
                 <td><?= $item['Part#'] ?></td>
                 <td><?= $item['Part Name'] ?></td>
+                <td><?= $item['Line_Location'] ?> (<?= $item['Line_Name'] ?>)</td>
                 <td><?= $item['Volume'] ?></td>
                 <td><?= $item['Material Type'] ?></td>
                 <td><?= $item['Width(mm)'] ?></td>
