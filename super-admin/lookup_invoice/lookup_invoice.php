@@ -86,6 +86,15 @@ button {
 button:hover {
     background-color: #444;
 }
+.button-container {
+    text-align: right;
+}
+
+.button-container button {
+    display: inline-block;
+    margin-left: 0px;
+    margin-right: 150px;
+}
 .return-button {
     display: inline-block;
     padding: 10px 20px;
@@ -120,9 +129,14 @@ button:hover {
             <?php endforeach; ?>
         </select>
     </form>
+    <div class="button-container">
+    <button id="approve-invoice">Approve Quote</button>
+    <button id="deny-invoice">Deny Quote</button>
+    </div>
     <div id="invoice_info"></div>
     <div id="line_items"></div>
     <button id="delete-invoice">Delete Quote</button>
+    
 
     <script>
     $(document).ready(function(){
@@ -210,10 +224,46 @@ button:hover {
 });
     </script>
     <script>
+        $("#deny-invoice").click(function(){
+    var invoiceId = $("#invoice").val();
+    if (invoiceId != "") {
+        $.ajax({
+            url: 'deny_invoice.php',
+            method: 'POST',
+            data: {invoiceId:invoiceId},
+            success: function(data) {
+                alert("Quote denied successfully");
+                location.reload();
+            }
+        });
+    } else {
+        alert("Please select a Quote to deny");
+    }
+});
+</script>
+    <script>
+    $("#approve-invoice").click(function(){
+    var invoiceId = $("#invoice").val();
+    if (invoiceId != "") {
+        $.ajax({
+            url: 'approve_invoice.php',
+            method: 'POST',
+            data: {invoiceId:invoiceId},
+            success: function(data) {
+                alert("Quote approved successfully");
+                location.reload();
+            }
+        });
+    } else {
+        alert("Please select an quote to approve");
+    }
+});
+</script>
+    <script>
         $("#delete-invoice").click(function(){
         var invoiceId = $("#invoice").val();
         if (invoiceId != "") {
-            var confirmDelete = confirm("Are you sure you want to delete this invoice?");
+            var confirmDelete = confirm("Are you sure you want to delete this quote?");
             if (confirmDelete) {
                 $.ajax({
                     url: 'delete_invoice.php',
@@ -226,7 +276,7 @@ button:hover {
                 });
             }
         } else {
-            alert("Please select a quote to delete");
+            alert("Please select an invoice to delete");
         }
     });;
     </script>

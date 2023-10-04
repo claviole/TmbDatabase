@@ -109,6 +109,7 @@ table tr:nth-child(even) {
 <div class= "button-container">
 <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
+    
     <h1>Lookup Customer</h1>
     <form method="post">
         <label for="customer">Customer:</label>

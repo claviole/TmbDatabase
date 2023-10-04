@@ -11,7 +11,7 @@
     
     
 </head>
-<body>
+<body style="background-image: url('images/steel_coils.jpg'); background-size: cover;">
     <?php
 
     //Unset all the server side variables
@@ -39,6 +39,9 @@
                 if($_SESSION["user_type"]=="admin"){
                     header("Location: Admin/index.php");
                 }
+                elseif($_SESSION["user_type"]=="super-admin"){
+                    header("Location: super-admin/index.php");
+                }
                 else{
                     header("Location: User/index.php");
                 }
@@ -48,10 +51,13 @@
             }
         }
     ?>
+     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="images/company_header.png" alt="company header" width="30%" height="20%" > 
+    </h1>
     <center>
     <div class="__layout">
              
-             <div class="text-black flex items-start md:items-center justify-center min-h-screen bg-image px-4 py-8 md:pt-0 bg-gray-50">
+             <div  class="text-black flex items-start  justify-center min-h-screen  px-4 py-8 md:pt-0 ">
                  <div class="flex items-center justify-center flex-col">
                     
                     <div class="flex items-start content-start justify-start h-full overflow-hidden bg-white rounded-lg shadow card mt-4 rounded-lg shadow max-w-md p-8 w-full">

@@ -57,7 +57,7 @@ CREATE TABLE `Users` (
 -- Dumping data for table 'Users'
 --
 INSERT INTO `Users` (`id`, `username`, `email`, `password`,`user_type`) VALUES
-(2,'bjohns','wjohns@targetmetalblanking.com','bjohns23','user'),
+(2,'bjohns','wjohns@targetmetalblanking.com','bjohns23','admin'),
 (3,'claviolette','claviolette@targetmetalblanking.com','042217Dv!','admin');
 
 
@@ -191,6 +191,8 @@ CREATE TABLE `Line_Item` (
   invoice_number varchar(255) NOT NULL,
   invoice_date date DEFAULT NULL,
   customer_id int(11) NOT NULL,
+  invoice_author varchar(255) NOT NULL,
+  approval_status varchar(255) DEFAULT "Awaiting Approval",
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
   `Customer Name` varchar(255) NOT NULL,
   FOREIGN KEY (`Customer Name`) REFERENCES `Customer` (`Customer Name`)
