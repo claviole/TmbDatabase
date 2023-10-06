@@ -61,23 +61,8 @@ INSERT INTO `Users` (`id`, `username`, `email`, `password`,`user_type`) VALUES
 (3,'claviolette','claviolette@targetmetalblanking.com','042217Dv!','admin');
 
 
--- --------------------------------------------------------
--- Table structure for table `Pallet`
-CREATE TABLE `Pallet` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Pallet Size` varchar(255) NOT NULL,
-  `Pallet Material` varchar(255) DEFAULT NULL,
-  `Pallet Weight` double DEFAULT NULL,
-  `Pallet Cost` double DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+-- ------------------------------------------------------------
 
---
--- Dumping data for table `Pallet`
---
-INSERT INTO `Pallet` (`Pallet Size`, `Pallet Material`,`Pallet Weight`, `Pallet Cost`) VALUES
-('31" x 78"', 'Wood',80, 80.00),
-('20" x 78"', 'Wood',80, 80.00),
-('60" x 78"', 'Wood',120, 125.00);
 
 -- ------------------------------------------------------------
 --
@@ -93,9 +78,7 @@ CREATE TABLE `Part` (
   `Surface` varchar(255) DEFAULT NULL,
   `Material Type` varchar(255) DEFAULT NULL,
   `pallet_type` varchar(255) DEFAULT NULL,
-  FOREIGN KEY (pallet_type) REFERENCES Pallet(`Pallet Material`),
 `pallet_size` varchar(255) DEFAULT NULL,
-  FOREIGN KEY (pallet_size) REFERENCES Pallet(`Pallet Size`),
   `Pieces per Lift` int DEFAULT NULL,
   `Stacks per Skid` int DEFAULT NULL,
   `Skids per Truck` int DEFAULT NULL,
