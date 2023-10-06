@@ -213,7 +213,62 @@ button:hover {
 <input type="hidden" id="user" value="<?php echo $_SESSION['user']; ?>">
 
     </form>
+    
     </div>
+    <div class="form-container">
+    <form action="submit_new_part.php" method="post">
+    
+        <div>
+        <label for="partNumber">Part Number:</label>
+        <input type="text" id="partNumber" name="partNumber">
+        <label for="partName">Part Name:</label>
+        <input type="text" id="partName" name="partName">
+        </div>
+        <br>
+        <div>
+        <label for="mill">Mill:</label>
+        <input type="text" id="mill" name="mill">
+        <label for="platform">Platform:</label>
+        <input type="text" id="platform" name="platform">
+        </div>
+        <br>
+        <div>
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type">
+        <label for="surface">Surface:</label>
+        <input type="text" id="surface" name="surface">
+        </div> 
+        <br>
+        <div>
+        <label for="materialType">Material Type:</label>
+        <input type="text" id="materialType" name="materialType">
+        <label for="palletType">Pallet Type:</label>
+        <input type="text" id="palletType" name="palletType">
+        </div>
+        <br>
+        <div>
+        <label for="palletSize">Pallet Size:</label>
+        <input type="text" id="palletSize" name="palletSize">
+        <label for="piecesPerLift">Pieces per Lift:</label>
+        <input type="number" id="piecesPerLift" name="piecesPerLift">
+        </div>
+        <br>
+        <div>
+        <label for="stacksPerSkid">Stacks per Skid:</label>
+        <input type="number" id="stacksPerSkid" name="stacksPerSkid">
+        <label for="skidsPerTruck">Skids per Truck:</label>
+        <input type="number" id="skidsPerTruck" name="skidsPerTruck">
+        </div>
+        <br>
+        <div>
+        <label for="scrapConsumption">Scrap Consumption:</label>
+        <input type="number" id="scrapConsumption" name="scrapConsumption" step="0.01">
+        </div>
+        <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+    
 <script>
 $(document).ready(function(){
     $("#customer").change(function(){

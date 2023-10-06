@@ -20,5 +20,5 @@ $stmt->bind_param("sssssssssiidd", $partNumber, $partName, $mill, $platform, $ty
 
 $stmt->execute();
 
-header('Location: add_new_part.php');
+header('start_new_invoice.php');
 ?>
