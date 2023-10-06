@@ -9,18 +9,35 @@ var data = {
 user=window.user;
 
 
+function submitNewPartForm(formData) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'submit_new_part.php', // your form submission URL
+            type: 'POST', // or GET
+            data: formData, // use the passed form data
+            success: function(response) {
+                resolve(response);
+            },
+            error: function(error) {
+                reject(error);
+            }
+        });
+    });
+}
 
-function addPart() {
+async function addPart() {
+    try {
+       
+
     elements=[];
     var lineProducedName= $("#line_produced option:selected").text();
    
     if (window.partData) {
-        var partName = window.partData['Part Name'];
+    var partName = document.getElementById('partName').value;
     // Get values from input fields
     var invoiceId = document.getElementById('invoice_id').value;
     var partNumber = document.getElementById('part').value
-    var partData = window.partData;
-    var partName= partData['Part Name'];
+    var partName= document.getElementById('partName').value;
     var volume = document.getElementById('volume').value;
     var width = document.getElementById('width').value;
     var pitch = document.getElementById('pitch').value;
@@ -50,24 +67,9 @@ function addPart() {
     var palletCost;
     var pallet_type=partData[`pallet_type`];
     var pallet_size=partData[`pallet_size`];
-    if(pallet_type=="Wood")
-    {
-        if(pallet_size=='31" x 78 "')
-        {
-            palletWeight=80;
-            palletCost=80;
-        }
-        else if(pallet_size=='20" x 78 "')
-        {
-            palletWeight=80;
-            palletCost=80;
-        }
-        else
-        {
-            palletWeight=120;
-            palletCost=125;
-        }
-    }
+    var palletWeight=document.getElementById('palletWeight').value;
+    var palletCost=document.getElementById('palletCost').value;
+  
  var pcsPerLift= partData['Pieces per Lift'];
  var stacksPerSkid=partData['Stacks per Skid'];
  var pcsPerSkid= pcsPerLift*stacksPerSkid;
@@ -206,7 +208,7 @@ for (var i = 0; i < cells.length; i++) {
 // Append new row to table
 document.getElementById('parts_table').appendChild(row);
 
-    
+    return Promise.resolve();
 }
 else
 {
@@ -214,9 +216,14 @@ else
 }
 elements[0]=invoiceId;
 
+}catch (error) {
+    // Handle form submission error
+    console.error('Form submission failed:', error);
 }
+}
+
 window.onload = function(){
-    document.getElementById('add-part').addEventListener('click', addPart);
+    
 document.getElementById('submit-button').addEventListener('click', function(event) {
     event.preventDefault();
     submitInvoice();
@@ -298,13 +305,25 @@ function clearPartInputs() {
     document.getElementById('uptime').value = '';
     document.getElementById('pph').value = '';
     document.getElementById('Steel_Or_Aluminum').value = '';
+    document.getElementById('partName').value = '';
+    document.getElementById('partNumber').value = '';
+    document.getElementById('mill').value = '';
+    document.getElementById('platform').value = '';
+    document.getElementById('type').value = '';
+    document.getElementById('surface').value = '';
+    document.getElementById('materialType').value = '';
+    document.getElementById('palletType').value = '';
+    document.getElementById('palletSize').value = '';
+    document.getElementById('piecesPerLift').value = '';
+    document.getElementById('stacksPerSkid').value = '';
+    document.getElementById('skidsPerTruck').value = '';
+    document.getElementById('scrapConsumption').value = '';
+    document.getElementById('palletWeight').value = '';
+    document.getElementById('palletCost').value = '';
 }
 
 window.onload = function(){
-    document.getElementById('add-part').addEventListener('click', function() {
-        addPart();
-        clearPartInputs();
-    });
+    
     document.getElementById('submit-button').addEventListener('click', function(event) {
         event.preventDefault();
         submitInvoice();

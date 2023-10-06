@@ -216,7 +216,7 @@ button:hover {
     
     </div>
     <div class="form-container">
-    <form action="submit_new_part.php" method="post">
+    <form id="submit_new_part" action="submit_new_part.php" method="post">
     
         <div>
         <label for="partNumber">Part Number:</label>
@@ -237,23 +237,27 @@ button:hover {
         <input type="text" id="type" name="type">
         <label for="surface">Surface:</label>
         <input type="text" id="surface" name="surface">
+        <label for="materialType">Material Type:</label>
+        <input type="text" id="materialType" name="materialType">
         </div> 
         <br>
         <div>
-        <label for="materialType">Material Type:</label>
-        <input type="text" id="materialType" name="materialType">
+       
         <label for="palletType">Pallet Type:</label>
         <input type="text" id="palletType" name="palletType">
-        </div>
         <br>
-        <div>
         <label for="palletSize">Pallet Size:</label>
         <input type="text" id="palletSize" name="palletSize">
-        <label for="piecesPerLift">Pieces per Lift:</label>
-        <input type="number" id="piecesPerLift" name="piecesPerLift">
+        <label for="palletWeight">Pallet Weight:</label>
+        <input type="number" id="palletWeight" name="palletWeight">
+        <label for="palletCost">Pallet Cost:</label>
+        <input type="number" id="palletCost" name="palletCost">
+       
         </div>
         <br>
         <div>
+        <label for="piecesPerLift">Pieces per Lift:</label>
+        <input type="number" id="piecesPerLift" name="piecesPerLift">
         <label for="stacksPerSkid">Stacks per Skid:</label>
         <input type="number" id="stacksPerSkid" name="stacksPerSkid">
         <label for="skidsPerTruck">Skids per Truck:</label>
@@ -264,7 +268,7 @@ button:hover {
         <label for="scrapConsumption">Scrap Consumption:</label>
         <input type="number" id="scrapConsumption" name="scrapConsumption" step="0.01">
         </div>
-        <button type="submit">Submit</button>
+        
         </form>
     </div>
     
@@ -310,29 +314,29 @@ $(document).ready(function(){
 
 <form action="submit_invoice.php" method="post">
     <div>
-    <label for="part">Part Number:</label>
-    <select id="part" name="part">
-        <option value="">Select a part</option>
-        <?php foreach($parts as $part): ?>
-            <option value="<?= $part['Part#'] ?>"><?= $part['Part#'] ?></option>
-        <?php endforeach; ?>
-    </select>
+    <label for="part"></label>
+    <input type="hidden" id="part" name="part">
+    <script>
+    $(document).ready(function(){
+    $('#partNumber').on('input', function() {
+        $('#part').val($(this).val());
+    });
+});
+    </script>
+       <label for="invoice_number"></label>
+    <input type="hidden" id="invoice_number" name="invoice_number" value="<?= $current_invoice ?>" readonly>
+ 
+    <label for="date"></label>
+    <input type="hidden" id="date" name="date" value="<?= $current_date ?>" readonly>
     
-    <br>
+
     <input type="hidden" id="invoice_id" value="<?php echo $current_invoice; ?>">
-    <br>
+
     <label for="volume">Volume:</label>
     <input type="text" id="volume" name="volume">
     </div>
-    <br>
-    <div>
-    <label for="invoice_number">Invoice Number:</label>
-    <input type="text" id="invoice_number" name="invoice_number" value="<?= $current_invoice ?>" readonly>
-    <br>
-    <label for="date">Date:</label>
-    <input type="text" id="date" name="date" value="<?= $current_date ?>" readonly>
-    </div>
-    <br>
+
+
     <div>
     <label for="Steel_Or_Aluminum">Steel or Aluminum?:</label>
 <select id="Steel_Or_Aluminum" name="Steel_Or_Aluminum">
@@ -341,7 +345,7 @@ $(document).ready(function(){
 <option value="Aluminum">Aluminum</option>
 </select>
     </div>
-<br>
+
     <div>
 
     <label for="Width(mm)">Width(mm):</label>
@@ -393,47 +397,50 @@ $(document).ready(function(){
 
 
 <script>
-$(document).ready(function(){
-$("#part").change(function(){
-    // Initially disable the "Add Part" button
-$("#add-part").prop("disabled", true);
-    var partNumber = $(this).val();
+$("#add-part").click(function(){
+    var partNumber = $("#part").val();
     if (partNumber != "") {
-        // Disable the "Add Part" button while the AJAX call is in progress
-        $("#add-part").prop("disabled", true);
-        $.ajax({
-            url: 'fetch_part.php',
-            method: 'POST',
-            data: {partNumber:partNumber},
-            success: function(data) {
-                var partData = JSON.parse(data);
-                console.log('Part data:', partData);
-                window.partData= partData;
-                // Enable the "Add Part" button after the AJAX call has completed
-                $("#add-part").prop("disabled", false);
-                $('part')
-                $('#volume').val(partData['Volume']);
-                $('#width').val(partData['Width']);
-                $('#pitch').val(partData['Pitch']);
-                $('#gauge').val(partData['Gauge']);
-                $('#num_outputs').val(partData['# Out']);
-                $('#line_produced').val(partData['Line Produced On']);
-                $('#uptime').val(partData['Uptime']);
-                $('#pph').val(partData['PPH']);
-            }
+        // Capture form data before it's cleared
+        const formData = {
+           
+            partNumber: document.getElementById('partNumber').value,
+            partName: document.getElementById('partName').value,
+            mill: document.getElementById('mill').value,
+            platform: document.getElementById('platform').value,
+            type: document.getElementById('type').value,
+            surface: document.getElementById('surface').value,
+            materialType: document.getElementById('materialType').value,
+            palletType: document.getElementById('palletType').value,
+            palletSize: document.getElementById('palletSize').value,
+            piecesPerLift: document.getElementById('piecesPerLift').value,
+            stacksPerSkid: document.getElementById('stacksPerSkid').value,
+            skidsPerTruck: document.getElementById('skidsPerTruck').value,
+            scrapConsumption: document.getElementById('scrapConsumption').value
+        }
+
+        submitNewPartForm(formData).then(function() {
+            $.ajax({
+                url: 'fetch_part.php',
+                method: 'POST',
+                data: {partNumber:partNumber},
+                success: function(data) {
+                    var partData = JSON.parse(data);
+                    console.log('Part data:', partData);
+                    window.partData= partData;
+
+
+                    addPart().then(function() {
+                        clearPartInputs();
+                    });
+                    
+                }
+            });
         });
     } else {
-        // Clear all the input fields
-        $('#volume').val('');
-        $('#width').val('');
-        $('#pitch').val('');
-        $('#gauge').val('');
-        $('#num_outputs').val('');
-        $('#line_produced').val('');
-        $('#uptime').val('');
-        $('#pph').val('');
+        clearPartInputs();
+         // Clear all the input fields
+        
     }
-});
 });
 </script>
 
