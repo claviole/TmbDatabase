@@ -338,12 +338,8 @@ $(document).ready(function(){
 
 
     <div>
-    <label for="Steel_Or_Aluminum">Steel or Aluminum?:</label>
-<select id="Steel_Or_Aluminum" name="Steel_Or_Aluminum">
-<option value="">Select a material</option>
-<option value="Steel">Steel</option>
-<option value="Aluminum">Aluminum</option>
-</select>
+    <label for="Density">Density:</label>
+    <input type="number" id="Density" name="Density">
     </div>
 
     <div>

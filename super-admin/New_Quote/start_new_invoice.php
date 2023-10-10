@@ -338,12 +338,8 @@ $(document).ready(function(){
 
 
     <div>
-    <label for="Steel_Or_Aluminum">Steel or Aluminum?:</label>
-<select id="Steel_Or_Aluminum" name="Steel_Or_Aluminum">
-<option value="">Select a material</option>
-<option value="Steel">Steel</option>
-<option value="Aluminum">Aluminum</option>
-</select>
+    <label for="Density">Density:</label>
+    <input type="number" id="Density" name="Density">
     </div>
 
     <div>
@@ -381,6 +377,10 @@ $(document).ready(function(){
     <input type="text" id="pph" name="PPH">
     <br>
     </div>
+    <div>
+    <label for="wash_and_lube">Wash and Lube:</label>
+    <input type="checkbox" id="wash_and_lube" name="wash_and_lube">
+</div>
     <button id="add-part" type="button">Add Part</button>
     </div>
     </div>
@@ -399,6 +399,7 @@ $(document).ready(function(){
 <script>
 $("#add-part").click(function(){
     var partNumber = $("#part").val();
+    var wash_and_lube = document.getElementById('wash_and_lube').checked;
     if (partNumber != "") {
         // Capture form data before it's cleared
         const formData = {

@@ -46,21 +46,12 @@ async function addPart() {
     var lineProduced = document.getElementById('line_produced').value;
     var uptime = document.getElementById('uptime').value;
     var partsPerHour = document.getElementById('pph').value;
-    var metal_type = document.getElementById('Steel_Or_Aluminum').value;
     var widthIN = width/25.4;
     var pitchIN= pitch/25.4;
     var gaugeIN= gauge/25.4;
-    var blankWeight;
     var hourlyRate;
-    if(metal_type=="Steel")
-    {
-        blankWeight=gaugeIN*widthIN*pitchIN*.2833;
-    }
-    else if(metal_type=="Aluminum")
-    {
-        blankWeight=gaugeIN*widthIN*pitchIN*.0968;
-    }
-
+    var Density=document.getElementById('Density').value;
+    var blankWeight=gaugeIN*widthIN*pitchIN*Density;
     var scrapLbs = partData['Scrap Consumption']*blankWeight;
     var pcsWeight= blankWeight-scrapLbs;
     var palletWeight;
@@ -69,6 +60,7 @@ async function addPart() {
     var pallet_size=partData[`pallet_size`];
     var palletWeight=document.getElementById('palletWeight').value;
     var palletCost=document.getElementById('palletCost').value;
+    var wash_and_lube=document.getElementById('wash_and_lube').checked;
   
  var pcsPerLift= partData['Pieces per Lift'];
  var stacksPerSkid=partData['Stacks per Skid'];
@@ -136,6 +128,8 @@ elements[36]=blankingPerPieceCost;
 elements[37]=packagingPerPieceCost;
 elements[38]=freightPerPiece;
 elements[39]=totalPerPiece;
+elements[40]=Density;
+elements[41]=wash_and_lube;
 
 var part = {
     invoiceId: elements[0],
@@ -177,7 +171,9 @@ var part = {
     blankingPerPieceCost: elements[36],
     packagingPerPieceCost: elements[37],
     freightPerPiece: elements[38],
-    totalPerPiece: elements[39]
+    totalPerPiece: elements[39],
+    Density: elements[40],
+    wash_and_lube: elements[41]
 
 
 }
@@ -188,7 +184,7 @@ var row = document.createElement('tr');
 
 // Check if the table already has a header row
 if (document.getElementById('parts_table').rows.length === 0) {
-    var headers = ['Part Number', 'Volume', 'Width', 'Pitch', 'Gauge', '# Out', 'Line Produced', 'Uptime', 'Parts Per Hour', 'Pcs Per Skid', 'Skids Per Truck','Weight Per Truck', 'Blanking Per Piece Cost', 'Packaging Per Piece Cost', 'Total Per Piece'];
+    var headers = ['Part Number', 'Volume', 'Width', 'Pitch', 'Gauge','Density', '# Out', 'Line Produced', 'Uptime', 'Parts Per Hour', 'Pcs Per Skid', 'Skids Per Truck','Weight Per Truck', 'Blanking Per Piece Cost', 'Packaging Per Piece Cost', 'Total Per Piece'];
     var headerRow = document.createElement('tr');
     for (var i = 0; i < headers.length; i++) {
         var headerCell = document.createElement('th');
@@ -198,7 +194,7 @@ if (document.getElementById('parts_table').rows.length === 0) {
     document.getElementById('parts_table').appendChild(headerRow);
 }
 
-var cells = [ partNumber, volume, width, pitch, gauge, numOutputs,lineProducedName, uptime, partsPerHour,pcsPerSkid,skidsPerTruck,weightPerTruck ,blankingPerPieceCost,packagingPerPieceCost,totalPerPiece,];
+var cells = [ partNumber, volume, width, pitch, gauge, Density, numOutputs,lineProducedName, uptime, partsPerHour,pcsPerSkid,skidsPerTruck,weightPerTruck ,blankingPerPieceCost,packagingPerPieceCost,totalPerPiece,];
 for (var i = 0; i < cells.length; i++) {
     var cell = document.createElement('td');
     cell.textContent = cells[i];
@@ -250,18 +246,13 @@ document.getElementById('submit-button').addEventListener('click', function(even
 function submitInvoice() {
     var selectedCustomer = $('#customer').val();
    
-   
-    
-        data.customer= selectedCustomer,
-        data.invoiceDate= new Date().toISOString(),
-        data.parts= data.parts
-        data.customerId = $('#customer_id').val();
-        data.invoice_author = user;
-        console.log('Data: ',data);
+    data.customer= selectedCustomer,
+    data.invoiceDate= new Date().toISOString(),
+    data.parts= data.parts
+    data.customerId = $('#customer_id').val();
+    data.invoice_author = user;
+    console.log('Data: ',data);
         
-       
-    
-    
     fetch('submit_invoice.php', {
         method: 'POST',
         headers: {
@@ -269,42 +260,45 @@ function submitInvoice() {
         },
         body: JSON.stringify(data)
     }) 
-    .then(response => response.text())
-.then(text => {
-    console.log(text);
-    return JSON.parse(text);
-})
+    .then(response => response.json())
     .then(data => {
         // Handle the response data
         console.log(data);
         // Clear all input fields
         $('input[type="text"], input[type="number"], select').val('');
-         // Clear the parts table
-         $("#parts_table").find("tr:gt(0)").remove();
+        // Clear the parts table
+        $("#parts_table").find("tr:gt(0)").remove();
         // Increment the invoice number
         var currentInvoiceNumber = parseInt($('#invoice_number').val());
         $('#invoice_number').val(currentInvoiceNumber + 1);
-        // Redirect to the admin dashboard
-    if (data.success) {
-        // Redirect to the new page
-    window.location.href = 'invoice_details.php?invoice_id=' + currentInvoiceNumber;
-    }
-    }).catch(error => {
+        // If the invoice was successfully submitted, generate the PDF
+        if (data.success) {
+            window.location.href = 'generate_invoice_pdf.php?invoice_id=' + currentInvoiceNumber;
+        }
+    })
+    .catch(error => {
         // Handle the error
         console.error('There has been a problem with your fetch operation:', error);
     });
 }
 
+window.onload = function(){
+    document.getElementById('submit-button').addEventListener('click', function(event) {
+        event.preventDefault();
+        submitInvoice();
+    });
+};
+
 function clearPartInputs() {
     document.getElementById('volume').value = '';
     document.getElementById('width').value = '';
     document.getElementById('pitch').value = '';
+    document.getElementById('Density').value = '';
     document.getElementById('gauge').value = '';
     document.getElementById('# Out').value = '';
     document.getElementById('line_produced').value = '';
     document.getElementById('uptime').value = '';
     document.getElementById('pph').value = '';
-    document.getElementById('Steel_Or_Aluminum').value = '';
     document.getElementById('partName').value = '';
     document.getElementById('partNumber').value = '';
     document.getElementById('mill').value = '';
@@ -320,6 +314,7 @@ function clearPartInputs() {
     document.getElementById('scrapConsumption').value = '';
     document.getElementById('palletWeight').value = '';
     document.getElementById('palletCost').value = '';
+    document.getElementById('wash_and_lube').value = '';
 }
 
 window.onload = function(){

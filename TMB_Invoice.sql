@@ -70,6 +70,7 @@ INSERT INTO `Users` (`id`, `username`, `email`, `password`,`user_type`) VALUES
 --
 CREATE TABLE `Part` (
   `part_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `customer_id` int(11) NOT NULL,
   `Part#` varchar(255) NOT NULL,
   `Part Name` varchar(255) DEFAULT NULL,
   `Mill` varchar(255) DEFAULT NULL,
@@ -130,6 +131,7 @@ CREATE TABLE `Line_Item` (
   `Pitch(in)` float DEFAULT NULL,
   `Gauge(mm)` float DEFAULT NULL,
   `Gauge(in)` float DEFAULT NULL,
+  `Density` float DEFAULT NULL,
   `Blank Weight(kg)` float DEFAULT NULL,
   `Blank Weight(lb)` float DEFAULT NULL,
   `Scrap Consumption` float DEFAULT NULL,
@@ -158,6 +160,7 @@ CREATE TABLE `Line_Item` (
   `Packaging Per Piece Cost` float DEFAULT NULL,
   `freight per piece cost` float DEFAULT NULL,
   `Total Cost per Piece` float DEFAULT NULL,
+  `wash_and_lube` varchar(255) DEFAULT NULL,
   FOREIGN KEY (`Part#`) REFERENCES `Part` (`Part#`),
   FOREIGN KEY (`Part Name`) REFERENCES `Part` (`Part Name`),
   FOREIGN KEY (`Material Type`) REFERENCES `Part` (`Material Type`),
