@@ -39,9 +39,9 @@ async function addPart() {
     var partNumber = document.getElementById('part').value
     var partName= document.getElementById('partName').value;
     var volume = document.getElementById('volume').value;
-    var width = document.getElementById('width').value;
-    var pitch = document.getElementById('pitch').value;
-    var gauge = document.getElementById('gauge').value;
+    var width = parseFloat(document.getElementById('width').value);
+    var pitch = parseFloat(document.getElementById('pitch').value);
+    var gauge = parseFloat(document.getElementById('gauge').value);
     var numOutputs = document.getElementById('# Out').value;
     var lineProduced = document.getElementById('line_produced').value;
     var uptime = document.getElementById('uptime').value;
@@ -50,10 +50,14 @@ async function addPart() {
     var pitchIN= pitch/25.4;
     var gaugeIN= gauge/25.4;
     var hourlyRate;
+    var hours_to_run=volume/partsPerHour;
     var Density=document.getElementById('Density').value;
-    var blankWeight=gaugeIN*widthIN*pitchIN*Density;
+    var blankWeight=(gauge*width*pitch*Density)*2.20462;
+    var blankWeightKg=blankWeight/2.20462;
     var scrapLbs = partData['Scrap Consumption']*blankWeight;
+    var scrapKg = scrapLbs/2.20462;
     var pcsWeight= blankWeight-scrapLbs;
+    var pcsWeightKg= pcsWeight/2.20462;
     var palletWeight;
     var palletCost;
     var pallet_type=partData[`pallet_type`];
@@ -61,7 +65,31 @@ async function addPart() {
     var pallet_uses=document.getElementById('pallet_uses').value;
     var palletWeight=document.getElementById('palletWeight').value;
     var palletCost=document.getElementById('palletCost').value;
-    var wash_and_lube=document.getElementById('wash_and_lube').checked;
+    var wash_and_lube_choice=document.getElementById('wash_and_lube').checked;
+    var steel_or_aluminum=document.getElementById('steel_or_aluminum').value;
+    var material_cost
+    var wash_and_lube;
+
+    if(wash_and_lube_choice==true)
+    {
+        wash_and_lube=parseFloat(50*hours_to_run).toFixed(3);
+    }
+    else
+    {
+        wash_and_lube=parseFloat(0).toFixed(3);
+    }
+   
+    
+    if(steel_or_aluminum=='steel')
+    {
+        material_cost=parseFloat(1.0589*blankWeight).toFixed(3);
+    }
+    else
+    {
+        material_cost=parseFloat(2.20462*blankWeight).toFixed(3);
+    }
+    var material_markup_percent=(document.getElementById('material_markup_percent').value)/100;
+    var material_cost_markup=parseFloat(material_cost*material_markup_percent).toFixed(3);
   
  var pcsPerLift= partData['Pieces per Lift'];
  var stacksPerSkid=partData['Stacks per Skid'];
@@ -85,7 +113,7 @@ var packagingPerPieceCost=(12.50/pcsPerSkid)+skidCostPerPc;
 packagingPerPieceCost=packagingPerPieceCost.toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
 var freightPerPiece=3200/pcsPerTruck;
-var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)).toFixed(3);
+var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(material_cost)+ parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+parseFloat(wash_and_lube)+parseFloat(material_cost_markup)).toFixed(3);
 var blanksPerMinute=partsPerHour/60;
 
 
@@ -102,11 +130,11 @@ elements[9]=pitchIN;
 elements[10]=gauge;
 elements[11]=gaugeIN;
 elements[12]=blankWeight;
-elements[13]=blankWeight/2.20462;
+elements[13]=blankWeightKg;
 elements[14]=partData[`Scrap Consumption`];
-elements[15]=pcsWeight/2.20462;
-elements[16]=pcsWeight;
-elements[17]=scrapLbs/2.20462;
+elements[15]=pcsWeight;
+elements[16]=pcsWeightKg;
+elements[17]=scrapKg;
 elements[18]=scrapLbs;
 elements[19]=pallet_type;
 elements[20]=pallet_size;
@@ -131,6 +159,9 @@ elements[38]=freightPerPiece;
 elements[39]=totalPerPiece;
 elements[40]=Density;
 elements[41]=wash_and_lube;
+elements[42]=material_cost;
+elements[43]=material_markup_percent;
+elements[44]=material_cost_markup;
 
 var part = {
     invoiceId: elements[0],
@@ -174,7 +205,10 @@ var part = {
     freightPerPiece: elements[38],
     totalPerPiece: elements[39],
     Density: elements[40],
-    wash_and_lube: elements[41]
+    wash_and_lube: elements[41],
+    material_cost: elements[42],
+    material_markup_percent: elements[43],
+    material_cost_markup: elements[44]
     
 
 
@@ -318,6 +352,8 @@ function clearPartInputs() {
     document.getElementById('palletCost').value = '';
     document.getElementById('wash_and_lube').value = '';
     document.getElementById('pallet_uses').value = '';
+    document.getElementById('steel_or_aluminum').value = '';
+    document.getElementById('material_markup_percent').value = '';
 }
 
 window.onload = function(){

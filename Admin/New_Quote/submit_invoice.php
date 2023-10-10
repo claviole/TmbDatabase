@@ -2,6 +2,15 @@
 session_start();
 include '../../connection.php';
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['wash_and_lube'])) {
+        // The "Wash and Lube" checkbox was checked
+        $wash_and_lube = true;
+    } else {
+        // The "Wash and Lube" checkbox was not checked
+        $wash_and_lube = false;
+    }
+}
 
 $data = json_decode(file_get_contents('php://input'), true);
 error_log(print_r($data, true));  // Add this line
@@ -68,13 +77,13 @@ try {
         $pcsPerLift= $database->real_escape_string($part['pcsPerLift']);
         $stacksPerSkid= $database->real_escape_string($part['stacksPerSkid']);
         $pcsPerSkid= $database->real_escape_string($part['pcsPerSkid']);
+        $UseSkidPcs= $database->real_escape_string($part['UseSkidPcs']);
         $liftWeight= $database->real_escape_string($part['liftWeight']);
         $stackHeight= $database->real_escape_string($part['stackHeight']);
         $skidsPerTruck= $database->real_escape_string($part['skidsPerTruck']);
         $pcsPerTruck= $database->real_escape_string($part['pcsPerTruck']);
         $weightPerTruck= $database->real_escape_string($part['weightPerTruck']);
         $annualTruckLoads= $database->real_escape_string($part['annualTruckLoads']);
-        $fiveUseSkidPcs= $database->real_escape_string($part['fiveUseSkidPcs']);
         $skidCostPerPcs= $database->real_escape_string($part['skidCostPerPcs']);
         $lineProduced= $database->real_escape_string($part['lineProduced']);
         $partsPerHour= $database->real_escape_string($part['partsPerHour']);
@@ -83,10 +92,15 @@ try {
         $packagingPerPieceCost= $database->real_escape_string($part['packagingPerPieceCost']);
         $freightPerPiece= $database->real_escape_string($part['freightPerPiece']);
         $totalPerPiece= $database->real_escape_string($part['totalPerPiece']);
+        $material_cost= $database->real_escape_string($part['material_cost']);
+        $wash_and_lube = $database->real_escape_string($part['wash_and_lube']);
+        $material_markup_percent= $database->real_escape_string($part['material_markup_percent']);
+        $material_cost_markup= $database->real_escape_string($part['material_cost_markup']);
 
         // Insert the part into the Line_Item table
-    $database->query("INSERT INTO Line_Item (invoice_id, `Part#`, `Part Name`, `Material Type`, `# Outputs`, `Volume`, `Width(mm)`, `width(in)`, `Pitch(mm)`, `Pitch(in)`, `Gauge(mm)`,`Density`, `Gauge(in)`, `Blank Weight(kg)`, `Blank Weight(lb)`, `Scrap Consumption`, `Pcs Weight(kg)`, `Pcs Weight(lb)`, `Scrap Weight(kg)`, `Scrap Weight(lb)`, `Pallet Type`, `Pallet Size`, `Pallet Weight(lb)`,`Pcs per Lift`,`Stacks per Skid`,`Pcs per Skid`,`Lift Weight+Skid Weight(lb)`,`Stack Height`,`Skids per Truck`,`Pieces per Truck`,`Truck Weight(lb)`,`Annual Truckloads`,`# Pieces 5 use skid`,`Skid cost per piece`,`Line Produced on`,`PPH`,`Uptime`,`Blanking per piece cost`,`Packaging per Piece Cost`,`freight per piece cost`,`Total Cost per Piece`) VALUES ('$invoice_id','$partNumber','$partName','$materialType','$numOutputs','$volume','$width','$widthIN','$pitch','$pitchIN','$gauge','$gaugeIN','$Density','$blankWeightKg','$blankWeightlbs','$scrapConsumption','$pcsWeightKg','$pcsWeight','$scrapLbsInKg','$scrapLbs','$palletType','$palletSize','$palletWeight','$pcsPerLift','$stacksPerSkid','$pcsPerSkid','$liftWeight','$stackHeight','$skidsPerTruck','$pcsPerTruck','$weightPerTruck','$annualTruckLoads','$fiveUseSkidPcs','$skidCostPerPcs','$lineProduced','$partsPerHour','$uptime','$blankingPerPieceCost','$packagingPerPieceCost','$freightPerPiece','$totalPerPiece')");
+    $database->query("INSERT INTO Line_Item (invoice_id, `Part#`, `Part Name`, `Material Type`, `# Outputs`, `Volume`, `Width(mm)`, `width(in)`, `Pitch(mm)`, `Pitch(in)`, `Gauge(mm)`,`Density`, `Gauge(in)`, `Blank Weight(kg)`, `Blank Weight(lb)`, `Scrap Consumption`, `Pcs Weight(kg)`, `Pcs Weight(lb)`, `Scrap Weight(kg)`, `Scrap Weight(lb)`, `Pallet Type`, `Pallet Size`, `Pallet Weight(lb)`,`Pcs per Lift`,`Stacks per Skid`,`Pcs per Skid`,`Lift Weight+Skid Weight(lb)`,`Stack Height`,`Skids per Truck`,`Pieces per Truck`,`Truck Weight(lb)`,`Annual Truckloads`,`UseSkidPcs`,`Skid cost per piece`,`Line Produced on`,`PPH`,`Uptime`,`Blanking per piece cost`,`Packaging per Piece Cost`,`freight per piece cost`,`Total Cost per Piece`,`wash_and_lube`,`material_cost`,`material_markup_percent`,`material_cost_markup`) VALUES ('$invoice_id','$partNumber','$partName','$materialType','$numOutputs','$volume','$width','$widthIN','$pitch','$pitchIN','$gauge','$gaugeIN','$Density','$blankWeightKg','$blankWeightlbs','$scrapConsumption','$pcsWeightKg','$pcsWeight','$scrapLbsInKg','$scrapLbs','$palletType','$palletSize','$palletWeight','$pcsPerLift','$stacksPerSkid','$pcsPerSkid','$liftWeight','$stackHeight','$skidsPerTruck','$pcsPerTruck','$weightPerTruck','$annualTruckLoads','$UseSkidPcs','$skidCostPerPcs','$lineProduced','$partsPerHour','$uptime','$blankingPerPieceCost','$packagingPerPieceCost','$freightPerPiece','$totalPerPiece','$wash_and_lube','$material_cost','$material_markup_percent','$material_cost_markup')");
     }
+    
     $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_number`, `invoice_author`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author')");
     
     // Commit the transaction

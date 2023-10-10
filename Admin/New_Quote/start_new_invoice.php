@@ -252,6 +252,8 @@ button:hover {
         <input type="number" id="palletWeight" name="palletWeight">
         <label for="palletCost">Pallet Cost:</label>
         <input type="number" id="palletCost" name="palletCost">
+        <label for="pallet_uses"># Pallet Uses:</label>
+        <input type="number" id="pallet_uses" name="pallet_uses">
        
         </div>
         <br>
@@ -377,6 +379,20 @@ $(document).ready(function(){
     <input type="text" id="pph" name="PPH">
     <br>
     </div>
+    <div>
+    <label for="wash_and_lube">Wash and Lube:</label>
+    <input type="checkbox" id="wash_and_lube" name="wash_and_lube">
+    <select id ="steel_or_aluminum" name="steel_or_aluminum">
+    <option value="">Select a material</option>
+    <option value="steel">Steel</option>
+    <option value="aluminum">Aluminum</option>
+    </select>
+</div>
+<div>
+    <label for= "material_markup_percent">Material Markup % :</label>
+    <input type="number" id="material_markup_percent" name="material_markup_percent">
+    </div>
+    
     <button id="add-part" type="button">Add Part</button>
     </div>
     </div>
@@ -395,6 +411,7 @@ $(document).ready(function(){
 <script>
 $("#add-part").click(function(){
     var partNumber = $("#part").val();
+    var wash_and_lube = document.getElementById('wash_and_lube').checked;
     if (partNumber != "") {
         // Capture form data before it's cleared
         const formData = {
@@ -408,6 +425,7 @@ $("#add-part").click(function(){
             materialType: document.getElementById('materialType').value,
             palletType: document.getElementById('palletType').value,
             palletSize: document.getElementById('palletSize').value,
+            pallet_uses: document.getElementById('pallet_uses').value,
             piecesPerLift: document.getElementById('piecesPerLift').value,
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
             skidsPerTruck: document.getElementById('skidsPerTruck').value,

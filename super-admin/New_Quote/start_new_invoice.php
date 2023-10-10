@@ -382,7 +382,17 @@ $(document).ready(function(){
     <div>
     <label for="wash_and_lube">Wash and Lube:</label>
     <input type="checkbox" id="wash_and_lube" name="wash_and_lube">
+    <select id ="steel_or_aluminum" name="steel_or_aluminum">
+    <option value="">Select a material</option>
+    <option value="steel">Steel</option>
+    <option value="aluminum">Aluminum</option>
+    </select>
 </div>
+<div>
+    <label for= "material_markup_percent">Material Markup % :</label>
+    <input type="number" id="material_markup_percent" name="material_markup_percent">
+    </div>
+    
     <button id="add-part" type="button">Add Part</button>
     </div>
     </div>
