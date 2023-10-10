@@ -58,6 +58,7 @@ async function addPart() {
     var palletCost;
     var pallet_type=partData[`pallet_type`];
     var pallet_size=partData[`pallet_size`];
+    var pallet_uses=document.getElementById('pallet_uses').value;
     var palletWeight=document.getElementById('palletWeight').value;
     var palletCost=document.getElementById('palletCost').value;
     var wash_and_lube=document.getElementById('wash_and_lube').checked;
@@ -71,8 +72,8 @@ async function addPart() {
  var pcsPerTruck=skidsPerTruck*pcsPerSkid;
  var weightPerTruck = (skidsPerTruck * liftWeight).toFixed(3);
 var annualTruckLoads=volume/pcsPerTruck;
-var fiveUseSkidPcs= pcsPerSkid*5;
-var skidCostPerPc=palletCost/fiveUseSkidPcs;
+var UseSkidPcs= pcsPerSkid*pallet_uses;
+var skidCostPerPc=palletCost/UseSkidPcs;
 if(lineProduced==11)
 {
     hourlyRate=950;
@@ -119,7 +120,7 @@ elements[27]=skidsPerTruck;
 elements[28]=pcsPerTruck;
 elements[29]=weightPerTruck;
 elements[30]=annualTruckLoads;
-elements[31]=fiveUseSkidPcs;
+elements[31]=UseSkidPcs;
 elements[32]=skidCostPerPc;
 elements[33]=lineProduced;
 elements[34]=partsPerHour;
@@ -163,7 +164,7 @@ var part = {
     pcsPerTruck: elements[28],
     weightPerTruck: elements[29],
     annualTruckLoads: elements[30],
-    fiveUseSkidPcs: elements[31],
+    UseSkidPcs: elements[31],
     skidCostPerPcs: elements[32],
     lineProduced: elements[33],
     partsPerHour: elements[34],
@@ -174,6 +175,7 @@ var part = {
     totalPerPiece: elements[39],
     Density: elements[40],
     wash_and_lube: elements[41]
+    
 
 
 }
@@ -315,6 +317,7 @@ function clearPartInputs() {
     document.getElementById('palletWeight').value = '';
     document.getElementById('palletCost').value = '';
     document.getElementById('wash_and_lube').value = '';
+    document.getElementById('pallet_uses').value = '';
 }
 
 window.onload = function(){

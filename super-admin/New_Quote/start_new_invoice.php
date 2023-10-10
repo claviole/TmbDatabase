@@ -252,6 +252,8 @@ button:hover {
         <input type="number" id="palletWeight" name="palletWeight">
         <label for="palletCost">Pallet Cost:</label>
         <input type="number" id="palletCost" name="palletCost">
+        <label for="pallet_uses"># Pallet Uses:</label>
+        <input type="number" id="pallet_uses" name="pallet_uses">
        
         </div>
         <br>
@@ -413,6 +415,7 @@ $("#add-part").click(function(){
             materialType: document.getElementById('materialType').value,
             palletType: document.getElementById('palletType').value,
             palletSize: document.getElementById('palletSize').value,
+            pallet_uses: document.getElementById('pallet_uses').value,
             piecesPerLift: document.getElementById('piecesPerLift').value,
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
             skidsPerTruck: document.getElementById('skidsPerTruck').value,
