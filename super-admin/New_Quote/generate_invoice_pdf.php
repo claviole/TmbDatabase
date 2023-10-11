@@ -1,114 +1,92 @@
 <?php
-require('../../fpdf186/fpdf.php');
+require_once('../../libraries/TCPDF-main/tcpdf.php');
 include '../../connection.php';
 
-class PDF extends FPDF
+class PDF extends TCPDF
 {
     // Page header
-    function Header()
+    public function Header()
     {
-       
-        // Arial bold 15
-        $this->SetFont('Arial','B',21);
-        // Move to the right
-        $this->Cell(175);
-        // Title
-        $this->Cell(30,10,'Ford Motor Company',0,0,'C');
-        $this->Ln(10);
+        global $invoice; // Make sure $invoice is accessible in this scope
 
-        $this->Cell(175);
-        $this->Cell(30,10,'Steel Blank Price Quotation',0,1,'C');
-        // Line break
-        $this->Ln(20);
+        // Fetch and format the invoice date
+        $invoice_date = $invoice['invoice_date'];
+        $formatted_date = date('F j, Y', strtotime($invoice_date));
+        $this->Image('../../images/company_header.png',10,6,100);
+        $this->Image('../../images/ford.png',$this->getPageWidth() - 100, 6, 100);
+        
+        $this->SetFont('helvetica', 'B', 20);
+        $this->Cell(0, 10, 'Ford Motor Company', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        $this->Ln(10);
+        $this->Cell(0, 10, 'Steel Blank Price Quotation', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        $this->Ln(10);
+        $this->SetFont('helvetica', '', 12);
+        $this->Cell(0, 25,$formatted_date, 0, false, 'C', 0, '', 0, false, 'M', 'M');
+    
     }
 
     // Page footer
-    function Footer()
+    public function Footer()
     {
-        // Position at 1.5 cm from bottom
         $this->SetY(-15);
-        // Arial italic 8
-        $this->SetFont('Arial','I',8);
-        // Page number
-        $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+        $this->SetFont('helvetica', 'I', 8);
+        $this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
 }
 
-// Get the invoice ID from the query string
 $invoice_id = isset($_GET['invoice_id']) ? $_GET['invoice_id'] : null;
 
 if ($invoice_id === null) {
-    // No invoice ID was provided, handle this error as needed
     exit('No invoice ID provided');
 }
 
-// Fetch the invoice details from the database
 $result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
 $invoice = $result->fetch_assoc();
 
-// Fetch the line items for the invoice
 $result = $database->query("SELECT Line_Item.*, `lines`.Line_Name, `lines`.Line_Location FROM Line_Item INNER JOIN `lines` ON Line_Item.`Line Produced on` = `lines`.line_id WHERE Line_Item.invoice_id = $invoice_id");
 $line_items = $result->fetch_all(MYSQLI_ASSOC);
 
-
-
-// Create a new PDF
-$pdf = new PDF('L', 'mm', 'A3'); // Changed to landscape mode to fit more columns
-$pdf->AliasNbPages();
+$pdf = new PDF('P', PDF_UNIT,'A3', true, 'UTF-8', false);
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Target Metal Blanking');
+$pdf->SetTitle('Steel Blank Price Quotation');
+$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+$pdf->SetMargins(PDF_MARGIN_LEFT,PDF_MARGIN_TOP+10, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+$pdf->setFontSubsetting(true);
+$pdf->SetFont('dejavusans', '', 14, '', true);
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',14);
 
-// Add the invoice data to the PDF
-$pdf->Cell(50,10,'Quote ##: ' . $invoice['invoice_id'], 0, 0);
-$pdf->Cell(10,10,'Date: ' . $invoice['invoice_date'], 0, 1);
+$html = '';
+    
 
-$pdf->Ln(10); // Add a 10mm space
+$pdf->writeHTML($html, true, false, true, false, '');
 
-// Add table header
-$pdf->SetFont('Arial','B',9);
-$pdf->Cell(15,10,'Part#',1);
-$pdf->Cell(40,10,'Part Name',1);
-$pdf->Cell(25,10,'Line Produced',1);
-$pdf->Cell(15,10,'Volume',1);
-$pdf->Cell(25,10,'Material Type',1);
-$pdf->Cell(15,10,'Width(mm)',1);
-$pdf->Cell(15,10,'Width(in)',1);
-$pdf->Cell(15,10,'Pitch(mm)',1);
-$pdf->Cell(15,10,'Pitch(in)',1);
-$pdf->Cell(15,10,'Gauge(mm)',1);
-$pdf->Cell(15,10,'Gauge(in)',1);
-$pdf->Cell(25,10,'Pcs per Skid',1);
-$pdf->Cell(35,10,'Blanking per piece cost',1);
-$pdf->Cell(35,10,'Packaging Per Piece Cost',1);
-$pdf->Cell(35,10,'Freight per piece cost',1);
-$pdf->Cell(35,10,'Total Cost per Piece',1);
-$pdf->Ln();
+$html = '<table border="0" cellpadding="3" cellspacing="0" style="width:30%; border:1px solid #ddd; margin-top:20px;">';
 
-// Add the line items to the PDF
-$pdf->SetFont('Arial','',12);
 foreach ($line_items as $item) {
-    $pdf->Cell(15,10,$item['Part#'],1);
-    $pdf->Cell(25,10,$item['Part Name'],1);
-    $pdf->Cell(25,10,$item['Line_Location'] . ' (' . $item['Line_Name'] . ')',1);
-    $pdf->Cell(15,10,$item['Volume'],1);
-    $pdf->Cell(25,10,$item['Material Type'],1);
-    $pdf->Cell(15,10,$item['Width(mm)'],1);
-    $pdf->Cell(15,10,$item['width(in)'],1);
-    $pdf->Cell(15,10,$item['Pitch(mm)'],1);
-    $pdf->Cell(15,10,$item['Pitch(in)'],1);
-    $pdf->Cell(15,10,$item['Gauge(mm)'],1);
-    $pdf->Cell(15,10,$item['Gauge(in)'],1);
-    $pdf->Cell(25,10,$item['Pcs per Skid'],1);
-    $pdf->Cell(35,10,$item['Blanking per piece cost'],1);
-    $pdf->Cell(35,10,$item['Packaging Per Piece Cost'],1);
-    $pdf->Cell(35,10,$item['freight per piece cost'],1);
-    $pdf->Cell(35,10,$item['Total Cost per Piece'],1);
-    $pdf->Ln();
+    $html .='<tr><th>Part#</th><td>' . $item['Part#'] . '</td></tr>'
+        . '<tr><th>Part Name</th><td>' . $item['Part Name'] . '</td></tr>'
+        . '<tr><th>Volume</th><td>' . $item['Volume'] . '</td></tr>'
+        . '<tr><th>Material Type</th><td>' . $item['Material Type'] . '</td></tr>'
+        . '<tr><th>Width(mm)</th><td>' . $item['Width(mm)'] . '</td></tr>'
+        . '<tr><th>Pitch(mm)</th><td>' . $item['Pitch(mm)'] . '</td></tr>'
+        . '<tr><th>Gauge(mm)</th><td>' . $item['Gauge(mm)'] . '</td></tr>'
+        . '<tr><th>Pcs per Skid</th><td>' . $item['Pcs per Skid'] . '</td></tr>'
+        . '<tr><th>Blanking per piece cost</th><td>' . $item['Blanking per piece cost'] . '</td></tr>'
+        . '<tr><th>Packaging Per Piece Cost</th><td>' . $item['Packaging Per Piece Cost'] . '</td></tr>'
+        . '<tr><th>Freight per piece cost</th><td>' . $item['freight per piece cost'] . '</td></tr>'
+        . '<tr><th>Total Cost per Piece</th><td>' . $item['Total Cost per Piece'] . '</td></tr>';
 }
 
-// Prepare the filename
-$filename = str_replace(' ', '_', $invoice['Customer Name']) . '_Invoice_' . $invoice_id . '.pdf';
+$html .= '</table>';
 
-// Output the PDF
-$pdf->Output($filename, 'D');
-?>
+$pdf->writeHTML($html, true, false, true, false, '');
+
+$pdf->Output('Invoice_' . $invoice_id . '.pdf', 'I');
