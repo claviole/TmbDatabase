@@ -70,6 +70,7 @@ INSERT INTO `Users` (`id`, `username`, `email`, `password`,`user_type`) VALUES
 --
 CREATE TABLE `Part` (
   `part_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `supplier_name` varchar(255) DEFAULT NULL,
   `customer_id` int(11) NOT NULL,
   `Part#` varchar(255) NOT NULL,
   `Part Name` varchar(255) DEFAULT NULL,

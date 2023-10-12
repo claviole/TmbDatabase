@@ -217,7 +217,12 @@ button:hover {
     </div>
     <div class="form-container">
     <form id="submit_new_part" action="submit_new_part.php" method="post">
-    
+                
+        <div>
+        <label for="supplier_name">Supplier Name:</label>
+        <input type="text" id="supplier_name" name="supplier_name">
+        </div>
+        <br>
         <div>
         <label for="partNumber">Part Number:</label>
         <input type="text" id="partNumber" name="partNumber">
@@ -315,6 +320,7 @@ $(document).ready(function(){
 
 
 <form action="submit_invoice.php" method="post">
+
     <div>
     <label for="part"></label>
     <input type="hidden" id="part" name="part">
@@ -331,10 +337,11 @@ $(document).ready(function(){
     <label for="date"></label>
     <input type="hidden" id="date" name="date" value="<?= $current_date ?>" readonly>
     
-
+    
     <input type="hidden" id="invoice_id" value="<?php echo $current_invoice; ?>">
 
     <label for="volume">Volume:</label>
+
     <input type="text" id="volume" name="volume">
     </div>
 
@@ -417,6 +424,7 @@ $("#add-part").click(function(){
         const formData = {
            
             partNumber: document.getElementById('partNumber').value,
+            supplier_name: document.getElementById('supplier_name').value,
             partName: document.getElementById('partName').value,
             mill: document.getElementById('mill').value,
             platform: document.getElementById('platform').value,

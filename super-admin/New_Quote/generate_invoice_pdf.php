@@ -16,9 +16,13 @@ class PDF extends TCPDF
         $this->Image('../../images/ford.png',$this->getPageWidth() - 100, 6, 100);
         
         $this->SetFont('helvetica', 'B', 20);
-        $this->Cell(0, 10, 'Ford Motor Company', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        $this->setFillColor(255, 199, 96);
+        $this->SetDrawColor(0,0,0);
+        $this->SetX(100);
+        $this->Cell(100, 10, 'Ford Motor Company', 'LRT', false, 'C', true, '', 0, false, 'M', 'M');
         $this->Ln(10);
-        $this->Cell(0, 10, 'Steel Blank Price Quotation', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        $this->SetX(100);
+        $this->Cell(100, 10, 'Steel Blank Price Quotation', 'LRB', false, 'C', true, '', 0, false, 'M', 'M');
         $this->Ln(10);
         $this->SetFont('helvetica', '', 12);
         $this->Cell(0, 25,$formatted_date, 0, false, 'C', 0, '', 0, false, 'M', 'M');
@@ -42,9 +46,15 @@ if ($invoice_id === null) {
 
 $result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
 $invoice = $result->fetch_assoc();
-
-$result = $database->query("SELECT Line_Item.*, `lines`.Line_Name, `lines`.Line_Location FROM Line_Item INNER JOIN `lines` ON Line_Item.`Line Produced on` = `lines`.line_id WHERE Line_Item.invoice_id = $invoice_id");
+$result = $database->query("
+    SELECT Line_Item.*, `lines`.Line_Name, `lines`.Line_Location, `part`.supplier_name ,`part`.Platform,`part`.Surface
+    FROM Line_Item 
+    INNER JOIN `lines` ON Line_Item.`Line Produced on` = `lines`.line_id 
+    INNER JOIN `part` ON Line_Item.`Part#` = `part`.`Part#` 
+    WHERE Line_Item.invoice_id = $invoice_id
+");
 $line_items = $result->fetch_all(MYSQLI_ASSOC);
+
 
 $pdf = new PDF('P', PDF_UNIT,'A3', true, 'UTF-8', false);
 $pdf->SetCreator(PDF_CREATOR);
@@ -62,31 +72,47 @@ $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 $pdf->setFontSubsetting(true);
 $pdf->SetFont('dejavusans', '', 14, '', true);
 $pdf->AddPage();
+$pdf->setCellPaddings(2,2,2,2);
 
 $html = '';
     
 
 $pdf->writeHTML($html, true, false, true, false, '');
-
-$html = '<table border="0" cellpadding="3" cellspacing="0" style="width:30%; border:1px solid #ddd; margin-top:20px;">';
-
+$startY = $pdf->GetY();
+$startX = $pdf->GetX();
+$pdf->SetX( 50);  // Adjust the value as needed
+$pdf->SetFont('helvetica', '', 10); // Set the font to Helvetica, regular, size 10
+// parent table
+// First table
+$html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:49.5%; border:1px solid #ddd; margin-top:20px;">';
 foreach ($line_items as $item) {
-    $html .='<tr><th>Part#</th><td>' . $item['Part#'] . '</td></tr>'
-        . '<tr><th>Part Name</th><td>' . $item['Part Name'] . '</td></tr>'
-        . '<tr><th>Volume</th><td>' . $item['Volume'] . '</td></tr>'
-        . '<tr><th>Material Type</th><td>' . $item['Material Type'] . '</td></tr>'
-        . '<tr><th>Width(mm)</th><td>' . $item['Width(mm)'] . '</td></tr>'
-        . '<tr><th>Pitch(mm)</th><td>' . $item['Pitch(mm)'] . '</td></tr>'
-        . '<tr><th>Gauge(mm)</th><td>' . $item['Gauge(mm)'] . '</td></tr>'
-        . '<tr><th>Pcs per Skid</th><td>' . $item['Pcs per Skid'] . '</td></tr>'
-        . '<tr><th>Blanking per piece cost</th><td>' . $item['Blanking per piece cost'] . '</td></tr>'
-        . '<tr><th>Packaging Per Piece Cost</th><td>' . $item['Packaging Per Piece Cost'] . '</td></tr>'
-        . '<tr><th>Freight per piece cost</th><td>' . $item['freight per piece cost'] . '</td></tr>'
-        . '<tr><th>Total Cost per Piece</th><td>' . $item['Total Cost per Piece'] . '</td></tr>';
+    $html .='<tr><th bgcolor="#ADD8E6">Supplier Name</th><td>' . $item['supplier_name'] . '</td></tr>'
+        .'<tr><th bgcolor="#ADD8E6" >Stamper Location</th><td>' . $item['Line_Location'] . '</td></tr>'
+        .'<tr><th bgcolor="#ADD8E6" >Part Number</th><td>' . $item['Part#'] . '</td></tr>'
+        . '<tr><th bgcolor="#ADD8E6" >Material Type</th><td>' . $item['Material Type'] . '</td></tr>'
+        . '<tr><th bgcolor="#ADD8E6" >Platform</th><td>' . $item['Platform'] . '</td></tr>'
+        . '<tr><th bgcolor="#ADD8E6" >Part Name</th><td>' . $item['Part Name'] . '</td></tr>'
+        . '<tr><th bgcolor="#ADD8E6" >Surface</th><td>' . $item['Surface'] . '</td></tr>';
 }
-
 $html .= '</table>';
+$pdf->writeHTML($html, true, false, true, false, '');
 
+// Move the position to start the second table
+$pdf->SetY($startY);  // Adjust the value as needed
+$pdf->SetX($pdf->GetX() + 152);  // Adjust the value as needed
+
+// Second table
+$html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:50%; border:1px solid #ddd; margin-top:20px;">';
+foreach($line_items as $item){
+    $html .= '<tr><th bgcolor="#ADD8E6">Volume</th><td>' . $item['Volume'] . ' pcs'. '</td></tr>';
+    $html .= '<tr><th bgcolor="#ADD8E6">Gauge</th><td>' . $item['Gauge(mm)'] . ' mm'. '</td></tr>';
+    $html .= '<tr><th bgcolor="#ADD8E6">widht</th><td>' . $item['Width(mm)'] .' mm'.  '</td></tr>';
+    $html .= '<tr><th bgcolor="#ADD8E6">Pitch</th><td>' . $item['Pitch(mm)'] . ' mm'. '</td></tr>';
+    $html .= '<tr><th bgcolor="#ADD8E6">Density</th><td>' . $item['Density'] . '</td></tr>';
+    $html .= '<tr><th bgcolor="#ADD8E6">Blank Weight</th><td>' . $item['Blank Weight(kg)'] .' kg' . '</td></tr>';
+    // Add more rows as needed
+}
+$html .= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
 
 $pdf->Output('Invoice_' . $invoice_id . '.pdf', 'I');
