@@ -51,7 +51,7 @@ async function addPart() {
     var gaugeIN= gauge/25.4;
     var hourlyRate;
     var hours_to_run=volume/partsPerHour;
-    var Density=document.getElementById('Density').value;
+    var Density=parseFloat(document.getElementById('Density').value);
     var blankWeight=(gauge*width*pitch*Density)*2.20462;
     var blankWeightKg=blankWeight/2.20462;
     var scrapLbs = partData['Scrap Consumption']*blankWeight;
