@@ -53,7 +53,7 @@ async function addPart() {
     var hours_to_run=volume/partsPerHour;
     var Density=parseFloat(document.getElementById('Density').value);
     var blankWeight=(gauge*width*pitch*Density)*2.20462;
-    var blankWeightKg=blankWeight/2.20462;
+    var blankWeightKg= parseFloat(blankWeight/2.20462).toFixed(3);
     var scrapLbs = partData['Scrap Consumption']*blankWeight;
     var scrapKg = scrapLbs/2.20462;
     var pcsWeight= blankWeight-scrapLbs;
@@ -109,7 +109,7 @@ if(lineProduced==11)
 }
 
 var blankingPerPieceCost=hourlyRate/partsPerHour;
-var packagingPerPieceCost=(12.50/pcsPerSkid)+skidCostPerPc;
+var packagingPerPieceCost= parseFloat((12.50/pcsPerSkid)+skidCostPerPc).toFixed(3);
 packagingPerPieceCost=packagingPerPieceCost.toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
 var freightPerPiece=3200/pcsPerTruck;

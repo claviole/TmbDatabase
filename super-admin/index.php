@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../connection.php'; // Assuming you have a db_connection.php file for database connection
-
+date_default_timezone_set('America/Chicago');
 $result = $database->query("SELECT COUNT(*) as count FROM invoice WHERE approval_status = 'Awaiting Approval'");
 $awaiting_approval_count = $result->fetch_assoc()['count'];
 

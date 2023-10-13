@@ -4,6 +4,7 @@ include '../../connection.php';
 
 class PDF extends TCPDF
 {
+    
     // Page header
     public function Header()
     {
@@ -12,18 +13,29 @@ class PDF extends TCPDF
         // Fetch and format the invoice date
         $invoice_date = $invoice['invoice_date'];
         $formatted_date = date('F j, Y', strtotime($invoice_date));
+        $this->setFillColor(229, 229, 229);
+
+        // Set the draw color to black
+        $this->SetDrawColor(0, 0, 0); // This sets the draw color to black
+
+        $this->Rect(0, 0, $this->getPageWidth(),45, 'DF' );
+
+        
+
+        $this->Rect(0, 45, $this->getPageWidth(),90, 'DF' );
         $this->Image('../../images/company_header.png',10,6,100);
         $this->Image('../../images/ford.png',$this->getPageWidth() - 100, 6, 100);
         
         $this->SetFont('helvetica', 'B', 20);
-        $this->setFillColor(255, 199, 96);
-        $this->SetDrawColor(0,0,0);
         $this->SetX(100);
         $this->Cell(100, 10, 'Ford Motor Company', 'LRT', false, 'C', true, '', 0, false, 'M', 'M');
         $this->Ln(10);
         $this->SetX(100);
         $this->Cell(100, 10, 'Steel Blank Price Quotation', 'LRB', false, 'C', true, '', 0, false, 'M', 'M');
         $this->Ln(10);
+        $this->setFillColor(235, 235, 235);
+        $this->SetDrawColor(0, 0, 0); // This sets the draw color to black
+        $this->Rect(0, 45, $this->getPageWidth(), $this->getPageHeight()-45, 'DF' );
         $this->SetFont('helvetica', '', 12);
         $this->Cell(0, 25,$formatted_date, 0, false, 'C', 0, '', 0, false, 'M', 'M');
     
@@ -36,6 +48,7 @@ class PDF extends TCPDF
         $this->SetFont('helvetica', 'I', 8);
         $this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
+    
 }
 
 $invoice_id = isset($_GET['invoice_id']) ? $_GET['invoice_id'] : null;
@@ -57,6 +70,7 @@ $line_items = $result->fetch_all(MYSQLI_ASSOC);
 
 
 $pdf = new PDF('P', PDF_UNIT,'A3', true, 'UTF-8', false);
+foreach ($line_items as $item) {
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Target Metal Blanking');
 $pdf->SetTitle('Steel Blank Price Quotation');
@@ -84,35 +98,88 @@ $pdf->SetX( 50);  // Adjust the value as needed
 $pdf->SetFont('helvetica', '', 10); // Set the font to Helvetica, regular, size 10
 // parent table
 // First table
+$startOfFirstTableX = $pdf->GetX();
 $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:49.5%; border:1px solid #ddd; margin-top:20px;">';
-foreach ($line_items as $item) {
-    $html .='<tr><th bgcolor="#ADD8E6">Supplier Name</th><td>' . $item['supplier_name'] . '</td></tr>'
-        .'<tr><th bgcolor="#ADD8E6" >Stamper Location</th><td>' . $item['Line_Location'] . '</td></tr>'
-        .'<tr><th bgcolor="#ADD8E6" >Part Number</th><td>' . $item['Part#'] . '</td></tr>'
-        . '<tr><th bgcolor="#ADD8E6" >Material Type</th><td>' . $item['Material Type'] . '</td></tr>'
-        . '<tr><th bgcolor="#ADD8E6" >Platform</th><td>' . $item['Platform'] . '</td></tr>'
-        . '<tr><th bgcolor="#ADD8E6" >Part Name</th><td>' . $item['Part Name'] . '</td></tr>'
-        . '<tr><th bgcolor="#ADD8E6" >Surface</th><td>' . $item['Surface'] . '</td></tr>';
-}
+
+    $html .='<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Supplier Name</th><td style ="text-align:center;">' . $item['supplier_name'] . '</td></tr>'
+        .'<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Stamper Location</th><td style ="text-align:center;">' . $item['Line_Location'] . '</td></tr>'
+        .'<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Part Number</th><td style ="text-align:center;">' . $item['Part#'] . '</td></tr>'
+        . '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Material Type</th><td style ="text-align:center;">' . $item['Material Type'] . '</td></tr>'
+        . '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Platform</th><td style ="text-align:center;">' . $item['Platform'] . '</td></tr>'
+        . '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Part Name</th><td style ="text-align:center;">' . $item['Part Name'] . '</td></tr>'
+        . '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Surface</th><td style ="text-align:center;">' . $item['Surface'] . '</td></tr>';
+
 $html .= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
+$bottomTableY= $pdf->GetY();
 
 // Move the position to start the second table
 $pdf->SetY($startY);  // Adjust the value as needed
 $pdf->SetX($pdf->GetX() + 152);  // Adjust the value as needed
-
+$pdf->setLeftMargin(50);
 // Second table
 $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:50%; border:1px solid #ddd; margin-top:20px;">';
-foreach($line_items as $item){
-    $html .= '<tr><th bgcolor="#ADD8E6">Volume</th><td>' . $item['Volume'] . ' pcs'. '</td></tr>';
-    $html .= '<tr><th bgcolor="#ADD8E6">Gauge</th><td>' . $item['Gauge(mm)'] . ' mm'. '</td></tr>';
-    $html .= '<tr><th bgcolor="#ADD8E6">widht</th><td>' . $item['Width(mm)'] .' mm'.  '</td></tr>';
-    $html .= '<tr><th bgcolor="#ADD8E6">Pitch</th><td>' . $item['Pitch(mm)'] . ' mm'. '</td></tr>';
-    $html .= '<tr><th bgcolor="#ADD8E6">Density</th><td>' . $item['Density'] . '</td></tr>';
-    $html .= '<tr><th bgcolor="#ADD8E6">Blank Weight</th><td>' . $item['Blank Weight(kg)'] .' kg' . '</td></tr>';
+
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Volume</th><td style ="text-align:center;">' . $item['Volume'] . ' pcs'. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Gauge</th><td style ="text-align:center;">' . $item['Gauge(mm)'] . ' mm'. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Width</th><td style ="text-align:center;">' . $item['Width(mm)'] .' mm'.  '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Pitch</th><td style ="text-align:center;">' . $item['Pitch(mm)'] . ' mm'. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Density</th><td style ="text-align:center;">' . $item['Density'] . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blank Weight</th><td style ="text-align:center;">' . $item['Blank Weight(kg)'] .' kg' . '</td></tr>';
     // Add more rows as needed
-}
+
 $html .= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
 
-$pdf->Output('Invoice_' . $invoice_id . '.pdf', 'I');
+$pdf->SetX($startOfFirstTableX);
+$pdf->SetY($bottomTableY);
+$pdf->SetLeftMargin(-10);
+$html = '<h2 style="text-align:center;">Material Cost Build-Up</h2>';
+$pdf->writeHTML($html, true, false, true, false, '');
+$pdf->SetLeftMargin(50);
+
+$html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:49.5%; border:1px solid #ddd; margin-top:20px;">';
+
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6"></th><td style ="text-align:center;font-weight:bold">' . '$ per KG'. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Base Price </th><td style ="text-align:center;">' . '$'. number_format($item['material_cost' ] /$item['Blank Weight(kg)'],3) . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Packaging</th><td style ="text-align:center;">' . '$'. number_format($item['Packaging Per Piece Cost' ]* $item['Blank Weight(kg)'],3) . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total :</th><td style ="text-align:center; background-color:#78FF00; ">' . '$'. number_format(($item['Packaging Per Piece Cost' ]* $item['Blank Weight(kg)'])+($item['material_cost' ] /$item['Blank Weight(kg)']),3) . '</td></tr>';
+
+$html.= '</table>';
+
+
+$pdf->writeHTML($html, true, false, true, false, '');
+
+$pdf->SetLeftMargin(110);
+$pdf->SetY($bottomTableY);
+
+$html = '<h2 style="text-align:center;">Blank Cost Build-up</h2>';
+$pdf->writeHTML($html, true, false, true, false, '');
+$pdf->SetLeftMargin(167);
+$html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:50%; border:1px solid #ddd; margin-top:20px;">';
+
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6"></th><td style ="text-align:center;font-weight:bold">' . '$ per Blank'. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Steel Cost in Blank</th><td style ="text-align:center;">' . '$'. $item['material_cost' ] . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blank Processing Cost</th><td style ="text-align:center;">' . '$'. $item['Blanking per piece cost' ] . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Freight</th><td style ="text-align:center;">' . '$' . $item['freight per piece cost']. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Packaging Cost:</th><td style ="text-align:center;">' . '$'. $item['Packaging Per Piece Cost'] .'</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Wash and Lube</th><td style ="text-align:center;">' . '$'. $item['wash_and_lube']/$item['Volume']. '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Material Cost Markup</th><td style ="text-align:center;">' . '$'.$item['material_cost_markup'] . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total Delivered per Blank Cost :</th><td style ="text-align:center;background-color:#78FF00;">' . '$'. ($item['material_cost' ] + $item['Blanking per piece cost' ] + $item['freight per piece cost'] + $item['Packaging Per Piece Cost'] + ($item['wash_and_lube']/$item['Volume']) + $item['material_cost_markup']) . '</td></tr>';
+
+$html.= '</table>';
+$pdf->writeHTML($html, true, false, true, false, '');
+
+$text = "(FGT27, Rev. 9/00), which are available online at www.fsn.ford.com or may be provided by the Buyer upon request, and your agreement that if the Buyer accepts your quotation, any purchase orders issued will be governed by those terms or any revised version in effect at the time of issuance. Seller must also comply with Ford QS9000 Quality System Standards.";
+
+// Set the position of the text box
+$x = 10; // X position
+$y = $pdf->GetY() + 120; // Y position (10 units below the current position)
+
+// Set the width and height of the text box
+$w = $pdf->getPageWidth() - 20; // Width (page width minus 10 units on each side for margin)
+$h = 50; // Height
+
+$pdf->writeHTMLCell($w, $h, $x, $y, $text, 1, 1, false, true, 'J', true);
+}
+$pdf->Output('Quote_' . $invoice_id . '.pdf', 'I');
