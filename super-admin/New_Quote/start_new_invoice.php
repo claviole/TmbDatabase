@@ -11,7 +11,7 @@ $invoice_result = $database->query("SELECT MAX(invoice_id) as max_invoice FROM i
 $current_invoice = intval($invoice_result->fetch_assoc()['max_invoice']) + 1;
 
 // Get current date
-$current_date = date("Y-m-d");
+$current_date = date("m-d-Y");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assuming the name of the select field for customer is 'customer'
     $_SESSION['selected_customer'] = $_POST['customer'];
