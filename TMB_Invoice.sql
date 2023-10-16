@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `TMB_Invoice`
+-- Database: `id21393103_tmb`
 --
 
 -- --------------------------------------------------------
@@ -124,12 +124,16 @@ CREATE TABLE `Line_Item` (
   `invoice_id` int(11) NOT NULL,
   `Part#` varchar(255) DEFAULT NULL,
   `Part Name` varchar(255) DEFAULT NULL,
+  `model_year` int(11) DEFAULT NULL,
   `Material Type` varchar(255) DEFAULT NULL,
+  `blank_die?` varchar(255) DEFAULT NULL,
   `# Outputs` int(11) DEFAULT NULL,
   `Volume` float DEFAULT NULL,
   `Width(mm)` float DEFAULT NULL,
   `width(in)` float DEFAULT NULL,
   `Pitch(mm)` float DEFAULT NULL,
+  `nom?` varchar(255) DEFAULT NULL,
+  `trap` varchar(255) DEFAULT NULL,
   `Pitch(in)` float DEFAULT NULL,
   `Gauge(mm)` float DEFAULT NULL,
   `Gauge(in)` float DEFAULT NULL,

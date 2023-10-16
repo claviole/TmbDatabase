@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
-        
-    <title>Login</title>
-
-    
-    
-</head>
-<body style="background-image: url('images/steel_coils.jpg'); background-size: cover;">
-    <?php
+<?php
 
     //Unset all the server side variables
     session_start();
@@ -20,7 +6,7 @@
     $_SESSION["usertype"]="";
 
     // Set the new timezone
-    date_default_timezone_set('Asia/Kolkata');
+    date_default_timezone_set('Usa/Chicago');
     $date = date('Y-m-d');
 
     $_SESSION["date"]=$date;
@@ -51,6 +37,20 @@
             }
         }
     ?>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+        
+    <title>Login</title>
+
+    
+    
+</head>
+<body style="background-image: url('images/steel_coils.jpg'); background-size: cover;">
      <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="images/company_header.png" alt="company header" width="30%" height="20%" > 
     </h1>

@@ -10,7 +10,7 @@ if(isset($_POST['invoiceId'])){
     $invoice = $result->fetch_assoc();
 
     // Fetch the line items for the invoice
-    $stmt = $database->prepare("SELECT Line_Item.*, `lines`.Line_Name, `lines`.Line_Location FROM Line_Item INNER JOIN `lines` ON Line_Item.`Line Produced on` = `lines`.line_id WHERE Line_Item.invoice_id = ?");
+    $stmt = $database->prepare("SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location FROM Line_Item INNER JOIN `Lines` ON Line_Item.`Line Produced on` = `Lines`.line_id WHERE Line_Item.invoice_id = ?");
     $stmt->bind_param("i", $invoiceId);
     $stmt->execute();
     $result = $stmt->get_result();

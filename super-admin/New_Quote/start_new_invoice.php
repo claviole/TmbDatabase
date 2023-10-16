@@ -53,12 +53,14 @@ $lines = $line_result->fetch_all(MYSQLI_ASSOC);
     justify-content: center;
     margin-bottom: 20px;
     border-radius: 10px;
+    width: auto;
     
     
    
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 
 .form-container div {
     display: flex;
@@ -70,11 +72,14 @@ $lines = $line_result->fetch_all(MYSQLI_ASSOC);
     margin: 10px;
     box-sizing: border-box;
 }
+
 .form-container div div {
     flex: 1 0 50%;
     margin: 10px;
     box-sizing: border-box;
 }
+
+
 
 form label {
     display: block;
@@ -106,6 +111,7 @@ form select {
     border: 1px solid #ccc;
     margin-bottom: 10px;
 }
+
 
 .parts-table {
     border: 1px solid #ccc;
@@ -162,6 +168,24 @@ button:hover {
     text-align: right;
     margin-right: 10px;
 }
+label[for="pdf_format"] {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+#pdf_format {
+    width: 10%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
+}
+
     </style>
 
 </head>
@@ -170,9 +194,9 @@ button:hover {
 <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
 <div class="form-container">
-<div >
    
     <form action="submit_invoice.php" method="post">
+        <div class="form-container">
         <label for="customer">Customer:</label>
         <select id="customer" name="customer">
         <option value="">Select a customer</option>
@@ -181,40 +205,41 @@ button:hover {
             <?php endforeach; ?>
 
             .</select>
-            <div>
-            <label for="customer_address">Customer Address:</label>
-<input type="text" id="customer_address" name="customer_address" readonly>
+            
+            <label for="customer_address"></label>
+<input type="hidden" id="customer_address" name="customer_address" readonly>
 <br>
-<label for="customer_city">Customer City:</label>
-<input type="text" id="customer_city" name="customer_city" readonly>
-</div>
+<label for="customer_city"></label>
+<input type="hidden" id="customer_city" name="customer_city" readonly>
+
 <br>
-<div>
-<label for="customer_state">Customer State:</label>
-<input type="text" id="customer_state" name="customer_state" readonly>
+
+<label for="customer_state"></label>
+<input type="hidden" id="customer_state" name="customer_state" readonly>
 <br>
-<label for="customer_zip">Customer Zip:</label>
-<input type="text" id="customer_zip" name="customer_zip" readonly>
-</div>
+<label for="customer_zip"></label>
+<input type="hidden"id="customer_zip" name="customer_zip" readonly>
+
 <br>
-<div>
-<label for="customer_phone">Customer Phone:</label>
-<input type="text" id="customer_phone" name="customer_phone" readonly>
+
+<label for="customer_phone"></label>
+<input type="hidden"id="customer_phone" name="customer_phone" readonly>
 <br>
-<label for="customer_email">Customer Email:</label>
-<input type="text" id="customer_email" name="customer_email" readonly>
-</div>
+<label for="customer_email"></label>
+<input type="hidden" id="customer_email" name="customer_email" readonly>
+
 <br>
-<label for="customer_contact">Customer Contact:</label>
-<input type="text" id="customer_contact" name="customer_contact" readonly>
+<label for="customer_contact"></label>
+<input type="hidden"id="customer_contact" name="customer_contact" readonly>
 <br>
 <input type="hidden" id="customer_id" name="customer_id">
 <br>
 <input type="hidden" id="user" value="<?php echo $_SESSION['user']; ?>">
-
+</div>
     </form>
+</div>
+<div class="form-container">
     
-    </div>
     <div class="form-container">
     <form id="submit_new_part" action="submit_new_part.php" method="post">
                 
@@ -235,6 +260,8 @@ button:hover {
         <input type="text" id="mill" name="mill">
         <label for="platform">Platform:</label>
         <input type="text" id="platform" name="platform">
+        <label for="model_year">Model Year(if applicable):</label>
+        <input type="text" id="model_year" name="model_year">
         </div>
         <br>
         <div>
@@ -316,7 +343,7 @@ $(document).ready(function(){
 });
 </script>
 
-<div>
+<div class= "form-container">
 
 
 <form action="submit_invoice.php" method="post">
@@ -349,8 +376,26 @@ $(document).ready(function(){
     <div>
     <label for="Density">Density:</label>
     <input type="number" id="Density" name="Density">
+    <label for="trap">Trap:</label>
+    <input type="text" id="trap" name="trap">
     </div>
 
+    <div>
+    <label for="nom?">Select Measurement Type:</label>
+<select id="nom?" name="nom?">
+    <option value="">Select a format</option>
+    <option value="NOM">NOM</option>
+    <option value="MIN">MIN</option>
+    <option value="MAX">MAX</option>
+</select>
+<label for="blank_die?">Blank Die?</label>
+<select id="blank_die?" name="blank_die?">
+    <option value="">Select YES/NO</option>
+    <option value="YES">YES</option>
+    <option value="NO">NO</option>
+
+</select>
+    </div>
     <div>
 
     <label for="Width(mm)">Width(mm):</label>
@@ -408,7 +453,12 @@ $(document).ready(function(){
 <table id="parts_table">
 <!-- Table headers go here -->
 </table>
-
+<label for="pdf_format">Select PDF format:</label>
+<select id="pdf_format" name="pdf_format">
+    <option value="">Select a format</option>
+    <option value="ford">Ford</option>
+    <option value="thai_summit">Thai Summit</option>
+</select>
     <button id="submit-button" type="button">Submit</button>
 </form>
 </div>
@@ -423,6 +473,7 @@ $("#add-part").click(function(){
         // Capture form data before it's cleared
         const formData = {
            
+            pdf_format:document.getElementById('pdf_format').value,
             partNumber: document.getElementById('partNumber').value,
             supplier_name: document.getElementById('supplier_name').value,
             partName: document.getElementById('partName').value,

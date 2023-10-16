@@ -60,10 +60,10 @@ if ($invoice_id === null) {
 $result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
 $invoice = $result->fetch_assoc();
 $result = $database->query("
-    SELECT Line_Item.*, `lines`.Line_Name, `lines`.Line_Location, `part`.supplier_name ,`part`.Platform,`part`.Surface
+    SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location, `Part`.supplier_name ,`Part`.Platform,`Part`.Surface
     FROM Line_Item 
-    INNER JOIN `lines` ON Line_Item.`Line Produced on` = `lines`.line_id 
-    INNER JOIN `part` ON Line_Item.`Part#` = `part`.`Part#` 
+    INNER JOIN `Lines` ON Line_Item.`Line Produced on` = `Lines`.line_id 
+    INNER JOIN `Part` ON Line_Item.`Part#` = `Part`.`Part#` 
     WHERE Line_Item.invoice_id = $invoice_id
 ");
 $line_items = $result->fetch_all(MYSQLI_ASSOC);

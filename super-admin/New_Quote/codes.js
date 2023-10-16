@@ -69,6 +69,10 @@ async function addPart() {
     var steel_or_aluminum=document.getElementById('steel_or_aluminum').value;
     var material_cost
     var wash_and_lube;
+    var nom = document.getElementById('nom?').value;
+    var blank_die=document.getElementById('blank_die?').value;
+    var model_year=document.getElementById('model_year').value;
+    var trap=document.getElementById('trap').value;
 
     if(wash_and_lube_choice==true)
     {
@@ -110,7 +114,6 @@ if(lineProduced==11)
 
 var blankingPerPieceCost=hourlyRate/partsPerHour;
 var packagingPerPieceCost= parseFloat((12.50/pcsPerSkid)+skidCostPerPc).toFixed(3);
-packagingPerPieceCost=packagingPerPieceCost.toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
 var freightPerPiece=3200/pcsPerTruck;
 var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(material_cost)+ parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+parseFloat(wash_and_lube)+parseFloat(material_cost_markup)).toFixed(3);
@@ -162,6 +165,10 @@ elements[41]=wash_and_lube;
 elements[42]=material_cost;
 elements[43]=material_markup_percent;
 elements[44]=material_cost_markup;
+elements[45]=nom;
+elements[46]=blank_die;
+elements[47]=model_year;
+elements[48]=trap;
 
 var part = {
     invoiceId: elements[0],
@@ -208,9 +215,11 @@ var part = {
     wash_and_lube: elements[41],
     material_cost: elements[42],
     material_markup_percent: elements[43],
-    material_cost_markup: elements[44]
-    
-
+    material_cost_markup: elements[44],
+    nom: elements[45],
+    blank_die: elements[46],
+    model_year: elements[47],
+    trap: elements[48]
 
 }
 data.parts.push(part);
@@ -287,8 +296,11 @@ function submitInvoice() {
     data.parts= data.parts
     data.customerId = $('#customer_id').val();
     data.invoice_author = user;
+    data.pdf_format = $('#pdf_format').val();
     console.log('Data: ',data);
         
+    if(data.pdf_format=='ford')
+    {
     fetch('submit_invoice.php', {
         method: 'POST',
         headers: {
@@ -308,14 +320,48 @@ function submitInvoice() {
         var currentInvoiceNumber = parseInt($('#invoice_number').val());
         $('#invoice_number').val(currentInvoiceNumber + 1);
         // If the invoice was successfully submitted, generate the PDF
+       
         if (data.success) {
-            window.location.href = 'generate_invoice_pdf.php?invoice_id=' + currentInvoiceNumber;
+            window.location.href = 'generate_ford_quote_pdf.php?invoice_id=' + currentInvoiceNumber;    
         }
     })
     .catch(error => {
         // Handle the error
         console.error('There has been a problem with your fetch operation:', error);
     });
+}
+else if(data.pdf_format=='thai_summit')
+{
+    fetch('submit_invoice.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }) 
+    .then(response => response.json())
+    .then(data => {
+        // Handle the response data
+        console.log(data);
+        // Clear all input fields
+        $('input[type="text"], input[type="number"], select').val('');
+        // Clear the parts table
+        $("#parts_table").find("tr:gt(0)").remove();
+        // Increment the invoice number
+        var currentInvoiceNumber = parseInt($('#invoice_number').val());
+        $('#invoice_number').val(currentInvoiceNumber + 1);
+        // If the invoice was successfully submitted, generate the PDF
+       
+        if (data.success) {
+            window.location.href = 'generate_thai_summit_quote.php?invoice_id=' + currentInvoiceNumber;    
+        }
+    })
+    .catch(error => {
+        // Handle the error
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+
+}
 }
 
 window.onload = function(){
@@ -354,6 +400,10 @@ function clearPartInputs() {
     document.getElementById('pallet_uses').value = '';
     document.getElementById('steel_or_aluminum').value = '';
     document.getElementById('material_markup_percent').value = '';
+    document.getElementById('nom?').value = '';
+    document.getElementById('blank_die?').value = '';
+    document.getElementById('model_year').value = '';
+    document.getElementById('trap').value = '';
 }
 
 window.onload = function(){
