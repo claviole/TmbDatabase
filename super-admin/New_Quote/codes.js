@@ -116,7 +116,7 @@ var blankingPerPieceCost=hourlyRate/partsPerHour;
 var packagingPerPieceCost= parseFloat((12.50/pcsPerSkid)+skidCostPerPc).toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
 var freightPerPiece=3200/pcsPerTruck;
-var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(material_cost)+ parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+parseFloat(wash_and_lube)+parseFloat(material_cost_markup)).toFixed(3);
+var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat((material_cost/blankWeight)*blankWeightKg)+ parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+parseFloat(wash_and_lube)+parseFloat((material_cost_markup/material_cost)*((material_cost/blankWeight)*blankWeightKg))).toFixed(3);
 var blanksPerMinute=partsPerHour/60;
 
 

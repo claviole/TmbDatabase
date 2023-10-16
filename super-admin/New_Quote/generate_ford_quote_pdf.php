@@ -159,13 +159,13 @@ $pdf->SetLeftMargin(167);
 $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:50%; border:1px solid #ddd; margin-top:20px;">';
 
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6"></th><td style ="text-align:center;font-weight:bold">' . '$ per Blank'. '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Steel Cost in Blank</th><td style ="text-align:center;">' . '$'. $item['material_cost' ] . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Steel Cost in Blank</th><td style ="text-align:center;">' . '$'. ($item['material_cost' ]/$blankWeightlbs)*$blankWeightKg . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blank Processing Cost</th><td style ="text-align:center;">' . '$'. $item['Blanking per piece cost' ] . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Freight</th><td style ="text-align:center;">' . '$' . $item['freight per piece cost']. '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Packaging Cost:</th><td style ="text-align:center;">' . '$'. $item['Packaging Per Piece Cost'] .'</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Wash and Lube</th><td style ="text-align:center;">' . '$'. $item['wash_and_lube']/$item['Volume']. '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Material Cost Markup</th><td style ="text-align:center;">' . '$'.$item['material_cost_markup'] . '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total Delivered per Blank Cost :</th><td style ="text-align:center;background-color:#78FF00;">' . '$'. ($item['material_cost' ] + $item['Blanking per piece cost' ] + $item['freight per piece cost'] + $item['Packaging Per Piece Cost'] + ($item['wash_and_lube']/$item['Volume']) + $item['material_cost_markup']) . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Material Cost Markup</th><td style ="text-align:center;">' . '$'.(($item['material_cost_markup']/ $item['material_cost'])*(($item['material_cost']/$item['blankWeightlbs'])*$item['blankWeightKg'])) . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total Delivered per Blank Cost</th><td style ="text-align:center; background-color:#78FF00; ">' . '$'. number_format((($item['material_cost_markup']/ $item['material_cost'])*(($item['material_cost']/$item['blankWeightlbs'])*$item['blankWeightKg']))+($item['wash_and_lube']/$item['Volume'])+$item['Packaging Per Piece Cost']+$item['freight per piece cost']+$item['Blanking per piece cost']+($item['material_cost' ]/$blankWeightlbs)*$blankWeightKg,3) . '</td></tr>';
 
 $html.= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
