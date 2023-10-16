@@ -98,7 +98,7 @@ async function addPart() {
  var pcsPerLift= partData['Pieces per Lift'];
  var stacksPerSkid=partData['Stacks per Skid'];
  var pcsPerSkid= pcsPerLift*stacksPerSkid;
- var liftWeight=(pcsPerLift*pcsWeight*stacksPerSkid)+palletWeight;
+ var liftWeight=(pcsPerLift*pcsWeight(pcsWeightKg)*stacksPerSkid)+palletWeight;
  var stackHeight=gaugeIN*pcsPerLift;
  var skidsPerTruck=partData['Skids per Truck'];
  var pcsPerTruck=skidsPerTruck*pcsPerSkid;
