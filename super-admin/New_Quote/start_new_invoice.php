@@ -369,7 +369,7 @@ $(document).ready(function(){
 
     <label for="volume">Volume:</label>
 
-    <input type="text" id="volume" name="volume">
+    <input type="number" id="volume" name="volume">
     </div>
 
 
