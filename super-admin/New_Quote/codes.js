@@ -291,81 +291,77 @@ document.getElementById('submit-button').addEventListener('click', function(even
 
 
 
-function submitInvoice() {
+async function submitInvoice() {
     var selectedCustomer = $('#customer').val();
    
-    data.customer= selectedCustomer,
-    data.invoiceDate= new Date().toISOString(),
-    data.parts= data.parts
+    data.customer = selectedCustomer;
+    data.invoiceDate = new Date().toISOString();
+    data.parts = data.parts;
     data.customerId = $('#customer_id').val();
     data.invoice_author = user;
     data.pdf_format = $('#pdf_format').val();
     data.contingencies = $('#contingencies').val();
-    console.log('Data: ',data);
+    console.log('Data: ', data);
         
-    if(data.pdf_format=='ford')
-    {
-    fetch('submit_invoice.php', {
+    // First, send the JSON data
+    let response = await fetch('submit_invoice.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }) 
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response data
-        console.log(data);
-        // Clear all input fields
-        $('input[type="text"], input[type="number"], select').val('');
-        // Clear the parts table
-        $("#parts_table").find("tr:gt(0)").remove();
-        // Increment the invoice number
-        var currentInvoiceNumber = parseInt($('#invoice_number').val());
-        $('#invoice_number').val(currentInvoiceNumber + 1);
-        // If the invoice was successfully submitted, generate the PDF
-       
-        if (data.success) {
-            window.location.href = 'generate_ford_quote_pdf.php?invoice_id=' + currentInvoiceNumber;    
-        }
-    })
-    .catch(error => {
-        // Handle the error
-        console.error('There has been a problem with your fetch operation:', error);
-    });
-}
-else if(data.pdf_format=='thai_summit')
-{
-    fetch('submit_invoice.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }) 
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response data
-        console.log(data);
-        // Clear all input fields
-        $('input[type="text"], input[type="number"], select').val('');
-        // Clear the parts table
-        $("#parts_table").find("tr:gt(0)").remove();
-        // Increment the invoice number
-        var currentInvoiceNumber = parseInt($('#invoice_number').val());
-        $('#invoice_number').val(currentInvoiceNumber + 1);
-        // If the invoice was successfully submitted, generate the PDF
-       
-        if (data.success) {
-            window.location.href = 'generate_thai_summit_quote.php?invoice_id=' + currentInvoiceNumber;    
-        }
-    })
-    .catch(error => {
-        // Handle the error
-        console.error('There has been a problem with your fetch operation:', error);
     });
 
-}
+  // After the fetch call to submit_invoice.php
+  let result = await response.json();
+
+  // Get the invoice_id from the JSON response
+ 
+
+    // Check if the first request was successful
+    if (result.success) {
+        // Then, send the files
+        let formData = new FormData();
+        let files = document.querySelector('#invoice_files').files;
+        for (let i = 0; i < files.length; i++) {
+            formData.append('invoice_files[]', files[i]);
+        }
+        var currentInvoiceNumber = parseInt($('#invoice_number').val());
+        // Add the invoice_id to the form data
+        formData.append('invoice_id', currentInvoiceNumber);
+
+        response = await fetch('submit_files.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        result = await response.json();
+
+        // Check if the file upload was successful
+        if (result.success) {
+            // Handle success
+            console.log("Files uploaded successfully");
+            // Clear all input fields
+            $('input[type="text"], input[type="number"], select').val('');
+            // Clear the parts table
+            $("#parts_table").find("tr:gt(0)").remove();
+            // Increment the invoice number
+            var currentInvoiceNumber = parseInt($('#invoice_number').val());
+            $('#invoice_number').val(currentInvoiceNumber + 1);
+            // If the invoice was successfully submitted, generate the PDF
+            if (data.pdf_format == 'ford') {
+                window.location.href = 'generate_ford_quote_pdf.php?invoice_id=' + currentInvoiceNumber;
+            } else if (data.pdf_format == 'thai_summit') {
+                window.location.href = 'generate_thai_summit_quote.php?invoice_id=' + currentInvoiceNumber;
+            }
+        } else {
+            // Handle error
+            console.error("Error uploading files: " + result.error);
+        }
+    } else {
+        // Handle error
+        console.error("Error submitting invoice: " + result.error);
+    }
 }
 
 window.onload = function(){

@@ -107,10 +107,17 @@ try {
     
     $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_number`, `invoice_author`,`contingencies`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies')");
     
+
+    
+
     // Commit the transaction
     // Commit the transaction
     $database->commit();
-    echo json_encode(['success' => true]);
+   // After the invoice is inserted into the database
+$invoice_id = $database->insert_id;  // Get the ID of the newly created invoice
+
+// Return the invoice_id in the JSON response
+echo json_encode(['success' => true, 'invoice_id' => $invoice_id]);
 } catch (Exception $e) {
     // An error occurred, rollback the transaction
     $database->rollback();

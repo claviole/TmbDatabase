@@ -483,6 +483,8 @@ $(document).ready(function(){
 <div class="form-container">
     <label for="contingencies">Contingencies:</label>
     <textarea id="contingencies" name="contingencies" rows="4" cols="50" style="resize: both;"></textarea>
+    <label for="invoice_files">Upload Files:</label>
+    <input type="file" id="invoice_files" name="invoice_files[]" multiple>
 </div>
 <div>
 <label for="pdf_format">Select PDF format:</label>
