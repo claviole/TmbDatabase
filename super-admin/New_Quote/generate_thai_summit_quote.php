@@ -1,6 +1,19 @@
 <?php
 require_once('../../libraries/TCPDF-main/tcpdf.php');
 include '../../connection.php';
+// Define the savePdfToDatabase function
+function savePdfToDatabase($invoice_id, $file_name, $file_contents) {
+    global $database;
+
+    // Prepare the SQL statement
+    $stmt = $database->prepare("INSERT INTO invoice_files (invoice_id, file_name, file_contents) VALUES (?, ?, ?)");
+
+    // Bind the parameters
+    $stmt->bind_param("iss", $invoice_id, $file_name, $file_contents);
+
+    // Execute the statement
+    $stmt->execute();
+}
 
 class PDF extends TCPDF
 {
@@ -93,10 +106,11 @@ $pdf->SetFillColor(173, 216, 230);
 $originalLeftMargin = $pdf->getMargins()['left'];
 $pdf->setLeftMargin(0);
 // Calculate the width of each cell
-$cellWidth = $pdf->getPageWidth() / 4;
+$cellWidth = $pdf->getPageWidth() / 5;
 $pdf->SetY(45.5);
 // Add the new fields
 $pdf->SetFont('helvetica', '', 12);
+$pdf->Cell($cellWidth, 10, 'Quote # : ' . $invoice['invoice_id'], 0, 0, 'C', true);
 $pdf->Cell($cellWidth, 10, 'Supplier: ' . $item['supplier_name'], 0, 0, 'C', true);
 $pdf->Cell($cellWidth, 10, 'Platform: ' . $item['Platform'], 0, 0, 'C', true);
 $pdf->Cell($cellWidth, 10, 'Model Year: ' . $item['model_year'], 0, 0, 'C', true);
@@ -188,4 +202,16 @@ $h = 50; // Height
 
 $pdf->writeHTMLCell($w, $h, $x, $y, $text, 1, 1, true, true, 'J', true);
 }
-$pdf->Output('Quote_' . $invoice_id . '.pdf', 'I');
+// Save the PDF to a file
+$pdfFilePath = __DIR__ . '../../../uploads/pdfs/Quote_' . $invoice_id . '.pdf';
+$pdf->Output($pdfFilePath, 'F');
+
+// Read the file content
+$pdfContent = file_get_contents($pdfFilePath);
+
+// Save the PDF content to the database
+// Save the PDF content to the database
+savePdfToDatabase($invoice_id, 'Quote_' . $invoice_id . '.pdf', $pdfContent);
+
+// Output the PDF to the browser
+$pdf->Output($pdfFilePath, 'I');

@@ -109,11 +109,33 @@ async function addPart() {
 var annualTruckLoads=volume/pcsPerTruck;
 var UseSkidPcs= pcsPerSkid*pallet_uses;
 var skidCostPerPc=palletCost/UseSkidPcs;
-if(lineProduced==11)
+if(lineProduced==1|| lineProduced==2 || lineProduced==3 || lineProduced==4 || lineProduced==5 || lineProduced==6 || lineProduced==7 || lineProduced==8 || lineProduced==9 || lineProduced==10)
 {
-    hourlyRate=950;
+    hourlyRate=850;
+}
+
+
+else if (lineProduced==11 || lineProduced==12 || lineProduced==13 || lineProduced==14 )
+{
+    hourlyRate=900;
+
+}  
+
+
+else if (lineProduced==15|| lineProduced==16 || lineProduced==17 || lineProduced==18 )
+{
+    hourlyRate=850;
 
 }
+else if(lineProduced==19 || lineProduced==20)
+{
+    hourlyRate=950;
+}
+else if(lineProduced==21)
+{
+    hourlyRate=350;
+}
+
 
 var blankingPerPieceCost=hourlyRate/partsPerHour;
 var packagingPerPieceCost= parseFloat((palletCost/pcsPerSkid)+(25/pcsPerSkid)).toFixed(3);
@@ -320,6 +342,7 @@ async function submitInvoice() {
 
     // Check if the first request was successful
     if (result.success) {
+        console.log('Result was a success');
         // Then, send the files
         let formData = new FormData();
         let files = document.querySelector('#invoice_files').files;

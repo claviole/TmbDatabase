@@ -1,6 +1,19 @@
 <?php
 require_once('../../libraries/TCPDF-main/tcpdf.php');
 include '../../connection.php';
+function savePdfToDatabase($invoice_id, $file_name, $file_contents) {
+    global $database;
+
+    // Prepare the SQL statement
+    $stmt = $database->prepare("INSERT INTO invoice_files (invoice_id, file_name, file_contents) VALUES (?, ?, ?)");
+
+    // Bind the parameters
+    $stmt->bind_param("iss", $invoice_id, $file_name, $file_contents);
+
+    // Execute the statement
+    $stmt->execute();
+}
+
 
 class PDF extends TCPDF
 {
@@ -184,4 +197,16 @@ $h = 50; // Height
 
 $pdf->writeHTMLCell($w, $h, $x, $y, $text, 1, 1, false, true, 'J', true);
 }
-$pdf->Output('Quote_' . $invoice_id . '.pdf', 'I');
+// Save the PDF to a file
+$pdfFilePath = __DIR__ . '../../../uploads/pdfs/Quote_' . $invoice_id . '.pdf';
+$pdf->Output($pdfFilePath, 'F');
+
+// Read the file content
+$pdfContent = file_get_contents($pdfFilePath);
+
+// Save the PDF content to the database
+// You need to implement the savePdfToDatabase function
+savePdfToDatabase($invoice_id, 'Quote_' . $invoice_id . '.pdf', $pdfContent);
+
+// Output the PDF to the browser
+$pdf->Output($pdfFilePath, 'I');
