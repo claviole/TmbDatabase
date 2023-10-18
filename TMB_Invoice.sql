@@ -71,8 +71,8 @@ INSERT INTO `Users` (`id`, `username`, `email`, `password`,`user_type`) VALUES
 CREATE TABLE `Part` (
   `part_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `supplier_name` varchar(255) DEFAULT NULL,
-  `customer_id` int(11) NOT NULL,
-  `Part#` varchar(255) NOT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `Part#` varchar(255) DEFAULT NULL,
   `Part Name` varchar(255) DEFAULT NULL,
   `Mill` varchar(255) DEFAULT NULL,
   `Platform` varchar(255) DEFAULT NULL,
@@ -103,7 +103,7 @@ INSERT INTO `Part` (`Part#`,`Part Name`,`Mill`,`Platform`,`Type`,`Surface`,`Mate
 --
 CREATE TABLE `Customer`(
   `customer_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Customer Name` varchar(255) NOT NULL,
+  `Customer Name` varchar(255) DEFAULT NULL,
   `Customer Address` varchar(255) DEFAULT NULL,
   `Customer City` varchar(255) DEFAULT NULL,
   `Customer State` varchar(255) DEFAULT NULL,
@@ -184,13 +184,14 @@ CREATE TABLE `Line_Item` (
  CREATE TABLE `invoice`(
   invoice_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   invoice_number varchar(255) NOT NULL,
-  invoice_date date DEFAULT NULL,
-  customer_id int(11) NOT NULL,
+  invoice_date varchar(255) DEFAULT NULL,
+  customer_id int(11) DEFAULT NULL,
   invoice_author varchar(255) NOT NULL,
   approval_status varchar(255) DEFAULT "Awaiting Approval",
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
   `Customer Name` varchar(255) NOT NULL,
-  FOREIGN KEY (`Customer Name`) REFERENCES `Customer` (`Customer Name`)
+  FOREIGN KEY (`Customer Name`) REFERENCES `Customer` (`Customer Name`),
+  contingencies MEDIUMBLOB
  ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- ------------------------------------------------------------\
