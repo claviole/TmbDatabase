@@ -4,7 +4,8 @@ var data = {
     customer: '',
     invoiceDate: '',
     parts: [],
-    invoice_author: ''
+    invoice_author: '',
+    contingencies: ''
 };
 user=window.user;
 
@@ -37,34 +38,36 @@ async function addPart() {
     // Get values from input fields
     var invoiceId = document.getElementById('invoice_id').value;
     var partNumber = document.getElementById('part').value
-    var partName= document.getElementById('partName').value;
     var volume = document.getElementById('volume').value;
     var width = parseFloat(document.getElementById('width').value);
     var pitch = parseFloat(document.getElementById('pitch').value);
     var gauge = parseFloat(document.getElementById('gauge').value);
     var numOutputs = document.getElementById('# Out').value;
     var lineProduced = document.getElementById('line_produced').value;
-    var uptime = document.getElementById('uptime').value;
-    var partsPerHour = document.getElementById('pph').value;
+    var uptime = document.getElementById('uptime').value/100;
+    var partsPerHour = document.getElementById('pph').value*uptime;
     var widthIN = width/25.4;
     var pitchIN= pitch/25.4;
     var gaugeIN= gauge/25.4;
     var hourlyRate;
     var hours_to_run=volume/partsPerHour;
     var Density=parseFloat(document.getElementById('Density').value);
-    var blankWeight=(gauge*width*pitch*Density)*2.20462;
+    var blankWeight=parseFloat(gaugeIN*widthIN*pitchIN*Density).toFixed(3);
     var blankWeightKg= parseFloat(blankWeight/2.20462).toFixed(3);
-    var scrapLbs = partData['Scrap Consumption']*blankWeight;
+    var scrapConsumption = document.getElementById('scrapConsumption').value;
+    var scrap_multiply= scrapConsumption/100;
+    var scrapLbs = scrap_multiply*blankWeight;
     var scrapKg = scrapLbs/2.20462;
     var pcsWeight= blankWeight-scrapLbs;
     var pcsWeightKg= pcsWeight/2.20462;
     var palletWeight;
     var palletCost;
-    var pallet_type=partData[`pallet_type`];
-    var pallet_size=partData[`pallet_size`];
+    var pallet_type=document.getElementById('palletType').value;
+    var pallet_size=document.getElementById('palletSize').value;
     var pallet_uses=document.getElementById('pallet_uses').value;
-    var palletWeight=document.getElementById('palletWeight').value;
-    var palletCost=document.getElementById('palletCost').value;
+    palletWeight=document.getElementById('palletWeight').value;
+    var palletWeightkg=palletWeight/2.20462;
+    palletCost=document.getElementById('palletCost').value;
     var wash_and_lube_choice=document.getElementById('wash_and_lube').checked;
     var steel_or_aluminum=document.getElementById('steel_or_aluminum').value;
     var material_cost
@@ -73,6 +76,9 @@ async function addPart() {
     var blank_die=document.getElementById('blank_die?').value;
     var model_year=document.getElementById('model_year').value;
     var trap=document.getElementById('trap').value;
+    var total_freight=document.getElementById('freight').value;
+    var material_type=document.getElementById('materialType').value;
+    var cost_per_lb=document.getElementById('cost_per_lb').value;
 
     if(wash_and_lube_choice==true)
     {
@@ -84,23 +90,20 @@ async function addPart() {
     }
    
     
-    if(steel_or_aluminum=='steel')
-    {
-        material_cost=parseFloat(1.0589*blankWeight).toFixed(3);
-    }
-    else
-    {
-        material_cost=parseFloat(2.20462*blankWeight).toFixed(3);
-    }
-    var material_markup_percent=(document.getElementById('material_markup_percent').value)/100;
-    var material_cost_markup=parseFloat(material_cost*material_markup_percent).toFixed(3);
+ 
+    
+    material_cost=parseFloat(cost_per_lb*blankWeight).toFixed(3);
+
   
- var pcsPerLift= partData['Pieces per Lift'];
- var stacksPerSkid=partData['Stacks per Skid'];
+    var material_markup_percent=(document.getElementById('material_markup_percent').value)/100;
+    var material_cost_markup=parseFloat((material_cost*material_markup_percent)+material_cost).toFixed(3);
+  
+ var pcsPerLift= document.getElementById('piecesPerLift').value;
+ var stacksPerSkid=document.getElementById('stacksPerSkid').value;
  var pcsPerSkid= pcsPerLift*stacksPerSkid;
- var liftWeight=(pcsPerLift*pcsWeight(pcsWeightKg)*stacksPerSkid)+palletWeight;
+ var liftWeight=(pcsPerLift*pcsWeight*stacksPerSkid)+palletWeight;
  var stackHeight=gaugeIN*pcsPerLift;
- var skidsPerTruck=partData['Skids per Truck'];
+ var skidsPerTruck=document.getElementById('skidsPerTruck').value;
  var pcsPerTruck=skidsPerTruck*pcsPerSkid;
  var weightPerTruck = (skidsPerTruck * liftWeight).toFixed(3);
 var annualTruckLoads=volume/pcsPerTruck;
@@ -113,17 +116,17 @@ if(lineProduced==11)
 }
 
 var blankingPerPieceCost=hourlyRate/partsPerHour;
-var packagingPerPieceCost= parseFloat((12.50/pcsPerSkid)+skidCostPerPc).toFixed(3);
+var packagingPerPieceCost= parseFloat((palletCost/pcsPerSkid)+(25/pcsPerSkid)).toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
-var freightPerPiece=3200/pcsPerTruck;
-var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat((material_cost/blankWeight)*blankWeightKg)+ parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+parseFloat(wash_and_lube)+parseFloat((material_cost_markup/material_cost)*((material_cost/blankWeight)*blankWeightKg))).toFixed(3);
+var freightPerPiece=total_freight/pcsPerTruck;
+var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+(parseFloat(wash_and_lube)/pcsPerTruck)+parseFloat(material_cost_markup)).toFixed(3);
 var blanksPerMinute=partsPerHour/60;
 
 
 elements[0]=invoiceId;
 elements[1]=partNumber;
 elements[2]=partName;
-elements[3]=partData[`Material Type`];
+elements[3]=material_type;
 elements[4]=numOutputs;
 elements[5]=volume;
 elements[6]=width;
@@ -134,7 +137,7 @@ elements[10]=gauge;
 elements[11]=gaugeIN;
 elements[12]=blankWeight;
 elements[13]=blankWeightKg;
-elements[14]=partData[`Scrap Consumption`];
+elements[14]=scrapConsumption;
 elements[15]=pcsWeight;
 elements[16]=pcsWeightKg;
 elements[17]=scrapKg;
@@ -297,6 +300,7 @@ function submitInvoice() {
     data.customerId = $('#customer_id').val();
     data.invoice_author = user;
     data.pdf_format = $('#pdf_format').val();
+    data.contingencies = $('#contingencies').val();
     console.log('Data: ',data);
         
     if(data.pdf_format=='ford')

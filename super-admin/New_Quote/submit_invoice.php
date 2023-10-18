@@ -32,7 +32,7 @@ $customer = $database->real_escape_string($data['customer']);
 $invoiceDate = $database->real_escape_string($data['invoiceDate']);
 $customerId = $database->real_escape_string($data['customerId']);
 $author = $database->real_escape_string($data['invoice_author']);
-
+$contingencies = $database->real_escape_string($data['contingencies']);
 
 // Start a transaction
 $database->begin_transaction();
@@ -105,7 +105,7 @@ try {
     }
     
     
-    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_number`, `invoice_author`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author')");
+    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_number`, `invoice_author`,`contingencies`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies')");
     
     // Commit the transaction
     // Commit the transaction

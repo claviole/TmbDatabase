@@ -59,6 +59,8 @@ if ($invoice_id === null) {
 
 $result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
 $invoice = $result->fetch_assoc();
+$contingencies = $invoice['contingencies']; // Fetch the contingencies text from the invoice
+$contingencies = nl2br($contingencies); // Replace newline characters with <br> tags
 $result = $database->query("
     SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location, `Part`.supplier_name ,`Part`.Platform,`Part`.Surface,`Part`.Type
     FROM Line_Item 
@@ -145,7 +147,7 @@ $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" s
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Pitch(in)</th><td style ="text-align:center;">' . $item['Pitch(in)'] . ' in'. '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Theoretical Blank Weight(Lbs)</th><td style ="text-align:center;">' . $item['Blank Weight(lb)'] .' lb' . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Parts/Blank</th><td style ="text-align:center;">' . "1". '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blanks Per MT</th><td style ="text-align:center;">' .number_format($item['PPH']/60,3) ."/MT". '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blanks Per MT</th><td style ="text-align:center;">' .number_format(2204.623/$item['Blank Weight(lb)'],3) ."/MT". '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6" >Surface</th><td style ="text-align:center;">' . $item['Surface'] . '</td></tr>';
     // Add more rows as needed
 
@@ -164,7 +166,7 @@ $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" s
 $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">% Scrap Return to TSK</th><td style ="text-align:center;">' . $item['Scrap Consumption'] . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blanking Cost</th><td style ="text-align:center;">' . '$'. number_format($item['Blanking per piece cost'],3) . "/Pc". '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Freight Cost</th><td style ="text-align:center;">' . '$'. number_format($item['freight per piece cost'],3) . "/Pc". '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total : </th><td style ="text-align:center;" bgcolor="#61FF33">' . '$'. number_format($item['freight per piece cost']+$item['Blanking per piece cost'],3) . "/Pc". '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total : </th><td style ="text-align:center;" bgcolor="#61FF33">' . '$'. number_format($item['freight per piece cost']+$item['Blanking per piece cost']+ $item['Packaging Per Piece Cost'],3) . "/Pc". '</td></tr>';
 
 $html.= '</table>';
 
@@ -175,7 +177,7 @@ $pdf->writeHTML($html, true, false, true, false, '');
 
 $pdf->SetFont('helvetica', '', 16);
 $pdf->setFillColor(240,255,41);
-$text = "Comments:<br>-Freight costs also to be included in your piece price.<br>-Include wooden pallet packaging costs in your piece price.<br>-TSK requires 80% PLATTS rebate for processing scrap.";
+$text = $contingencies;
 // Set the position of the text box
 $x = 10; // X position
 $y = $pdf->GetY() + 80; // Y position (10 units below the current position)

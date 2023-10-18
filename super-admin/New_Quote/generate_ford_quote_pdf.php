@@ -59,6 +59,8 @@ if ($invoice_id === null) {
 
 $result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
 $invoice = $result->fetch_assoc();
+$contingencies = $invoice['contingencies']; // Fetch the contingencies text from the invoice
+$contingencies = nl2br($contingencies); // Replace newline characters with <br> tags
 $result = $database->query("
     SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location, `Part`.supplier_name ,`Part`.Platform,`Part`.Surface
     FROM Line_Item 
@@ -170,7 +172,7 @@ $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" s
 $html.= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
 
-$text = "(FGT27, Rev. 9/00), which are available online at www.fsn.ford.com or may be provided by the Buyer upon request, and your agreement that if the Buyer accepts your quotation, any purchase orders issued will be governed by those terms or any revised version in effect at the time of issuance. Seller must also comply with Ford QS9000 Quality System Standards.";
+$text =$contingencies;
 
 // Set the position of the text box
 $x = 10; // X position

@@ -10,7 +10,7 @@ $awaiting_approval_count = $result->fetch_assoc()['count'];
 // Check if the user is logged in and is an admin
 if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../login.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -47,7 +47,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/company_header.png" alt="company header" width="30%" height="20%" > 
+        <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
         <div class="notification<?php echo $awaiting_approval_count > 0 ? ' flashing' : ''; ?>">
     Quotes Awaiting Approval: <?php echo $awaiting_approval_count; ?>
 </div>

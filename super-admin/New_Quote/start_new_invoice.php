@@ -261,7 +261,7 @@ label[for="pdf_format"] {
         <label for="platform">Platform:</label>
         <input type="text" id="platform" name="platform">
         <label for="model_year">Model Year(if applicable):</label>
-        <input type="text" id="model_year" name="model_year">
+        <input type="number" id="model_year" name="model_year">
         </div>
         <br>
         <div>
@@ -280,7 +280,7 @@ label[for="pdf_format"] {
         <br>
         <label for="palletSize">Pallet Size:</label>
         <input type="text" id="palletSize" name="palletSize">
-        <label for="palletWeight">Pallet Weight:</label>
+        <label for="palletWeight">Pallet Weight(Lbs):</label>
         <input type="number" id="palletWeight" name="palletWeight">
         <label for="palletCost">Pallet Cost:</label>
         <input type="number" id="palletCost" name="palletCost">
@@ -299,7 +299,7 @@ label[for="pdf_format"] {
         </div>
         <br>
         <div>
-        <label for="scrapConsumption">Scrap Consumption:</label>
+        <label for="scrapConsumption">Scrap Consumption %:</label>
         <input type="number" id="scrapConsumption" name="scrapConsumption" step="0.01">
         </div>
         
@@ -424,7 +424,7 @@ $(document).ready(function(){
     </div>
     <div>
     <br>
-    <label for="Uptime">Uptime:</label>
+    <label for="Uptime">Uptime %:</label>
     <input type="text" id="uptime" name="uptime">
     <br>
     <label for="pph">PPH:</label>
@@ -444,6 +444,12 @@ $(document).ready(function(){
     <label for= "material_markup_percent">Material Markup % :</label>
     <input type="number" id="material_markup_percent" name="material_markup_percent">
     </div>
+    <div>
+    <label for="freight">Freight Cost</label>
+    <input type="number" id="freight" name="freight">
+    <label for="cost_per_lb">Material Cost / lb:</label>
+    <input type="number" id="cost_per_lb" name="cost_per_lb">
+    </div>
     
     <button id="add-part" type="button">Add Part</button>
     </div>
@@ -453,6 +459,32 @@ $(document).ready(function(){
 <table id="parts_table">
 <!-- Table headers go here -->
 </table>
+</div>
+<style>
+    .form-container {
+        width: 100%; /* Ensures that the form container takes up the full width of its parent */
+        text-align: center; /* Aligns the text to the left */
+        border: 2px solid black;
+        margin-bottom: 30px;
+    border-radius: 10px;
+    }
+    .form-container textarea {
+        width: 100%; /* Ensures that the textarea takes up the full width of its parent */
+        padding: 10px;
+    border: 3px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+
+    }
+</style>
+<div class="form-container">
+    <label for="contingencies">Contingencies:</label>
+    <textarea id="contingencies" name="contingencies" rows="4" cols="50" style="resize: both;"></textarea>
+</div>
+<div>
 <label for="pdf_format">Select PDF format:</label>
 <select id="pdf_format" name="pdf_format">
     <option value="">Select a format</option>
@@ -488,7 +520,8 @@ $("#add-part").click(function(){
             piecesPerLift: document.getElementById('piecesPerLift').value,
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
             skidsPerTruck: document.getElementById('skidsPerTruck').value,
-            scrapConsumption: document.getElementById('scrapConsumption').value
+            scrapConsumption: document.getElementById('scrapConsumption').value,
+            contingencies: document.getElementById('contingencies').value
         }
 
         submitNewPartForm(formData).then(function() {

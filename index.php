@@ -52,7 +52,7 @@
 </head>
 <body style="background-image: url('images/steel_coils.jpg'); background-size: cover;">
      <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="images/company_header.png" alt="company header" width="30%" height="20%" > 
+        <img src="images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
     </h1>
     <center>
     <div class="__layout">
