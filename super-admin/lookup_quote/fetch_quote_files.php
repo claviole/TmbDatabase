@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Fetch files for the quote
         $stmt = $database->prepare("SELECT `file_name` FROM `invoice_files` WHERE `invoice_id` = ?");
-        $stmt->bind_param("s", $quoteId);
+        $stmt->bind_param("i", $quoteId);
         $stmt->execute();
 
         $result = $stmt->get_result();

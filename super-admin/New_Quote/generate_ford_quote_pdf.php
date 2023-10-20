@@ -1,19 +1,19 @@
 <?php
 require_once('../../libraries/TCPDF-main/tcpdf.php');
 include '../../connection.php';
+// Define the savePdfToDatabase function
 function savePdfToDatabase($invoice_id, $file_name, $file_contents) {
     global $database;
 
     // Prepare the SQL statement
-    $stmt = $database->prepare("INSERT INTO invoice_files (invoice_id, file_name, file_contents) VALUES (?, ?, ?)");
+    $stmt = $database->prepare("INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_contents`) VALUES (?, ?, ?)");
 
     // Bind the parameters
-    $stmt->bind_param("iss", $invoice_id, $file_name, $file_contents);
+    $stmt->bind_param("sss", $invoice_id, $file_name, $file_contents);
 
     // Execute the statement
     $stmt->execute();
 }
-
 
 class PDF extends TCPDF
 {
@@ -70,16 +70,18 @@ if ($invoice_id === null) {
     exit('No invoice ID provided');
 }
 
-$result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
+$result = $database->query("SELECT * FROM invoice WHERE invoice_id = '{$invoice_id}'");
 $invoice = $result->fetch_assoc();
 $contingencies = $invoice['contingencies']; // Fetch the contingencies text from the invoice
+$invoice_author = $invoice['invoice_author'];
+$ID=$invoice['invoice_id'];
 $contingencies = nl2br($contingencies); // Replace newline characters with <br> tags
 $result = $database->query("
-    SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location, `Part`.supplier_name ,`Part`.Platform,`Part`.Surface
+    SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location, `Part`.supplier_name ,`Part`.Platform,`Part`.Surface,`Part`.Type
     FROM Line_Item 
     INNER JOIN `Lines` ON Line_Item.`Line Produced on` = `Lines`.line_id 
     INNER JOIN `Part` ON Line_Item.`Part#` = `Part`.`Part#` 
-    WHERE Line_Item.invoice_id = $invoice_id
+    WHERE Line_Item.invoice_id = '{$invoice_id}'
 ");
 $line_items = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -174,13 +176,13 @@ $pdf->SetLeftMargin(167);
 $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:50%; border:1px solid #ddd; margin-top:20px;">';
 
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6"></th><td style ="text-align:center;font-weight:bold">' . '$ per Blank'. '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Steel Cost in Blank</th><td style ="text-align:center;">' . '$'. ($item['material_cost' ]/$blankWeightlbs)*$blankWeightKg . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Steel Cost in Blank</th><td style ="text-align:center;">' . '$'. ($item['material_cost' ]/$item['Blank Weight(lb)'])*$item['Blank Weight(kg)'] . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blank Processing Cost</th><td style ="text-align:center;">' . '$'. $item['Blanking per piece cost' ] . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Freight</th><td style ="text-align:center;">' . '$' . $item['freight per piece cost']. '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Packaging Cost:</th><td style ="text-align:center;">' . '$'. $item['Packaging Per Piece Cost'] .'</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Wash and Lube</th><td style ="text-align:center;">' . '$'. $item['wash_and_lube']/$item['Volume']. '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Material Cost Markup</th><td style ="text-align:center;">' . '$'.(($item['material_cost_markup']/ $item['material_cost'])*(($item['material_cost']/$item['blankWeightlbs'])*$item['blankWeightKg'])) . '</td></tr>';
-    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total Delivered per Blank Cost</th><td style ="text-align:center; background-color:#78FF00; ">' . '$'. number_format((($item['material_cost_markup']/ $item['material_cost'])*(($item['material_cost']/$item['blankWeightlbs'])*$item['blankWeightKg']))+($item['wash_and_lube']/$item['Volume'])+$item['Packaging Per Piece Cost']+$item['freight per piece cost']+$item['Blanking per piece cost']+($item['material_cost' ]/$blankWeightlbs)*$blankWeightKg,3) . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Material Cost Markup</th><td style ="text-align:center;">' . '$'.(($item['material_cost_markup']/ $item['material_cost'])*(($item['material_cost']/$item['Blank Weight(lb)'])*$item['Blank Weight(kg)'])) . '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total Delivered per Blank Cost</th><td style ="text-align:center; background-color:#78FF00; ">' . '$'. number_format((($item['material_cost_markup']/ $item['material_cost'])*(($item['material_cost']/$item['Blank Weight(lb)'])*$item['Blank Weight(kg)']))+($item['wash_and_lube']/$item['Volume'])+$item['Packaging Per Piece Cost']+$item['freight per piece cost']+$item['Blanking per piece cost']+($item['material_cost' ]/$item['Blank Weight(lb)'])*$item['Blank Weight(kg)'],3) . '</td></tr>';
 
 $html.= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
@@ -196,17 +198,22 @@ $w = $pdf->getPageWidth() - 20; // Width (page width minus 10 units on each side
 $h = 50; // Height
 
 $pdf->writeHTMLCell($w, $h, $x, $y, $text, 1, 1, false, true, 'J', true);
+$pdf->writeHTML("Quote Author :" . $invoice_author, true, false, true, false, '');
 }
+$part_number = $item['Part#'];
+$invoice_version=$invoice['version'];
+$pdf_file_name=$invoice_author.'-'.$part_number.'-'.$invoice_version.'.pdf';
 // Save the PDF to a file
-$pdfFilePath = __DIR__ . '../../../uploads/pdfs/Quote_' . $invoice_id . '.pdf';
+$pdfFilePath = __DIR__ . '../../../uploads/pdfs/' .  $pdf_file_name;
 $pdf->Output($pdfFilePath, 'F');
 
 // Read the file content
 $pdfContent = file_get_contents($pdfFilePath);
 
+
 // Save the PDF content to the database
-// You need to implement the savePdfToDatabase function
-savePdfToDatabase($invoice_id, 'Quote_' . $invoice_id . '.pdf', $pdfContent);
+// Save the PDF content to the database
+savePdfToDatabase($ID, $pdf_file_name, $pdfContent);
 
 // Output the PDF to the browser
 $pdf->Output($pdfFilePath, 'I');

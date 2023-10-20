@@ -3,8 +3,9 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `approval_status` = 'Awaiting Approval'");
+$result = $database->query("SELECT `invoice_id`, `Customer Name` FROM `invoice` ");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,17 +26,15 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         }
 
         .quote-list {
-    position: relative; /* Add this line */
     width: 80%;
     margin: 20px auto;
-    padding: 5px;
+    padding: 20px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
-    overflow-y: auto;
-    max-height: 400px;
+    overflow-y: auto;  /* Add this line */
+    max-height: 400px; /* Adjust this value as needed */
 }
-
 
         .quote {
             display: flex;
@@ -121,12 +120,13 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 }
 .quote, .quote-header {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
+    grid-template-columns: 1fr 3fr 1fr 1fr; /* Adjust as needed */
     gap: 10px; /* Adjust as needed */
 }
 .quote-id {
     color: blue;
     cursor: pointer;
+}
 }
 .quote-header {
     position: sticky; /* Change this line */
@@ -145,21 +145,17 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
-<div class="quote-list">
-    <div class="quote-header">
-        <span class="quote-id-header">Quote#</span>
-        <span class="version-header">Version</span>
-        <span class="customer-name-header">Customer Name</span>
-        <span></span> <!-- Empty placeholders for buttons -->
-        <span></span>
-    </div>
+    <!-- ... -->
+    <div class="quote-list">
+        <input type="text" id="quote-search" placeholder="Search quotes...">
+        <div class="quote-header">
+            <!-- ... -->
+        </div>
     <?php foreach($quotes as $quote): ?>
         <div class="quote">
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
-            <span class="version"><?= $quote['version'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
-            <button class="approve-quote">Approve</button>
-            <button class="deny-quote">Deny</button>
+          
         </div>
     <?php endforeach; ?>
 </div>
@@ -168,6 +164,18 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     </div>
     <!-- Your scripts here -->
     <script>
+          $('#quote-search').on('input', function() {
+            var search = $(this).val().toLowerCase();
+            $('.quote').each(function() {
+                var quoteId = $(this).find('.quote-id').text().toLowerCase();
+                var customerName = $(this).find('.customer-name').text().toLowerCase();
+                if (quoteId.includes(search) || customerName.includes(search)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
     $(".quote").click(function() {
     var quoteId = $(this).find(".quote-id").text();
     $.ajax({
@@ -180,31 +188,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     });
 });
 
-$(".approve-quote").click(function() {
-    var quoteId = $(this).siblings(".quote-id").text();
-    $.ajax({
-        url: 'approve_quote.php',
-        method: 'POST',
-        data: {quoteId:quoteId},
-        success: function(data) {
-            alert("Quote approved successfully");
-            location.reload();
-        }
-    });
-});
 
-$(".deny-quote").click(function() {
-    var quoteId = $(this).siblings(".quote-id").text();
-    $.ajax({
-        url: 'deny_quote.php',
-        method: 'POST',
-        data: {quoteId:quoteId},
-        success: function(data) {
-            alert("Quote denied successfully");
-            location.reload();
-        }
-    });
-});
 
 </script>
 </body>

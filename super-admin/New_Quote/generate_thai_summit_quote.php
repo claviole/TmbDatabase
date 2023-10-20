@@ -6,10 +6,10 @@ function savePdfToDatabase($invoice_id, $file_name, $file_contents) {
     global $database;
 
     // Prepare the SQL statement
-    $stmt = $database->prepare("INSERT INTO invoice_files (invoice_id, file_name, file_contents) VALUES (?, ?, ?)");
+    $stmt = $database->prepare("INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_contents`) VALUES (?, ?, ?)");
 
     // Bind the parameters
-    $stmt->bind_param("iss", $invoice_id, $file_name, $file_contents);
+    $stmt->bind_param("sss", $invoice_id, $file_name, $file_contents);
 
     // Execute the statement
     $stmt->execute();
@@ -70,16 +70,18 @@ if ($invoice_id === null) {
     exit('No invoice ID provided');
 }
 
-$result = $database->query("SELECT * FROM invoice WHERE invoice_id = $invoice_id");
+$result = $database->query("SELECT * FROM invoice WHERE invoice_id = '{$invoice_id}'");
 $invoice = $result->fetch_assoc();
 $contingencies = $invoice['contingencies']; // Fetch the contingencies text from the invoice
+$invoice_author = $invoice['invoice_author'];
+$ID=$invoice['invoice_id'];
 $contingencies = nl2br($contingencies); // Replace newline characters with <br> tags
 $result = $database->query("
     SELECT Line_Item.*, `Lines`.Line_Name, `Lines`.Line_Location, `Part`.supplier_name ,`Part`.Platform,`Part`.Surface,`Part`.Type
     FROM Line_Item 
     INNER JOIN `Lines` ON Line_Item.`Line Produced on` = `Lines`.line_id 
     INNER JOIN `Part` ON Line_Item.`Part#` = `Part`.`Part#` 
-    WHERE Line_Item.invoice_id = $invoice_id
+    WHERE Line_Item.invoice_id = '{$invoice_id}'
 ");
 $line_items = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -106,11 +108,12 @@ $pdf->SetFillColor(173, 216, 230);
 $originalLeftMargin = $pdf->getMargins()['left'];
 $pdf->setLeftMargin(0);
 // Calculate the width of each cell
-$cellWidth = $pdf->getPageWidth() / 5;
+$cellWidth = $pdf->getPageWidth() / 6;
 $pdf->SetY(45.5);
 // Add the new fields
 $pdf->SetFont('helvetica', '', 12);
-$pdf->Cell($cellWidth, 10, 'Quote # : ' . $invoice['invoice_id'], 0, 0, 'C', true);
+$pdf->Cell($cellWidth, 10, 'Q# : ' . $invoice['invoice_id'], 0, 0, 'C', true);
+$pdf->Cell($cellWidth, 10, 'Version: ' . $invoice['version'], 0, 0, 'C', true);
 $pdf->Cell($cellWidth, 10, 'Supplier: ' . $item['supplier_name'], 0, 0, 'C', true);
 $pdf->Cell($cellWidth, 10, 'Platform: ' . $item['Platform'], 0, 0, 'C', true);
 $pdf->Cell($cellWidth, 10, 'Model Year: ' . $item['model_year'], 0, 0, 'C', true);
@@ -201,17 +204,22 @@ $w = $pdf->getPageWidth() - 20; // Width (page width minus 10 units on each side
 $h = 50; // Height
 
 $pdf->writeHTMLCell($w, $h, $x, $y, $text, 1, 1, true, true, 'J', true);
+$pdf->writeHTML("Invoice Author: " . $invoice_author, true, false, true, false, '');
 }
+$part_number = $item['Part#'];
+$invoice_version=$invoice['version'];
+$pdf_file_name=$invoice_author.'-'.$part_number.'-'.$invoice_version.'.pdf';
 // Save the PDF to a file
-$pdfFilePath = __DIR__ . '../../../uploads/pdfs/Quote_' . $invoice_id . '.pdf';
+$pdfFilePath = __DIR__ . '../../../uploads/pdfs/' .  $pdf_file_name;
 $pdf->Output($pdfFilePath, 'F');
 
 // Read the file content
 $pdfContent = file_get_contents($pdfFilePath);
 
+
 // Save the PDF content to the database
 // Save the PDF content to the database
-savePdfToDatabase($invoice_id, 'Quote_' . $invoice_id . '.pdf', $pdfContent);
+savePdfToDatabase($ID, $pdf_file_name, $pdfContent);
 
 // Output the PDF to the browser
 $pdf->Output($pdfFilePath, 'I');

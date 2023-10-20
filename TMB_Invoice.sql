@@ -182,8 +182,9 @@ CREATE TABLE `Line_Item` (
 -- Table Structure for 'Invoice'
 --
  CREATE TABLE `invoice`(
-  invoice_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  invoice_id int(11) DEFAULT NULL PRIMARY KEY ,
   invoice_number varchar(255) NOT NULL,
+  `version` int(11) DEFULT 1,
   invoice_date varchar(255) DEFAULT NULL,
   customer_id int(11) DEFAULT NULL,
   invoice_author varchar(255) NOT NULL,
@@ -200,8 +201,9 @@ CREATE TABLE `Line_Item` (
 -- Table Structure for 'invoice_files'
 --
 CREATE TABLE `invoice_files`(
-  `invoice_id` int(11) NOT NULL,
-  `file_name` varchar(255) NOT NULL,
+  `invoice_id` int(11) NOT NULL
+  `file_name`  varchar(255) NOT NULL, 
+  `file_name` MEDIUMBLOB NOT NULL
   FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`invoice_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 

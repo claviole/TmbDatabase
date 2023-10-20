@@ -36,7 +36,7 @@ async function addPart() {
     if (window.partData) {
     var partName = document.getElementById('partName').value;
     // Get values from input fields
-    var invoiceId = document.getElementById('invoice_id').value;
+    var invoiceId = $('#invoice_number').val();
     var partNumber = document.getElementById('part').value
     var volume = document.getElementById('volume').value;
     var width = parseFloat(document.getElementById('width').value);
@@ -137,7 +137,7 @@ else if(lineProduced==21)
 }
 
 
-var blankingPerPieceCost=hourlyRate/partsPerHour;
+var blankingPerPieceCost=parseFloat(hourlyRate/partsPerHour).toFixed(3);
 var packagingPerPieceCost= parseFloat((palletCost/pcsPerSkid)+(25/pcsPerSkid)).toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
 var freightPerPiece=total_freight/pcsPerTruck;
@@ -334,11 +334,8 @@ async function submitInvoice() {
         body: JSON.stringify(data)
     });
 
-  // After the fetch call to submit_invoice.php
-  let result = await response.json();
-
-  // Get the invoice_id from the JSON response
- 
+    // After the fetch call to submit_invoice.php
+    let result = await response.json();
 
     // Check if the first request was successful
     if (result.success) {
@@ -349,7 +346,7 @@ async function submitInvoice() {
         for (let i = 0; i < files.length; i++) {
             formData.append('invoice_files[]', files[i]);
         }
-        var currentInvoiceNumber = parseInt($('#invoice_number').val());
+        var currentInvoiceNumber = $('#invoice_number').val();
         // Add the invoice_id to the form data
         formData.append('invoice_id', currentInvoiceNumber);
 
@@ -364,29 +361,33 @@ async function submitInvoice() {
         if (result.success) {
             // Handle success
             console.log("Files uploaded successfully");
-            // Clear all input fields
-            $('input[type="text"], input[type="number"], select').val('');
-            // Clear the parts table
-            $("#parts_table").find("tr:gt(0)").remove();
-            // Increment the invoice number
-            var currentInvoiceNumber = parseInt($('#invoice_number').val());
-            $('#invoice_number').val(currentInvoiceNumber + 1);
-            // If the invoice was successfully submitted, generate the PDF
-            if (data.pdf_format == 'ford') {
-                window.location.href = 'generate_ford_quote_pdf.php?invoice_id=' + currentInvoiceNumber;
-            } else if (data.pdf_format == 'thai_summit') {
-                window.location.href = 'generate_thai_summit_quote.php?invoice_id=' + currentInvoiceNumber;
-            }
+        } else if (result.error === 'No files or invoice_id received.') {
+            // Handle specific error: no files or invoice_id received
+            console.log("No files or invoice_id received. Continuing to generate PDFs.");
         } else {
-            // Handle error
+            // Handle other errors
             console.error("Error uploading files: " + result.error);
+            return;  // Stop execution if there's an error other than 'No files or invoice_id received.'
+        }
+
+        // Clear all input fields
+        $('input[type="text"], input[type="number"], select').val('');
+        // Clear the parts table
+        $("#parts_table").find("tr:gt(0)").remove();
+        // Increment the invoice number
+        var currentInvoiceNumber = $('#invoice_number').val();
+    
+        // If the invoice was successfully submitted, generate the PDF
+        if (data.pdf_format == 'ford') {
+            window.location.href = 'generate_ford_quote_pdf.php?invoice_id=' + currentInvoiceNumber;
+        } else if (data.pdf_format == 'thai_summit') {
+            window.location.href = 'generate_thai_summit_quote.php?invoice_id=' + currentInvoiceNumber;
         }
     } else {
         // Handle error
         console.error("Error submitting invoice: " + result.error);
     }
 }
-
 window.onload = function(){
     document.getElementById('submit-button').addEventListener('click', function(event) {
         event.preventDefault();
@@ -427,6 +428,9 @@ function clearPartInputs() {
     document.getElementById('blank_die?').value = '';
     document.getElementById('model_year').value = '';
     document.getElementById('trap').value = '';
+    document.getElementById('freight').value = '';
+    document.getElementById('cost_per_lb').value = '';
+
 }
 
 window.onload = function(){

@@ -14,22 +14,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     for ($i = 0; $i < $fileCount; $i++) {
         $fileName = $_FILES['invoice_files']['name'][$i];
         $fileTmpName = $_FILES['invoice_files']['tmp_name'][$i];
-
-        // Generate a unique name for the file before saving it
-        $uniqueFileName = uniqid() . '-' . $fileName;
-
-        // You should create a 'uploads' directory in your project root
-        $destination = '../../uploads/' . $uniqueFileName;
-
+    
+        // Use the original file name
+        $destination = '../../uploads/' . $fileName;
+    
         // Move the file
         if (move_uploaded_file($fileTmpName, $destination)) {
             // Read the file contents
             $fileContents = file_get_contents($destination);
-
+    
             // Insert file info into the database table
-            $sql = "INSERT INTO invoice_files (invoice_id, file_name, file_contents) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_contents`) VALUES (?, ?, ?)";
             $stmt = $database->prepare($sql);
-            $stmt->bind_param("iss", $invoice_id, $uniqueFileName, $fileContents);
+            $stmt->bind_param("sss", $invoice_id, $fileName, $fileContents);
             $stmt->execute();
         }
     }
