@@ -6,9 +6,11 @@ include '../../connection.php'; // Assuming you have a db_connection.php file fo
 $result = $database->query("SELECT `Customer Name` FROM Customer");
 $customers = $result->fetch_all(MYSQLI_ASSOC);
 
-// Fetch current invoice number
-$invoice_result = $database->query("SELECT MAX(invoice_id) as max_invoice FROM invoice");
-$current_invoice = intval($invoice_result->fetch_assoc()['max_invoice']) + 1;
+
+$invoice_author= $_SESSION['user'];
+$author_parts = explode(' ', $invoice_author);
+$author_initials = $author_parts[0][0] . $author_parts[1][0];
+
 
 // Get current date
 $current_date = date("m-d-Y");
@@ -68,7 +70,7 @@ $lines = $line_result->fetch_all(MYSQLI_ASSOC);
     
     border: 2px solid black;
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
     margin: 10px;
     box-sizing: border-box;
 }
@@ -358,14 +360,12 @@ $(document).ready(function(){
     });
 });
     </script>
-       <label for="invoice_number"></label>
-    <input type="hidden" id="invoice_number" name="invoice_number" value="<?= $current_invoice ?>" readonly>
  
     <label for="date"></label>
     <input type="hidden" id="date" name="date" value="<?= $current_date ?>" readonly>
     
     
-    <input type="hidden" id="invoice_id" value="<?php echo $current_invoice; ?>">
+    <input type="hidden" id="invoice_number" name="invoice_number" readonly>
 
     <label for="volume">Volume:</label>
 
@@ -500,6 +500,14 @@ $(document).ready(function(){
 
 
 <script>
+$(document).ready(function(){
+    $('#partNumber').on('input', function() {
+        var partNumber = $(this).val();
+        var authorInitials = "<?php echo $author_initials; ?>";
+        $('#invoice_number').val(authorInitials + '_' + partNumber);
+    });
+});
+
 $("#add-part").click(function(){
     var partNumber = $("#part").val();
     var wash_and_lube = document.getElementById('wash_and_lube').checked;
