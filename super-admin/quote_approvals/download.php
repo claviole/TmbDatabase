@@ -6,7 +6,7 @@ if (isset($_GET['quoteId'])) {
     $invoice_id = $_GET['quoteId'];
   
     $stmt = $database->prepare("SELECT `file_name`, `file_contents` FROM `invoice_files` WHERE `invoice_id` = ? AND `file_name` = ?");
-$stmt->bind_param("is", $invoice_id, $_GET['file_name']);
+$stmt->bind_param("ss", $invoice_id, $_GET['file_name']);
     $stmt->execute();
 
     $result = $stmt->get_result();

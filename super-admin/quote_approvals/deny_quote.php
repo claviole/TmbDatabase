@@ -6,7 +6,7 @@ if(isset($_POST['quoteId'])){
 
     // Prepare the statement to update the quote
     $stmt = $database->prepare("UPDATE invoice SET approval_status = 'Denied' WHERE invoice_id = ?");
-    $stmt->bind_param("i", $quoteId);
+    $stmt->bind_param("s", $quoteId);
     $stmt->execute();
 
     // Check if the update was successful

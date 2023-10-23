@@ -17,7 +17,7 @@ $skidsPerTruck = $database->real_escape_string($_POST['skidsPerTruck']);
 $scrapConsumption = $database->real_escape_string($_POST['scrapConsumption']);
 
 $stmt = $database->prepare("INSERT INTO Part (`Part#`,`supplier_name`, `Part Name`, `Mill`, `Platform`, `Type`, `Surface`, `Material Type`, `pallet_type`, `pallet_size`,`pallet_uses`, `Pieces per Lift`, `Stacks per Skid`, `Skids per Truck`, `Scrap Consumption`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssssssssiiddd", $partNumber,$supplier_name, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $piecesPerLift, $stacksPerSkid, $skidsPerTruck, $scrapConsumption);
+$stmt->bind_param("ssssssssssiiddf", $partNumber,$supplier_name, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $piecesPerLift, $stacksPerSkid, $skidsPerTruck, $scrapConsumption);
 
 $stmt->execute();
 

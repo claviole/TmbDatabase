@@ -507,7 +507,15 @@ $(document).ready(function(){
         $('#invoice_number').val(authorInitials + '_' + partNumber);
     });
 });
-
+$(document).ready(function(){
+    // Show an alert if the submit button is clicked without a customer selected
+    $('#submit-button').click(function(e){
+        if($('#customer').val() == '') {
+            e.preventDefault();
+            alert('Please select a customer before submitting.');
+        }
+    });
+});
 $("#add-part").click(function(){
     var partNumber = $("#part").val();
     var wash_and_lube = document.getElementById('wash_and_lube').checked;
