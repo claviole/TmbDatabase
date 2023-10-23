@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT DISTINCT `invoice_id`, `Customer Name` FROM `invoice` ");
+$result = $database->query("SELECT DISTINCT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' ");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
@@ -18,14 +18,13 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Quote Approvals</title>
     <style>
-     body {
+      body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
 
-     
         .quote-list {
     position: relative; /* Add this line */
     width: 80%;
@@ -113,7 +112,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         }
         .quote-header {
     display: flex;
-    justify-content: space-between;
+  
     padding: 10px;
     background-color: #ddd;
 }
@@ -121,16 +120,34 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 .quote-id-header, .customer-name-header {
     font-weight: bold;
 }
-.quote, .quote-header {
+.quote-id-header {
+    max-width: 50%; /* Adjust as needed */
+    margin-left: 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.version-header {
+    max-width: 50px;
+    margin-left: 400px; /* Adjust as needed */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.customer-name-header{
+    max-width: 50%;
+    margin-left: 500px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.quote{
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr 1fr; /* Adjust as needed */
+    grid-template-columns: 1fr 1fr 1fr; /* Adjust as needed */
+    justify-content: start; /* Add this line */
     gap: 10px; /* Adjust as needed */
 }
 .quote-id {
     color: blue;
     cursor: pointer;
 }
-
 .quote-header {
     position: sticky; /* Change this line */
     top: 0px; /* Adjust as needed */
@@ -138,10 +155,39 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     background-color: #fff; /* Add this line */
     z-index: 10; /* Add this line */
     display: flex;
-    justify-content: space-between;
     padding: 10px;
     background-color: #ddd;
 }
+
+
+        .quote-files {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+       
+
+   
+
+.quote-id {
+    color: blue;
+    cursor: pointer;
+}
+
+
+        .quote-files {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
 .btn {
     display: inline-block;
     padding: 10px 20px;
@@ -184,11 +230,15 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <div class="quote-list">
         <input type="text" id="quote-search" placeholder="Search quotes...">
         <div class="quote-header">
+            <span class="quote-id-header">Quote ID</span>
+            <span class="version-header">Version</span>
+            <span class="customer-name-header">Customer Name</span>
             <!-- ... -->
         </div>
     <?php foreach($quotes as $quote): ?>
         <div class="quote">
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
+            <span class="version"><?= $quote['version'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
           
         </div>
@@ -201,6 +251,11 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     </div>
     <!-- Your scripts here -->
     <script>
+        function confirmDelete(quoteId) {
+    if (confirm('Are you sure you want to delete this quote?')) {
+        window.location.href = 'delete_quote.php?invoice_id=' + quoteId;
+    }
+}
           $('#quote-search').on('input', function() {
             var search = $(this).val().toLowerCase();
             $('.quote').each(function() {
@@ -222,7 +277,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     success: function(data) {
         $(".quote-files").html(data);
         var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
-        var deleteButton = '<a href="delete_quote.php?invoice_id=' + quoteId + '" class="delete-btn">Delete Quote</a>';
+        var deleteButton = '<a href="delete_quote.php" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
         $(".quote-files").append(editButton); // Append the button after the files
         $(".quote-files").append(deleteButton); // Append the button after the files
     }   
