@@ -194,7 +194,7 @@ elements[45]=nom;
 elements[46]=blank_die;
 elements[47]=model_year;
 elements[48]=trap;
-
+elements[49]=palletCost;
 var part = {
     invoiceId: elements[0],
     partNumber: elements[1],
@@ -244,7 +244,8 @@ var part = {
     nom: elements[45],
     blank_die: elements[46],
     model_year: elements[47],
-    trap: elements[48]
+    trap: elements[48],
+    palletCost: elements[49]
 
 }
 data.parts.push(part);
@@ -292,6 +293,7 @@ window.onload = function(){
     
 document.getElementById('submit-button').addEventListener('click', function(event) {
     event.preventDefault();
+    
     submitInvoice();
     fetch('Admin/fetch_invoice.php', {
         method: 'POST',
