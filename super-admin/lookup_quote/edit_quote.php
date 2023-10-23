@@ -209,9 +209,13 @@ label[for="pdf_format"] {
     color: black;
 }
 
-    </style>
+    .save-button {
+        background-color: red;
+        color: white;
+    }
 
-    <!-- Your styles here -->
+ 
+</style>
 </head>
 <body>
 
@@ -398,7 +402,7 @@ label[for="pdf_format"] {
     <input type="float" id="cost_per_lb" name="cost_per_lb">
     </div>
     
-    <button id="add-part" type="button">Add Part</button>
+    <button id="add-part" type="button">Add Changes</button>
     </div>
     </div>
     
@@ -452,7 +456,9 @@ label[for="pdf_format"] {
     </tr>
 <?php endforeach; ?>
 </tbody>
+
 </table>
+
 
 </div>
 <style>
@@ -490,9 +496,9 @@ label[for="pdf_format"] {
 </select>
 
 </form>
-<td><button class="save-button">Save</button></td>
+<td><button class="save-button">Save Manual Overrides</button></td>
 <td><button class="generate-pdf-button"> Generate PDF</button></td>
-<button id="submit-button" type="button">Submit Invoice</button>
+<button id="submit-button" type="button">Submit Changes</button>
 </div>
 </div>
 </body>

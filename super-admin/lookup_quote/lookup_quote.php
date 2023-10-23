@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name` FROM `invoice` ");
+$result = $database->query("SELECT DISTINCT `invoice_id`, `Customer Name` FROM `invoice` ");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
