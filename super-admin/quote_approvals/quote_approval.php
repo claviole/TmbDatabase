@@ -28,7 +28,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     position: relative; /* Add this line */
     width: 80%;
     margin: 20px auto;
-    padding: 5px;
+    padding: 0px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);

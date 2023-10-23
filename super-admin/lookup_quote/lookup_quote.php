@@ -25,16 +25,19 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             background-color: #f4f4f4;
         }
 
+     
         .quote-list {
+    position: relative; /* Add this line */
     width: 80%;
     margin: 20px auto;
-    padding: 20px;
+    padding: 0px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
-    overflow-y: auto;  /* Add this line */
-    max-height: 400px; /* Adjust this value as needed */
+    overflow-y: auto;
+    max-height: 400px;
 }
+
 
         .quote {
             display: flex;
@@ -127,7 +130,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     color: blue;
     cursor: pointer;
 }
-}
+
 .quote-header {
     position: sticky; /* Change this line */
     top: 0px; /* Adjust as needed */
@@ -139,6 +142,38 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     padding: 10px;
     background-color: #ddd;
 }
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-weight: 700;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+.delete-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    font-weight: 700;
+}
+
+.delete-btn:hover {
+    background-color: #da190b;
+}
+
     </style>
 </head>
 <body>
@@ -161,6 +196,8 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 </div>
 <div class="quote-files">
         <!-- Files will be loaded here -->
+
+       
     </div>
     <!-- Your scripts here -->
     <script>
@@ -176,18 +213,22 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
                 }
             });
         });
-    $(".quote").click(function() {
+        $(".quote").click(function() {
     var quoteId = $(this).find(".quote-id").text();
     $.ajax({
-        url: 'fetch_quote_files.php',
-        method: 'POST',
-        data: {quoteId:quoteId},
-        success: function(data) {
-            $(".quote-files").html(data);
-        }
-    });
-});
+    url: 'fetch_quote_files.php',
+    method: 'POST',
+    data: {quoteId:quoteId},
+    success: function(data) {
+        $(".quote-files").html(data);
+        var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
+        var deleteButton = '<a href="delete_quote.php?invoice_id=' + quoteId + '" class="delete-btn">Delete Quote</a>';
+        $(".quote-files").append(editButton); // Append the button after the files
+        $(".quote-files").append(deleteButton); // Append the button after the files
+    }   
 
+});
+});
 
 
 </script>

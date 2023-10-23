@@ -41,10 +41,6 @@ $database->begin_transaction();
 
 
 try {
-    // Get the ID of the inserted invoice
-    $invoice_id = $database->insert_id;
-    // Insert the invoice into the invoice tabl
-    
 
 
 
@@ -104,11 +100,21 @@ try {
         $trap= $database->real_escape_string($part['trap']);
         $palletCost= $database->real_escape_string($part['palletCost']);
         // Insert the part into the Line_Item table
-    $database->query("INSERT INTO Line_Item (invoice_id,`Part#`, `Part Name`, `Material Type`, `# Outputs`, `Volume`, `Width(mm)`, `width(in)`, `Pitch(mm)`, `Pitch(in)`, `Gauge(mm)`,`Density`, `Gauge(in)`, `Blank Weight(kg)`, `Blank Weight(lb)`, `Scrap Consumption`, `Pcs Weight(kg)`, `Pcs Weight(lb)`, `Scrap Weight(kg)`, `Scrap Weight(lb)`, `Pallet Type`, `Pallet Size`, `Pallet Weight(lb)`,`Pcs per Lift`,`Stacks per Skid`,`Pcs per Skid`,`Lift Weight+Skid Weight(lb)`,`Stack Height`,`Skids per Truck`,`Pieces per Truck`,`Truck Weight(lb)`,`Annual Truckloads`,`UseSkidPcs`,`Skid cost per piece`,`Line Produced on`,`PPH`,`Uptime`,`Blanking per piece cost`,`Packaging per Piece Cost`,`freight per piece cost`,`Total Cost per Piece`,`wash_and_lube`,`material_cost`,`material_markup_percent`,`material_cost_markup`,`nom?`,`blank_die?`,`model_year`,`trap`,`palletCost`) VALUES ('$invoice_id','$partNumber','$partName','$materialType','$numOutputs','$volume','$width','$widthIN','$pitch','$pitchIN','$gauge','$Density','$gaugeIN','$blankWeightKg','$blankWeightlbs','$scrapConsumption','$pcsWeightKg','$pcsWeight','$scrapLbsInKg','$scrapLbs','$palletType','$palletSize','$palletWeight','$pcsPerLift','$stacksPerSkid','$pcsPerSkid','$liftWeight','$stackHeight','$skidsPerTruck','$pcsPerTruck','$weightPerTruck','$annualTruckLoads','$UseSkidPcs','$skidCostPerPcs','$lineProduced','$partsPerHour','$uptime','$blankingPerPieceCost','$packagingPerPieceCost','$freightPerPiece','$totalPerPiece','$wash_and_lube','$material_cost','$material_markup_percent','$material_cost_markup','$nom','$blank_die','$model_year','$trap','$palletCost')");
-    }
+        $stmt = $database->prepare("UPDATE Line_Item SET `Part Name` = ?, `Material Type` = ?, `# Outputs` = ?, `Volume` = ?, `Width(mm)` = ?, `width(in)` = ?, `Pitch(mm)` = ?, `Pitch(in)` = ?, `Gauge(mm)` = ?, `Density` = ?, `Gauge(in)` = ?, `Blank Weight(kg)` = ?, `Blank Weight(lb)` = ?, `Scrap Consumption` = ?, `Pcs Weight(kg)` = ?, `Pcs Weight(lb)` = ?, `Scrap Weight(kg)` = ?, `Scrap Weight(lb)` = ?, `Pallet Type` = ?, `Pallet Size` = ?, `Pallet Weight(lb)` = ?, `Pcs per Lift` = ?, `Stacks per Skid` = ?, `Pcs per Skid` = ?, `Lift Weight+Skid Weight(lb)` = ?, `Stack Height` = ?, `Skids per Truck` = ?, `Pieces per Truck` = ?, `Truck Weight(lb)` = ?, `Annual Truckloads` = ?, `UseSkidPcs` = ?, `Skid cost per piece` = ?, `Line Produced on` = ?, `PPH` = ?, `Uptime` = ?, `Blanking per piece cost` = ?, `Packaging per Piece Cost` = ?, `freight per piece cost` = ?, `Total Cost per Piece` = ?, `wash_and_lube` = ?, `material_cost` = ?, `material_markup_percent` = ?, `material_cost_markup` = ?, `nom?` = ?, `blank_die?` = ?, `model_year` = ?, `trap` = ?, `palletCost` = ? WHERE `invoice_id` = ? AND `Part#` = ?");
+        $stmt->bind_param("ssddddddddddddddddsdddddddddddddiddddddddddssssdsd", $partName, $materialType, $numOutputs, $volume, $width, $widthIN, $pitch, $pitchIN, $gauge, $Density, $gaugeIN, $blankWeightKg, $blankWeightlbs, $scrapConsumption, $pcsWeightKg, $pcsWeight, $scrapLbsInKg, $scrapLbs, $palletType, $palletSize, $palletWeight, $pcsPerLift, $stacksPerSkid, $pcsPerSkid, $liftWeight, $stackHeight, $skidsPerTruck, $pcsPerTruck, $weightPerTruck, $annualTruckLoads, $UseSkidPcs, $skidCostPerPcs, $lineProduced, $partsPerHour, $uptime, $blankingPerPieceCost, $packagingPerPieceCost, $freightPerPiece, $totalPerPiece, $wash_and_lube, $material_cost, $material_markup_percent, $material_cost_markup, $nom, $blank_die, $model_year, $trap, $palletCost, $invoice_id, $partNumber);
+        
+        $stmt->execute();    }
+    // Get the maximum version number for the given invoice number
+$result = $database->query("SELECT MAX(`version`) as `max_version` FROM `invoice` WHERE invoice_id = '$invoice_id'");
+$row = $result->fetch_assoc();
+
+$max_version = $row['max_version'] + 1;  // Increment the version number
+
+// Insert the new invoice with the incremented version number
+$database->query("INSERT INTO invoice (`invoice_date`,`invoice_id`, `invoice_author`,`contingencies`,`version`) VALUES ('$invoiceDate','$invoice_id', '$author','$contingencies','$max_version')");
+
     
-    
-    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies')");
+   
     
 
     

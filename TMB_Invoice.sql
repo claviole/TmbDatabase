@@ -170,6 +170,7 @@ CREATE TABLE `Line_Item` (
   `material_cost` float DEFAULT NULL,
   `material_markup_percent` float DEFAULT NULL,
   `material_cost_markup` float DEFAULT NULL,
+  `palletCost` float DEFAULT NULL,
   FOREIGN KEY (`Part#`) REFERENCES `Part` (`Part#`),
   FOREIGN KEY (`Part Name`) REFERENCES `Part` (`Part Name`),
   FOREIGN KEY (`Material Type`) REFERENCES `Part` (`Material Type`),
