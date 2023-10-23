@@ -16,7 +16,7 @@ $stacksPerSkid = $database->real_escape_string($_POST['stacksPerSkid']);
 $skidsPerTruck = $database->real_escape_string($_POST['skidsPerTruck']);
 $scrapConsumption = $database->real_escape_string($_POST['scrapConsumption']);
 $stmt = $database->prepare("UPDATE Part SET `supplier_name` = ?, `Part Name` = ?, `Mill` = ?, `Platform` = ?, `Type` = ?, `Surface` = ?, `Material Type` = ?, `pallet_type` = ?, `pallet_size` = ?, `pallet_uses` = ?, `Pieces per Lift` = ?, `Stacks per Skid` = ?, `Skids per Truck` = ?, `Scrap Consumption` = ? WHERE `Part#` = ?");
-$stmt->bind_param("ssssssssssiiddds", $supplier_name, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $piecesPerLift, $stacksPerSkid, $skidsPerTruck, $scrapConsumption, $partNumber);
+$stmt->bind_param("sssssssssiiddds", $supplier_name, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $piecesPerLift, $stacksPerSkid, $skidsPerTruck, $scrapConsumption, $partNumber);
 
 $stmt->execute();
 

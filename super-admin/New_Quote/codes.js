@@ -45,6 +45,8 @@ async function addPart() {
     var numOutputs = document.getElementById('# Out').value;
     var lineProduced = document.getElementById('line_produced').value;
     var uptime = document.getElementById('uptime').value/100;
+    var uptime_multiplier=uptime/100;
+    var partsPerHour = document.getElementById('pph').value*uptime_multiplier;
     var partsPerHour = document.getElementById('pph').value*uptime;
     var widthIN = width/25.4;
     var pitchIN= pitch/25.4;

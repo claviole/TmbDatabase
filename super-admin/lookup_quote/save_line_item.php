@@ -11,7 +11,7 @@ $totalCost = $_POST['totalCost'];
 
 
 // Prepare an SQL statement to update the row
-$stmt = $database->prepare("UPDATE `line_item` SET `Blanking Per Piece Cost`= ?,`Packaging Per Piece Cost` = ?,`Total Cost per Piece` = ? WHERE `Part#` = ?");
+$stmt = $database->prepare("UPDATE `Line_Item` SET `Blanking Per Piece Cost`= ?,`Packaging Per Piece Cost` = ?,`Total Cost per Piece` = ? WHERE `Part#` = ?");
 
 // Bind the new values to the SQL statement
 

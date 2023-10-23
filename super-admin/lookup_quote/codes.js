@@ -316,7 +316,7 @@ document.getElementById('submit-button').addEventListener('click', function(even
 
 
 async function submitInvoice() {
-   
+    data.invoiceId = document.getElementById('invoice_number').value;
     data.customer = document.getElementById('customer').value;
     data.invoiceDate = new Date().toISOString();
     data.parts = data.parts;

@@ -2,14 +2,14 @@
 session_start();
 include '../../connection.php';
 
-$quote_id = $_GET['invoice_id'];
+$invoice_id = $_GET['invoice_id'];
 
 // Fetch the quote and line items from the database
-$quote = $database->query("SELECT * FROM invoice WHERE invoice_id = '$quote_id'")->fetch_assoc();
-$line_items = $database->query("SELECT * FROM line_item WHERE invoice_id = '$quote_id'")->fetch_all(MYSQLI_ASSOC);
+$invoice = $database->query("SELECT * FROM invoice WHERE invoice_id = '$invoice_id'")->fetch_assoc();
+$line_items = $database->query("SELECT * FROM Line_Item WHERE invoice_id = '$invoice_id'")->fetch_all(MYSQLI_ASSOC);
 // Then assign the fetched values to your variables
 
-$customer_id = $quote['customer_id'];
+$customer_id = $invoice['customer_id'];
 
 // Fetch customers for dropdown
 $result = $database->query("SELECT `Customer Name` FROM Customer");
@@ -22,7 +22,7 @@ $parts = $result_part->fetch_all(MYSQLI_ASSOC);
 // Fetch lines for dropdown
 $line_result = $database->query("SELECT `line_id`, `Line_Location`, `Line_Name` FROM `Lines`");
 $lines = $line_result->fetch_all(MYSQLI_ASSOC);
-$resultmax = $database->query("SELECT MAX(`version`) as `max_version` FROM `invoice` WHERE invoice_id = '$quote_id'");
+$resultmax = $database->query("SELECT MAX(`version`) as `max_version` FROM `invoice` WHERE invoice_id = '$invoice_id'");
 $row = $resultmax->fetch_assoc();
 
 $max_version = $row['max_version'];
@@ -320,7 +320,7 @@ label[for="pdf_format"] {
     <input type="hidden" id="date" name="date" value="<?= $current_date ?>" readonly>
     
     
-    <input type="hidden" id="invoice_number" name="invoice_number" value="<?php echo $quote_id; ?>" readonly>
+    <input type="hidden" id="invoice_number" name="invoice_number" value="<?php echo $invoice_id; ?>" readonly>
     
 
     <label for="volume">Volume:</label>
@@ -575,13 +575,13 @@ $("#add-part").click(function(){
 
     var partNumber = $("#partNumber").val();
     var max_version = <?php echo $max_version; ?>;
-    var current_invoice="<?php echo $quote_id; ?>";
-    $('#invoice_number').val(current_invoice);
+   
     var wash_and_lube = document.getElementById('wash_and_lube').checked;
     if (partNumber != "") {
         // Capture form data before it's cleared
         const formData = {
            
+            invoice_number: (document.getElementById('invoice_number').value),
             pdf_format:document.getElementById('pdf_format').value,
             partNumber: (document.getElementById('partNumber').value),
             supplier_name: document.getElementById('supplier_name').value,
