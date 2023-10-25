@@ -87,7 +87,23 @@ $author_initials = $author_parts[0][0] . $author_parts[1][0];
     margin: 10px;
     box-sizing: border-box;
 }
+#generate-pdf-button {
+    background-color: #4CAF50; /* Green background */
+    border: none; /* No border */
+    color: white; /* White text */
+    padding: 15px 32px; /* Some padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer; /* Mouse pointer on hover */
+    border-radius: 12px; /* Rounded corners */
+}
 
+#generate-pdf-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
 
 
 form label {
@@ -213,6 +229,23 @@ label[for="pdf_format"] {
         background-color: red;
         color: white;
     }
+    .save-button {
+    background-color: #FF0000; /* Red background */
+    border: none; /* No border */
+    color: white; /* White text */
+    padding: 15px 32px; /* Some padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer; /* Mouse pointer on hover */
+    border-radius: 12px; /* Rounded corners */
+}
+
+.save-button:hover {
+    background-color: #CC0000; /* Darker red on hover */
+}
 
  
 </style>
@@ -417,8 +450,6 @@ label[for="pdf_format"] {
             <th>Pitch(mm)</th>
             <th>Gauge(mm)</th>
             <th>Density</th>
-            <th># Outputs</th>
-            <th>Line Produced On</th>
             <th>Uptime</th>
             <th>PPH</th>
             <th>Pcs per Skid</th>
@@ -441,8 +472,6 @@ label[for="pdf_format"] {
         <td><?php echo $item['Pitch(mm)']; ?></td>
         <td><?php echo $item['Gauge(mm)']; ?></td>
         <td><?php echo $item['Density']; ?></td>
-        <td><?php echo $item['# Outputs']; ?></td>
-        <td><?php echo $item['Line Produced on']; ?></td>
         <td><?php echo $item['Uptime']." % "; ?></td>
         <td><?php echo $item['PPH']; ?></td>
         <td><?php echo $item['Pcs per Skid']; ?></td>
@@ -497,8 +526,8 @@ label[for="pdf_format"] {
 
 </form>
 <td><button class="save-button">Save Manual Overrides</button></td>
-<td><button class="generate-pdf-button"> Generate PDF</button></td>
-<button id="submit-button" type="button">Submit Changes</button>
+<button id="generate-pdf-button" class="generate-pdf-button">Generate PDF</button>
+<button id="submit-button" type="button">Submit Recalulated Part</button>
 </div>
 </div>
 </body>
@@ -552,6 +581,7 @@ $(".line-item").click(function(){
             var data = JSON.parse(response);
             console.log("Part data: ", data);
             // You can now use the part_id and additional data to fill form fields
+            $('#customer_id').val(data['customer_id']);
             $('#supplier_name').val(data['supplier_name']);
             $('#partNumber').val((data['Part#']));
             $('#partName').val(data['Part Name']);
@@ -576,6 +606,7 @@ $("#add-part").click(function(){
     var partNumber = $("#partNumber").val();
     var max_version = <?php echo $max_version; ?>;
    
+
     var wash_and_lube = document.getElementById('wash_and_lube').checked;
     if (partNumber != "") {
         // Capture form data before it's cleared
@@ -666,6 +697,39 @@ $(".generate-pdf-button").click(function() {
     } else {
         alert('Please select a PDF format.');
     }
+});
+$(document).ready(function(){
+    $("#customer").change(function(){
+        var customerName = $(this).val();
+        if (customerName != "") {
+            $.ajax({
+                url: 'fetch_customer.php',
+                method: 'POST',
+                data: {customerName:customerName},
+                success: function(data) {
+                    var customerData = JSON.parse(data);
+                    $('#customer_id').val(customerData['customer_id']);
+                    $('#customer_address').val(customerData['Customer Address']);
+                    $('#customer_city').val(customerData['Customer City']);
+                    $('#customer_state').val(customerData['Customer State']);
+                    $('#customer_zip').val(customerData['Customer Zip']);
+                    $('#customer_phone').val(customerData['Customer Phone']);
+                    $('#customer_email').val(customerData['Customer Email']);
+                    $('#customer_contact').val(customerData['Customer Contact']);
+                }
+            });
+        } else {
+            // Clear all the input fields
+            $('#customer_id').val('');
+            $('#customer_address').val('');
+            $('#customer_city').val('');
+            $('#customer_state').val('');
+            $('#customer_zip').val('');
+            $('#customer_phone').val('');
+            $('#customer_email').val('');
+            $('#customer_contact').val('');
+        }
+    });
 });
 
 </script>

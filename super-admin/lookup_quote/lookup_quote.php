@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT DISTINCT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' ");
+$result = $database->query("SELECT `invoice_id`, `Customer Name` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' GROUP BY `invoice_id`, `Customer Name`");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
@@ -126,12 +126,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.version-header {
-    max-width: 50px;
-    margin-left: 400px; /* Adjust as needed */
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+
 .customer-name-header{
     max-width: 50%;
     margin-left: 500px;
@@ -231,14 +226,12 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         <input type="text" id="quote-search" placeholder="Search quotes...">
         <div class="quote-header">
             <span class="quote-id-header">Quote ID</span>
-            <span class="version-header">Version</span>
             <span class="customer-name-header">Customer Name</span>
             <!-- ... -->
         </div>
     <?php foreach($quotes as $quote): ?>
         <div class="quote">
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
-            <span class="version"><?= $quote['version'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
           
         </div>
@@ -277,11 +270,10 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     success: function(data) {
         $(".quote-files").html(data);
         var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
-        var deleteButton = '<a href="delete_quote.php" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
+        var deleteButton = '<a href="#" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
         $(".quote-files").append(editButton); // Append the button after the files
         $(".quote-files").append(deleteButton); // Append the button after the files
     }   
-
 });
 });
 

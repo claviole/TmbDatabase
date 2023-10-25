@@ -182,6 +182,7 @@ $pdf->SetLeftMargin(50);
 $html = '<table bgcolor="#FFC760" border="1.5" cellpadding="3" cellspacing="0" style="width:80%; border:1px solid #ddd; margin-top:20px;">';
 $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">% Scrap Return to TSK</th><td style ="text-align:center;">' . $item['Scrap Consumption'] . '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Blanking Cost</th><td style ="text-align:center;">' . '$'. number_format($item['Blanking per piece cost'],3) . "/Pc". '</td></tr>';
+    $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Packaging Cost</th><td style ="text-align:center;">' . '$'. number_format($item['Packaging Per Piece Cost'],3) . "/Pc". '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Freight Cost</th><td style ="text-align:center;">' . '$'. number_format($item['freight per piece cost'],3) . "/Pc". '</td></tr>';
     $html .= '<tr><th style ="text-align:center;font-weight:bold" bgcolor="#ADD8E6">Total : </th><td style ="text-align:center;" bgcolor="#61FF33">' . '$'. number_format($item['freight per piece cost']+$item['Blanking per piece cost']+ $item['Packaging Per Piece Cost'],3) . "/Pc". '</td></tr>';
 

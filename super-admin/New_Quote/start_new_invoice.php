@@ -528,6 +528,7 @@ $("#add-part").click(function(){
             supplier_name: document.getElementById('supplier_name').value,
             partName: document.getElementById('partName').value,
             mill: document.getElementById('mill').value,
+            customer_id: document.getElementById('customer_id').value,
             platform: document.getElementById('platform').value,
             type: document.getElementById('type').value,
             surface: document.getElementById('surface').value,

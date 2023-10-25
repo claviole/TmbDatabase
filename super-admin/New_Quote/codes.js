@@ -1,6 +1,6 @@
 var elements=[];
 var data = {
-    customerId: '',
+    customer_id: '',
     customer: '',
     invoiceDate: '',
     parts: [],
@@ -323,7 +323,7 @@ async function submitInvoice() {
     data.customer = selectedCustomer;
     data.invoiceDate = new Date().toISOString();
     data.parts = data.parts;
-    data.customerId = $('#customer_id').val();
+    data.customer_id = $('#customer_id').val();
     data.invoice_author = user;
     data.pdf_format = $('#pdf_format').val();
     data.contingencies = $('#contingencies').val();

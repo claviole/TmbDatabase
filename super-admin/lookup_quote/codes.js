@@ -197,7 +197,7 @@ elements[48]=trap;
 elements[49]=palletCost;
 
 var part = {
-    invoiceId: elements[0],
+    invoice_id: elements[0],
     partNumber: elements[1],
     partName: elements[2],
     materialType: elements[3],
@@ -316,11 +316,11 @@ document.getElementById('submit-button').addEventListener('click', function(even
 
 
 async function submitInvoice() {
-    data.invoiceId = document.getElementById('invoice_number').value;
+    data.invoice_id = $('#invoice_number').val();
     data.customer = document.getElementById('customer').value;
     data.invoiceDate = new Date().toISOString();
     data.parts = data.parts;
-    data.customerId = $('#customer_id').val();
+    data.customer_id = $('#customer_id').val();
     data.invoice_author = user;
     data.pdf_format = $('#pdf_format').val();
     data.contingencies = $('#contingencies').val();
