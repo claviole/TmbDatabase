@@ -27,14 +27,21 @@ if (!isset($data['invoice_author'])) {
     echo json_encode(['error' => 'invoice_author not provided.']);
     exit();
 }
-$customer = $database->real_escape_string($data['customer']);
 
 $invoiceDate = $database->real_escape_string($data['invoiceDate']);
-$customerId = $database->real_escape_string($data['customerId']);
+$customerId = $database->real_escape_string($data['customer_id']);
 $author_fullname = $database->real_escape_string($data['invoice_author']);
 $author_parts = explode(' ', $author_fullname);
 $author = $author_parts[0][0] . $author_parts[1][0];
 $contingencies = $database->real_escape_string($data['contingencies']);
+$query = "SELECT `Customer Name` FROM `Customer` WHERE `customer_id` = ?";
+$stmt = $database->prepare($query);
+$stmt->bind_param("s", $customerId);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$customerName = $row['Customer Name'];
+
 
 // Start a transaction
 $database->begin_transaction();
@@ -49,7 +56,7 @@ try {
     $parts = $data['parts'];
 
     foreach ($parts as $part) {
-        $invoice_id = $database->real_escape_string($part['invoiceId']);
+        $invoice_id = $database->real_escape_string($part['invoice_id']);
         $partNumber = $database->real_escape_string($part['partNumber']);
         $partName= $database->real_escape_string($part['partName']);
         $materialType = $database->real_escape_string($part['materialType']);
@@ -107,11 +114,10 @@ try {
     // Get the maximum version number for the given invoice number
 $result = $database->query("SELECT MAX(`version`) as `max_version` FROM `invoice` WHERE invoice_id = '$invoice_id'");
 $row = $result->fetch_assoc();
-
 $max_version = $row['max_version'] + 1;  // Increment the version number
-
+error_log("Max version: " . $max_version);
 // Insert the new invoice with the incremented version number
-$database->query("INSERT INTO invoice (`invoice_date`,`invoice_id`, `invoice_author`,`contingencies`,`version`) VALUES ('$invoiceDate','$invoice_id', '$author','$contingencies','$max_version')");
+$database->query("INSERT INTO invoice (`invoice_date`,`invoice_id`,`Customer Name`,`customer_id`, `invoice_author`,`contingencies`,`version`) VALUES ('$invoiceDate','$invoice_id','$customerName','$customerId', '$author','$contingencies','$max_version')");
 
     
    

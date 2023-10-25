@@ -30,7 +30,7 @@ if (!isset($data['invoice_author'])) {
 $customer = $database->real_escape_string($data['customer']);
 
 $invoiceDate = $database->real_escape_string($data['invoiceDate']);
-$customerId = $database->real_escape_string($data['customerId']);
+$customerId = $database->real_escape_string($data['customer_id']);
 $author_fullname = $database->real_escape_string($data['invoice_author']);
 $author_parts = explode(' ', $author_fullname);
 $author = $author_parts[0][0] . $author_parts[1][0];
@@ -44,7 +44,7 @@ try {
     // Get the ID of the inserted invoice
     $invoice_id = $database->insert_id;
     // Insert the invoice into the invoice tabl
-    
+    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies')");
 
 
 
