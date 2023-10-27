@@ -15,6 +15,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Quote Approvals</title>
     <style>
@@ -173,16 +174,15 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     cursor: pointer;
 }
 
-
-        .quote-files {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
-        }
-
+.quote-files {
+    display: none;
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
 .btn {
     display: inline-block;
     padding: 10px 20px;
@@ -268,23 +268,48 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
                 }
             });
         });
-        $(".quote").click(function() {
+        var currentQuoteId = null;
+
+$(".quote").click(function() {
     var quoteId = $(this).find(".quote-id").text();
-    $.ajax({
-    url: 'fetch_quote_files.php',
-    method: 'POST',
-    data: {quoteId:quoteId},
-    success: function(data) {
-        $(".quote-files").html(data);
-        var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
-        var deleteButton = '<a href="#" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
-        $(".quote-files").append(editButton); // Append the button after the files
-        $(".quote-files").append(deleteButton); // Append the button after the files
-    }   
-});
+    if (currentQuoteId === quoteId) {
+        $(".quote-files").slideUp();
+        currentQuoteId = null;
+    } else {
+        $.ajax({
+            url: 'fetch_quote_files.php',
+            method: 'POST',
+            data: {quoteId:quoteId},
+            success: function(data) {
+                $(".quote-files").hide().html(data);
+                var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
+                var deleteButton = '<a href="#" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
+                $(".quote-files").append(editButton);
+                $(".quote-files").append(deleteButton);
+                $(".quote-files").slideDown();
+            }   
+        });
+        currentQuoteId = quoteId;
+    }
 });
 
-
+$(document).on('click', '.quote-files a', function(e) {
+    e.preventDefault();
+    var fileName = $(this).text().replace('Download ', '');
+    Swal.fire({
+        title: 'Confirm download',
+        text: 'Do you want to download ' + fileName + '?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Download',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Download the file
+            window.location.href = $(this).attr('href');
+        }
+    });
+});
 </script>
 </body>
 </html>
