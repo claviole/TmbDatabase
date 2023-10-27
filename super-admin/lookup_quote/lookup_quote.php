@@ -218,9 +218,16 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     </style>
 </head>
 <body>
+<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
 <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+       
+
+     
+    </h1>
     <!-- ... -->
     <div class="quote-list">
         <input type="text" id="quote-search" placeholder="Search quotes...">

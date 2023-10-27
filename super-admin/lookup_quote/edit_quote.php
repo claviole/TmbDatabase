@@ -641,7 +641,7 @@ $("#add-part").click(function(){
                     var partData = JSON.parse(data);
                     console.log('Part data:', partData);
                     window.partData= partData;
-
+                            
 
                     addPart().then(function() {
                         $('#parts_table tr:last').addClass('green-highlight');
@@ -654,7 +654,7 @@ $("#add-part").click(function(){
         });
         
     } else {
-        clearPartInputs();
+        clearPartInputs();  
          // Clear all the input fields
         
     }
@@ -731,6 +731,14 @@ $(document).ready(function(){
         }
     });
 });
+$(document).ready(function() {
+    // Hide the "Submit Changes" button initially
+    $('#submit-button').hide();
 
+    // Show the "Submit Changes" button when the "Add Part" button is clicked
+    $('#add-part').click(function() {
+        $('#submit-button').show();
+    });
+});
 </script>
 </html>
