@@ -190,6 +190,7 @@ CREATE TABLE `Line_Item` (
   customer_id int(11) DEFAULT NULL,
   invoice_author varchar(255) NOT NULL,
   approval_status varchar(255) DEFAULT "Awaiting Approval",
+  award_total decimal(12,3) DEFAULT NULL,
   award_status varchar(255) DEFAULT "pending",
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
   `Customer Name` varchar(255) NOT NULL,

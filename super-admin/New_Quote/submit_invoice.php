@@ -51,7 +51,7 @@ try {
     
     
     $parts = $data['parts'];
-
+    $award_total = 0;
     foreach ($parts as $part) {
         $invoice_id = $database->real_escape_string($part['invoiceId']);
         $partNumber = $database->real_escape_string($part['partNumber']);
@@ -103,12 +103,13 @@ try {
         $model_year= $database->real_escape_string($part['model_year']);
         $trap= $database->real_escape_string($part['trap']);
         $palletCost= $database->real_escape_string($part['palletCost']);
+        $award_total+=($totalPerPiece*$volume);
         // Insert the part into the Line_Item table
     $database->query("INSERT INTO Line_Item (invoice_id,`Part#`, `Part Name`, `Material Type`, `# Outputs`, `Volume`, `Width(mm)`, `width(in)`, `Pitch(mm)`, `Pitch(in)`, `Gauge(mm)`,`Density`, `Gauge(in)`, `Blank Weight(kg)`, `Blank Weight(lb)`, `Scrap Consumption`, `Pcs Weight(kg)`, `Pcs Weight(lb)`, `Scrap Weight(kg)`, `Scrap Weight(lb)`, `Pallet Type`, `Pallet Size`, `Pallet Weight(lb)`,`Pcs per Lift`,`Stacks per Skid`,`Pcs per Skid`,`Lift Weight+Skid Weight(lb)`,`Stack Height`,`Skids per Truck`,`Pieces per Truck`,`Truck Weight(lb)`,`Annual Truckloads`,`UseSkidPcs`,`Skid cost per piece`,`Line Produced on`,`PPH`,`Uptime`,`Blanking per piece cost`,`Packaging per Piece Cost`,`freight per piece cost`,`Total Cost per Piece`,`wash_and_lube`,`material_cost`,`material_markup_percent`,`material_cost_markup`,`nom?`,`blank_die?`,`model_year`,`trap`,`palletCost`) VALUES ('$invoice_id','$partNumber','$partName','$materialType','$numOutputs','$volume','$width','$widthIN','$pitch','$pitchIN','$gauge','$Density','$gaugeIN','$blankWeightKg','$blankWeightlbs','$scrapConsumption','$pcsWeightKg','$pcsWeight','$scrapLbsInKg','$scrapLbs','$palletType','$palletSize','$palletWeight','$pcsPerLift','$stacksPerSkid','$pcsPerSkid','$liftWeight','$stackHeight','$skidsPerTruck','$pcsPerTruck','$weightPerTruck','$annualTruckLoads','$UseSkidPcs','$skidCostPerPcs','$lineProduced','$partsPerHour','$uptime','$blankingPerPieceCost','$packagingPerPieceCost','$freightPerPiece','$totalPerPiece','$wash_and_lube','$material_cost','$material_markup_percent','$material_cost_markup','$nom','$blank_die','$model_year','$trap','$palletCost')");
     }
     
     
-    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies')");
+    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`,`award_total`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies','$award_total')");
     
 
     

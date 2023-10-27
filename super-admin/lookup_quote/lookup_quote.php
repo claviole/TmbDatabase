@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name`,`award_status` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' GROUP BY `invoice_id`, `Customer Name`");
+$result = $database->query("SELECT `invoice_id`, `Customer Name`,`award_status`,`award_total` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' GROUP BY `invoice_id`, `Customer Name`");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
@@ -118,12 +118,21 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     background-color: #ddd;
 }
 
-.quote-id-header, .customer-name-header,.award-status-header {
+.quote-id-header, .customer-name-header,.award-status-header,.award-total-header {
     font-weight: bold;
+}
+.award-total {
+    color: #008000; /* This is a green color similar to a dollar bill */
 }
 .quote-id-header {
     max-width: 50%; /* Adjust as needed */
     margin-left: 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.award-total-header {
+    max-width: 50%; /* Adjust as needed */
+    margin-left: 500px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -137,14 +146,14 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
 .award-status-header{
     max-width: 50%;
-    margin-left: 700px;
+    margin-left: 300px;
     text-overflow: ellipsis;
     white-space: nowrap;
 
 }
 .quote{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* Adjust as needed */
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Adjust as needed */
     justify-content: start; /* Add this line */
     gap: 10px; /* Adjust as needed */
 }
@@ -243,6 +252,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             <span class="quote-id-header">Quote ID</span>
             <span class="customer-name-header">Customer Name</span>
             <span class="award-status-header">Award Status</span>
+            <span class="award-total-header">Quote Total</span>
             <!-- ... -->
         </div>
     <?php foreach($quotes as $quote): ?>
@@ -250,6 +260,8 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
             <span class="award-status"><?= $quote['award_status'] ?></span>
+            <span class="award-total"><?= '$'.number_format($quote['award_total']) ?></span>
+
           
         </div>
     <?php endforeach; ?>

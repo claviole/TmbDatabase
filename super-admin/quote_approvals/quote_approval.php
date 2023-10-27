@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `approval_status` = 'Awaiting Approval'");
+$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = 'Awaiting Approval'");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -50,10 +50,11 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             border-bottom: none;
         }
 
-        .quote-id, .customer-name {
+        .quote-id, .customer-name, .version, .award-total {
             font-weight: 500;
             color: #333;
         }
+   
 
         .approve-quote, .deny-quote {
             padding: 5px 10px;
@@ -117,12 +118,16 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     background-color: #ddd;
 }
 
-.quote-id-header, .customer-name-header {
+.quote-id-header, .customer-name-header,.version-header,.award-total-header {
     font-weight: bold;
+}
+
+.award-total {
+    color: #008000; /* This is a green color similar to a dollar bill */
 }
 .quote, .quote-header {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
     gap: 10px; /* Adjust as needed */
 }
 .quote-id {
@@ -143,14 +148,19 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     </style>
 </head>
 <body>
+<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
 <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+</h1>
 <div class="quote-list">
     <div class="quote-header">
         <span class="quote-id-header">Quote#</span>
         <span class="version-header">Version</span>
         <span class="customer-name-header">Customer Name</span>
+        <span class ="award-total-header">Award Total</span>
         <span></span> <!-- Empty placeholders for buttons -->
         <span></span>
     </div>
@@ -159,27 +169,35 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <span class="quote-id"><?= $quote['invoice_id'] ?></span>
     <span class="version"><?= $quote['version'] ?></span>
     <span class="customer-name"><?= $quote['Customer Name'] ?></span>
+    <span class="award-total"><?= '$'.number_format($quote['award_total']) ?></span>
     <button class="approve-quote" id="approve-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Approve</button>
     <button class="deny-quote" id="deny-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Deny</button>
 </div>
     <?php endforeach; ?>
 </div>
-<div class="quote-files">
-        <!-- Files will be loaded here -->
-    </div>
+<div class="quote-files" style="display: none;">
+    <!-- Files will be loaded here -->
+</div>
     <!-- Your scripts here -->
     <script>
+    var currentQuoteId = null;
     $(".quote").click(function() {
-    var quoteId = $(this).find(".quote-id").text();
-    $.ajax({
-        url: 'fetch_quote_files.php',
-        method: 'POST',
-        data: {quoteId:quoteId},
-        success: function(data) {
-            $(".quote-files").html(data);
+        var quoteId = $(this).find(".quote-id").text();
+        if (currentQuoteId === quoteId) {
+            $(".quote-files").slideUp();
+            currentQuoteId = null;
+        } else {
+            $.ajax({
+                url: 'fetch_quote_files.php',
+                method: 'POST',
+                data: {quoteId:quoteId},
+                success: function(data) {
+                    $(".quote-files").hide().html(data).slideDown();
+                    currentQuoteId = quoteId;
+                }
+            });
         }
     });
-});
 
 $(".approve-quote").click(function() {
     var quoteIdAndVersion = $(this).attr('id').split('-');
@@ -219,6 +237,24 @@ $(".deny-quote").click(function() {
             }).then(function() {
                 location.reload();
             });
+        }
+    });
+});
+
+$(document).on('click', '.quote-files .download-link', function(e) {
+    e.preventDefault();
+    var fileName = $(this).text().replace('Download ', '');
+    Swal.fire({
+        title: 'Confirm download',
+        text: 'Do you want to download ' + fileName + '?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Download',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Download the file
+            window.location.href = $(this).attr('href');
         }
     });
 });

@@ -42,6 +42,7 @@ $author_initials = $author_parts[0][0] . $author_parts[1][0];
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="codes.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -457,9 +458,10 @@ label[for="pdf_format"] {
             <th>Pcs per Skid</th>
             <th>Skids per Truck</th>
             <th>Truck Weight(lb)</th>
-            <th>Blanking per piece cost</th>
-            <th>Packaging Per Piece Cost</th>
-            <th>Total Cost per Piece</th>
+            <th>Freight/pc</th>
+            <th>Blanking/pc</th>
+            <th>Packaging/pc</th>
+            <th>Total/pc</th>
             
 
             <!-- Add more columns as needed -->
@@ -481,6 +483,7 @@ label[for="pdf_format"] {
         <td><?php echo $item['Pcs per Skid']; ?></td>
         <td><?php echo $item['Skids per Truck']; ?></td>
         <td><?php echo $item['Truck Weight(lb)']; ?></td>
+        <td><input type="text" id="freight-cost-" class="freight-cost" value="<?php echo $item['freight per piece cost']; ?>"></td>
         <td><input type="text" id="blanking-cost-" class="blanking-cost" value="<?php echo $item['Blanking per piece cost']; ?>"></td>
     <td><input type="text" id="packaging-cost-" class="packaging-cost" value="<?php echo $item['Packaging Per Piece Cost']; ?>"></td>
     <td><input type="text" id="total-cost-" class="total-cost" value="<?php echo $item['Total Cost per Piece']; ?>"></td>
@@ -619,8 +622,12 @@ $("#add-part").click(function(){
             invoice_number: (document.getElementById('invoice_number').value),
             pdf_format:document.getElementById('pdf_format').value,
             partNumber: (document.getElementById('partNumber').value),
+            lineProduced: document.getElementById('line_produced').value,
+            uptime: document.getElementById('uptime').value,
+            pph: document.getElementById('pph').value,
             supplier_name: document.getElementById('supplier_name').value,
             partName: document.getElementById('partName').value,
+            line_produced: document.getElementById('line_produced').value,
             mill: document.getElementById('mill').value,
             platform: document.getElementById('platform').value,
             type: document.getElementById('type').value,
@@ -633,7 +640,8 @@ $("#add-part").click(function(){
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
             skidsPerTruck: document.getElementById('skidsPerTruck').value,
             scrapConsumption: document.getElementById('scrapConsumption').value,
-            contingencies: document.getElementById('contingencies').value
+            contingencies: document.getElementById('contingencies').value,
+
         }
 
         submitNewPartForm(formData).then(function() {
@@ -668,6 +676,7 @@ $(".save-button").click(function() {
     var row = $(this).closest('tr');
     var index = row.index(); // Get the index of the row
     var partNumber = $('#part-number').val();
+    var freightCost = $('#freight-cost-').val();
     var blankingCost = $('#blanking-cost-').val();
     var packagingCost = $('#packaging-cost-').val();
     var totalCost = $('#total-cost-').val();
@@ -677,6 +686,7 @@ $(".save-button").click(function() {
     url: 'save_line_item.php',
     type: 'post',
     data: {
+        freightCost: freightCost,
         blankingCost: blankingCost,
         packagingCost: packagingCost,
         totalCost: totalCost,

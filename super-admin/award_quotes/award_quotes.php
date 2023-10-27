@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `approval_status` = 'Approved' AND `award_status` ='pending'");
+$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = 'Approved' AND `award_status` ='pending'");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -36,7 +36,9 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     overflow-y: auto;
     max-height: 400px;
 }
-
+.quote span {
+    padding-left: 50px; /* Adjust this value to move the items more or less to the right */
+}
 
         .quote {
             display: flex;
@@ -50,7 +52,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             border-bottom: none;
         }
 
-        .quote-id, .customer-name {
+        .quote-id, .customer-name, .version, .award-total {
             font-weight: 500;
             color: #333;
         }
@@ -117,12 +119,12 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     background-color: #ddd;
 }
 
-.quote-id-header, .customer-name-header {
+.quote-id-header, .customer-name-header,.version-header,.award-total-header {
     font-weight: bold;
 }
 .quote, .quote-header {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
     gap: 10px; /* Adjust as needed */
 }
 .quote-id {
@@ -166,6 +168,9 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         .refuse-quote:hover {
             background-color: #da190b;
         }
+        .award-total {
+    color: #008000; /* This is a green color similar to a dollar bill */
+}
     </style>
 </head>
 <body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
@@ -182,6 +187,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         <span class="quote-id-header">Quote#</span>
         <span class="version-header">Version</span>
         <span class="customer-name-header">Customer Name</span>
+        <span class="award-total-header">Award Total</span>
         <span></span> <!-- Empty placeholders for buttons -->
         <span></span>
     </div>
@@ -190,6 +196,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
             <span class="version"><?= $quote['version'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
+            <span class="award-total"><?= '$'.number_format($quote['award_total'])?></span>
             <button class="award-quote" id="award-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Award</button>
             <button class="refuse-quote" id="refuse-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Refuse</button>
         </div>
