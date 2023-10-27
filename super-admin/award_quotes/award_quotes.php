@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `approval_status` = 'Awaiting Approval'");
+$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version` FROM `invoice` WHERE `approval_status` = 'Approved' AND `award_status` ='pending'");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -14,9 +14,9 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <title>Quote Approvals</title>
+    <title>Quote Awards</title>
     <style>
      body {
             font-family: 'Roboto', sans-serif;
@@ -140,12 +140,43 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     padding: 10px;
     background-color: #ddd;
 }
+.award-quote, .refuse-quote {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 700;
+        }
+
+        .award-quote {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .award-quote:hover {
+            background-color: #45a049;
+        }
+
+        .refuse-quote {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .refuse-quote:hover {
+            background-color: #da190b;
+        }
     </style>
 </head>
-<body>
+<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
 <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+        
+    </h1>
+
 <div class="quote-list">
     <div class="quote-header">
         <span class="quote-id-header">Quote#</span>
@@ -156,37 +187,21 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     </div>
     <?php foreach($quotes as $quote): ?>
         <div class="quote" id="quote-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">
-    <span class="quote-id"><?= $quote['invoice_id'] ?></span>
-    <span class="version"><?= $quote['version'] ?></span>
-    <span class="customer-name"><?= $quote['Customer Name'] ?></span>
-    <button class="approve-quote" id="approve-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Approve</button>
-    <button class="deny-quote" id="deny-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Deny</button>
-</div>
+            <span class="quote-id"><?= $quote['invoice_id'] ?></span>
+            <span class="version"><?= $quote['version'] ?></span>
+            <span class="customer-name"><?= $quote['Customer Name'] ?></span>
+            <button class="award-quote" id="award-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Award</button>
+            <button class="refuse-quote" id="refuse-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Refuse</button>
+        </div>
     <?php endforeach; ?>
 </div>
-<div class="quote-files">
-        <!-- Files will be loaded here -->
-    </div>
-    <!-- Your scripts here -->
     <script>
-    $(".quote").click(function() {
-    var quoteId = $(this).find(".quote-id").text();
-    $.ajax({
-        url: 'fetch_quote_files.php',
-        method: 'POST',
-        data: {quoteId:quoteId},
-        success: function(data) {
-            $(".quote-files").html(data);
-        }
-    });
-});
-
-$(".approve-quote").click(function() {
+$(".award-quote").click(function() {
     var quoteIdAndVersion = $(this).attr('id').split('-');
     var quoteId = quoteIdAndVersion[1];
     var version = quoteIdAndVersion[2];
     $.ajax({
-        url: 'approve_quote.php',
+        url: 'award_quote.php',
         method: 'POST',
         data: {quoteId:quoteId, version:version},
         dataType: 'json',
@@ -202,12 +217,12 @@ $(".approve-quote").click(function() {
     });
 });
 
-$(".deny-quote").click(function() {
+$(".refuse-quote").click(function() {
     var quoteIdAndVersion = $(this).attr('id').split('-');
     var quoteId = quoteIdAndVersion[1];
     var version = quoteIdAndVersion[2];
     $.ajax({
-        url: 'deny_quote.php',
+        url: 'refuse_quote.php',
         method: 'POST',
         data: {quoteId:quoteId, version:version},
         dataType: 'json',

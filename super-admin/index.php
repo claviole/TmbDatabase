@@ -63,6 +63,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
         <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='New_Quote/start_new_invoice.php'">Start New Quote</button>
         <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='add_new_customer/add_new_customer.php'">Add New Customer</button>
         <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='lookup_quote/lookup_quote.php'">Look Up Quote</button>
+        <button style="width:400px; margin-top: 10px;border:2px solid black ;"class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='award_quotes/award_quotes.php'">Award Quotes</button>
         <button style="width:400px; margin-top: 10px;border:2px solid black ;"class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='management/management.php'">Management Menu</button>
     </div>
     </div>

@@ -450,6 +450,8 @@ label[for="pdf_format"] {
             <th>Pitch(mm)</th>
             <th>Gauge(mm)</th>
             <th>Density</th>
+            <th># Outputs</th>
+            <th>Line Produced on</th>
             <th>Uptime</th>
             <th>PPH</th>
             <th>Pcs per Skid</th>
@@ -472,6 +474,8 @@ label[for="pdf_format"] {
         <td><?php echo $item['Pitch(mm)']; ?></td>
         <td><?php echo $item['Gauge(mm)']; ?></td>
         <td><?php echo $item['Density']; ?></td>
+        <td><?php echo $item['# Outputs'];?></td>
+        <td><?php echo $item['Line Produced on']; ?></td>
         <td><?php echo $item['Uptime']." % "; ?></td>
         <td><?php echo $item['PPH']; ?></td>
         <td><?php echo $item['Pcs per Skid']; ?></td>

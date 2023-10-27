@@ -3,7 +3,7 @@ session_start();
 include '../../connection.php';
 
 // Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' GROUP BY `invoice_id`, `Customer Name`");
+$result = $database->query("SELECT `invoice_id`, `Customer Name`,`award_status` FROM `invoice` WHERE `Customer Name` IS NOT NULL AND `Customer Name` <> '' GROUP BY `invoice_id`, `Customer Name`");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
@@ -118,7 +118,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     background-color: #ddd;
 }
 
-.quote-id-header, .customer-name-header {
+.quote-id-header, .customer-name-header,.award-status-header {
     font-weight: bold;
 }
 .quote-id-header {
@@ -133,6 +133,14 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     margin-left: 500px;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.award-status-header{
+    max-width: 50%;
+    margin-left: 700px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
 }
 .quote{
     display: grid;
@@ -234,12 +242,14 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         <div class="quote-header">
             <span class="quote-id-header">Quote ID</span>
             <span class="customer-name-header">Customer Name</span>
+            <span class="award-status-header">Award Status</span>
             <!-- ... -->
         </div>
     <?php foreach($quotes as $quote): ?>
         <div class="quote">
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
+            <span class="award-status"><?= $quote['award_status'] ?></span>
           
         </div>
     <?php endforeach; ?>
@@ -292,8 +302,7 @@ $(".quote").click(function() {
         currentQuoteId = quoteId;
     }
 });
-
-$(document).on('click', '.quote-files a', function(e) {
+$(document).on('click', '.quote-files .download-link', function(e) {
     e.preventDefault();
     var fileName = $(this).text().replace('Download ', '');
     Swal.fire({
