@@ -18,7 +18,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Quote Awards</title>
     <style>
-     body {
+      body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
@@ -36,9 +36,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     overflow-y: auto;
     max-height: 400px;
 }
-.quote span {
-    padding-left: 50px; /* Adjust this value to move the items more or less to the right */
-}
+
 
         .quote {
             display: flex;
@@ -56,6 +54,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
             font-weight: 500;
             color: #333;
         }
+   
 
         .approve-quote, .deny-quote {
             padding: 5px 10px;
@@ -122,9 +121,13 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 .quote-id-header, .customer-name-header,.version-header,.award-total-header {
     font-weight: bold;
 }
+
+.award-total {
+    color: #008000; /* This is a green color similar to a dollar bill */
+}
 .quote, .quote-header {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
+    grid-template-columns: 1fr 1fr 2fr 1fr .5fr .5fr; /* Adjust as needed */
     gap: 10px; /* Adjust as needed */
 }
 .quote-id {
@@ -171,6 +174,20 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         .award-total {
     color: #008000; /* This is a green color similar to a dollar bill */
 }
+.quote-id {
+    color: blue;
+    cursor: pointer;
+}
+.customer-name{
+    margin-left: 50px;
+}
+.version{
+    margin-left: 60px;
+}
+.award-total{
+    margin-left: -50px;
+}
+
     </style>
 </head>
 <body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
@@ -247,3 +264,4 @@ $(".refuse-quote").click(function() {
 </script>
 </body>
 </html>
+

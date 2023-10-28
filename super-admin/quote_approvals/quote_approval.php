@@ -27,8 +27,9 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 
         .quote-list {
     position: relative; /* Add this line */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr  1fr; /* Adjust as needed */
     width: 80%;
-    margin: 20px auto;
+    margin: 0px auto;
     padding: 0px;
     background-color: #fff;
     border-radius: 5px;
@@ -127,13 +128,23 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 }
 .quote, .quote-header {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr; /* Adjust as needed */
-    gap: 10px; /* Adjust as needed */
+    grid-template-columns: 1fr 1fr 1fr 1fr .5fr  .5fr; /* Adjust as needed */
+    gap: 0px; /* Adjust as needed */
 }
 .quote-id {
     color: blue;
     cursor: pointer;
 }
+.customer-name{
+    margin-left: -40px;
+}
+.version{
+    margin-left: 20px;
+}
+.award-total{
+    margin-left: 50px;
+}
+
 .quote-header {
     position: sticky; /* Change this line */
     top: 0px; /* Adjust as needed */
@@ -181,6 +192,8 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <!-- Your scripts here -->
     <script>
     var currentQuoteId = null;
+    
+
     $(".quote").click(function() {
         var quoteId = $(this).find(".quote-id").text();
         if (currentQuoteId === quoteId) {
