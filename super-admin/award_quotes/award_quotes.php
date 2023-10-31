@@ -5,6 +5,9 @@ include '../../connection.php';
 // Fetch quotes for dropdown
 $result = $database->query("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = 'Approved' AND `award_status` ='pending'");
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
+
+$award_result = $database->query("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = 'Approved' AND `award_status` ='Awarded'");
+$awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -187,7 +190,29 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 .award-total{
     margin-left: -50px;
 }
+.quote-btn {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
+    .quote-btn:hover {
+        opacity: 0.8;
+    }
+
+    #pending-quotes-btn {
+        background-color: #4CAF50; /* Green */
+        color: white;
+    }
+
+    #awarded-quotes-btn {
+        background-color: #008CBA; /* Blue */
+        color: white;
+    }
     </style>
 </head>
 <body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
@@ -199,7 +224,10 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         
     </h1>
 
+
 <div class="quote-list">
+<button id="pending-quotes-btn" class="quote-btn">Pending Quotes</button>
+<button id="awarded-quotes-btn" class="quote-btn">Awarded Quotes</button>
     <div class="quote-header">
         <span class="quote-id-header">Quote#</span>
         <span class="version-header">Version</span>
@@ -219,6 +247,26 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         </div>
     <?php endforeach; ?>
 </div>
+
+<div id="awarded-quotes-table" class="quote-list" style="display: none;">
+    <div class="quote-header">
+        <span class="quote-id-header">Quote#</span>
+        <span class="version-header">Version</span>
+        <span class="customer-name-header">Customer Name</span>
+        <span class="award-total-header">Award Total</span>
+        <span></span> <!-- Empty placeholders for buttons -->
+        <span></span>
+    </div>
+    <?php foreach($awarded_quotes as $awarded ): ?>
+        <div class="quote" id="quote-<?= $awarded['invoice_id'] ?>-<?= $awarded['version'] ?>">
+            <span class="quote-id"><?= $awarded['invoice_id'] ?></span>
+            <span class="version"><?= $awarded['version'] ?></span>
+            <span class="customer-name"><?= $awarded['Customer Name'] ?></span>
+            <span class="award-total"><?= '$'.number_format($awarded['award_total'])?></span>
+        </div>
+    <?php endforeach; ?>
+</div>
+
     <script>
 $(".award-quote").click(function() {
     var quoteIdAndVersion = $(this).attr('id').split('-');
@@ -258,6 +306,35 @@ $(".refuse-quote").click(function() {
             }).then(function() {
                 location.reload();
             });
+        }
+    });
+});
+$("#pending-quotes-btn").click(function() {
+    $("#pending-quotes-table").show();
+    $("#awarded-quotes-table").hide();
+});
+
+$("#awarded-quotes-btn").click(function() {
+    $("#pending-quotes-table").hide();
+    $("#awarded-quotes-table").show();
+});
+
+$(".quote").click(function() {
+    var quoteId = $(this).find(".quote-id").text();
+    var version = $(this).find(".version").text();
+
+    var pdfUrl = "get_pdf.php?invoice_id=" + quoteId + "&version=" + version;
+
+    Swal.fire({
+        title: 'Confirm download',
+        text: 'Do you want to download the awarded Quote?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, download it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.open(pdfUrl, '_blank');
         }
     });
 });

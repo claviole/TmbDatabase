@@ -35,6 +35,7 @@ $lines = $line_result->fetch_all(MYSQLI_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="codes.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -566,6 +567,34 @@ $("#add-part").click(function(){
          // Clear all the input fields
         
     }
+});
+
+$(document).ready(function(){
+    var customerOptions = {};
+    <?php foreach($customers as $Customer): ?>
+        customerOptions["<?= $Customer['Customer Name'] ?>"] = "<?= $Customer['Customer Name'] ?>";
+    <?php endforeach; ?>
+
+    Swal.fire({
+        title: 'Select a customer',
+        input: 'select',
+        inputOptions: customerOptions,
+        showCancelButton: true,
+        inputValidator: function (value) {
+            return new Promise(function (resolve, reject) {
+                if (value !== '') {
+                    resolve();
+                } else {
+                    resolve('You need to select a customer');
+                }
+            });
+        }
+    }).then(function (result) {
+        if (result.isConfirmed) {
+            $('#customer').val(result.value);
+            $('#customer').trigger('change'); // Trigger the change event to fetch customer details
+        }
+    });
 });
 </script>
 

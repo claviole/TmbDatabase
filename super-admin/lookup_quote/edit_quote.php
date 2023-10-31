@@ -248,11 +248,34 @@ label[for="pdf_format"] {
     background-color: #CC0000; /* Darker red on hover */
 }
 
- 
+.selected {
+    background-color: #f0f0f0; /* Change this to your preferred color */
+}
+.return-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1B145D;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: 700;
+        }
+
+        .return-button:hover {
+            background-color: #111;
+        }
+
+        .return-button-container {
+            text-align: right;
+            margin-right: 10px;
+        }
 </style>
 </head>
 <body>
-
+<div class="return-button-container">
+    <a href="lookup_quote.php" class="return-button">Return to Quotes</a>
+</div>
 
    
     <form action="submit_invoice.php" method="post">
@@ -486,7 +509,7 @@ label[for="pdf_format"] {
         <td><input type="text" id="freight-cost-" class="freight-cost" value="<?php echo $item['freight per piece cost']; ?>"></td>
         <td><input type="text" id="blanking-cost-" class="blanking-cost" value="<?php echo $item['Blanking per piece cost']; ?>"></td>
     <td><input type="text" id="packaging-cost-" class="packaging-cost" value="<?php echo $item['Packaging Per Piece Cost']; ?>"></td>
-    <td><input type="text" id="total-cost-" class="total-cost" value="<?php echo $item['Total Cost per Piece']; ?>"></td>
+        <td><?php echo $item['Total Cost per Piece']; ?></td>
 </tr>
        
     </tr>
@@ -543,7 +566,12 @@ label[for="pdf_format"] {
     $('#customer').hide();
 
 $(".line-item").click(function(){
-    
+        // Remove the 'selected' class from all line items
+        $(".line-item").removeClass("selected");
+
+        // Add the 'selected' class to the clicked line item
+        $(this).addClass("selected");
+
     var clickedLineItem = null;
     console.log("Line item clicked");
     var item = $(this).data('item');
@@ -673,31 +701,48 @@ $("#add-part").click(function(){
 });
 
 $(".save-button").click(function() {
-    var row = $(this).closest('tr');
-    var index = row.index(); // Get the index of the row
-    var partNumber = $('#part-number').val();
-    var freightCost = $('#freight-cost-').val();
-    var blankingCost = $('#blanking-cost-').val();
-    var packagingCost = $('#packaging-cost-').val();
-    var totalCost = $('#total-cost-').val();
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You are about to override a calculated value",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, save it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var row = $(this).closest('tr');
+            var index = row.index(); // Get the index of the row
+            var partNumber = $('#part-number').val();
+            var freightCost = $('#freight-cost-').val();
+            var blankingCost = $('#blanking-cost-').val();
+            var packagingCost = $('#packaging-cost-').val();
+            var totalCost = $('#total-cost-').val();
 
-    // Send the new values to the server to be saved
-    $.ajax({
-    url: 'save_line_item.php',
-    type: 'post',
-    data: {
-        freightCost: freightCost,
-        blankingCost: blankingCost,
-        packagingCost: packagingCost,
-        totalCost: totalCost,
-        partNumber: partNumber
-       
-        // ... include other values here ...
-    },
-    success: function(response) {
-        // Handle the server response here
-    }
-});
+            // Send the new values to the server to be saved
+            $.ajax({
+                url: 'save_line_item.php',
+                type: 'post',
+                data: {
+                    freightCost: freightCost,
+                    blankingCost: blankingCost,
+                    packagingCost: packagingCost,
+                    totalCost: totalCost,
+                    partNumber: partNumber
+                },
+                success: function(response) {
+                    // Handle the server response here
+                    Swal.fire(
+                        'Saved!',
+                        'Your changes have been saved.',
+                        'success'
+                    )
+                    // Refresh the page
+                    location.reload();
+                }
+            });
+        }
+    })
 });
 $(".generate-pdf-button").click(function() {
     var invoiceNumber = $('#invoice_number').val(); // Get the invoice number from the input field
