@@ -192,6 +192,7 @@ CREATE TABLE `Line_Item` (
   approval_status varchar(255) DEFAULT "Awaiting Approval",
   award_total decimal(12,3) DEFAULT NULL,
   award_status varchar(255) DEFAULT "pending",
+  approved_by varchar(255) DEFAULT NULL,
   FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
   `Customer Name` varchar(255) NOT NULL,
   FOREIGN KEY (`Customer Name`) REFERENCES `Customer` (`Customer Name`),

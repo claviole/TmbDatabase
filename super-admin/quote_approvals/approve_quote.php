@@ -1,13 +1,14 @@
 <?php
 include '../../connection.php';
-
+session_start();
 if(isset($_POST['quoteId']) && isset($_POST['version'])){
     $quoteId = $_POST['quoteId'];
     $version = $_POST['version'];
+  
 
     // Prepare the statement to update the quote
-    $stmt = $database->prepare("UPDATE `invoice` SET `approval_status` = 'Approved' WHERE `invoice_id` = ? AND `version` = ?");
-    $stmt->bind_param("ss", $quoteId, $version);
+    $stmt = $database->prepare("UPDATE `invoice` SET `approval_status` = 'Approved', `approved_by` = ? WHERE `invoice_id` = ? AND `version` = ?");
+    $stmt->bind_param("sss", $_SESSION['user'], $quoteId, $version);
     $stmt->execute();
 
     // Check if the update was successful
