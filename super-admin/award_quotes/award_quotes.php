@@ -213,6 +213,28 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
         background-color: #008CBA; /* Blue */
         color: white;
     }
+    .button-container {
+    margin-left: 20px; /* Adjust this value as needed */
+    display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+}
+
+.button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 10px; /* Add some space between the buttons */
+    background-color: #4CAF50; /* Green */
+    color: white; /* White text */
+}
+
+.button-container button:hover {
+    background-color: #45a049; /* Darker green */
+}
+
     </style>
 </head>
 <body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
@@ -225,9 +247,14 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
     </h1>
 
 
-<div class="quote-list">
-<button id="pending-quotes-btn" class="quote-btn">Pending Quotes</button>
-<button id="awarded-quotes-btn" class="quote-btn">Awarded Quotes</button>
+
+    <div class="button-container">
+    <button id="pending-quotes-btn">Pending Quotes</button>
+    <button id="awarded-quotes-btn">Awarded Quotes</button>
+</div>
+
+<div id="pending-quotes-table" class="quote-list">
+
     <div class="quote-header">
         <span class="quote-id-header">Quote#</span>
         <span class="version-header">Version</span>
@@ -266,6 +293,7 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
         </div>
     <?php endforeach; ?>
 </div>
+
 
     <script>
 $(".award-quote").click(function() {
