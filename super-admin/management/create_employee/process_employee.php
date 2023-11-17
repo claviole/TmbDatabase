@@ -13,11 +13,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check the user role and assign appropriate value
     if ($user_role == "Sales") {
-        $user_role = "admin";
+        $user_role = "Sales";
     } else if ($user_role == "Management") {
         $user_role = "super-admin";
     }
-
+    else if($user_role == "Human Resources")
+    {
+        $user_role = "Human Resources";
+    }
+    
     // Generate a random 6 character password
     $password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
 

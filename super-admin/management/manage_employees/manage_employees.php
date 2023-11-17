@@ -117,7 +117,7 @@ echo '<tbody>';
 while ($row = $result->fetch_assoc()) {
     list($first_name, $last_name) = explode(' ', $row['username']);
     $email = $row['email'];
-    $user_type = $row['user_type'] == 'super-admin' ? 'Manager' : 'Sales';
+    $user_type = $row['user_type'] ;
 
     echo '<tr>';
     echo '<td>' . $first_name . '</td>';

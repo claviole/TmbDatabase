@@ -246,3 +246,85 @@ INSERT INTO `Lines`(`line_id`,`Line_Location`,`Line_Name`) VALUES
 (20,'Target Metal Blanking - Sauk Village','Line 7'),
 (21,'Target Metal Blanking - Sauk Village','Laser');
 
+
+
+-- Table Structure for 'job_titles'
+-- 
+CREATE TABLE `job_titles`(
+  job_title_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  job_title varchar(255) NOT NULL
+);
+
+-- Dumping data for table 'job_titles'
+--
+INSERT INTO `job_titles` (`job_title_id`, `job_title`) VALUES
+(1, 'Line 1 Operator'),
+(2, 'Line 3 Operator'),
+(3, 'Line 4 Operator'),
+(4, 'Line 5 Operator'),
+(5, 'Line 6 Operator'),
+(6, 'Line 6 QC Operator'),
+(7, 'Line 7 Operator'),
+(8, 'Line 7 QC Operator'),
+(9, 'Laser Line Operator'),
+(10, 'Master Operator'),
+(11, 'Material Handler'),
+(12, 'Warehouse'),
+(13, 'Quality Auditor'),
+(14, 'Quality Supervisor'),
+(15, 'Clerk'),
+(16, 'Die Repair Tech'),
+(17, 'Die Setter'),
+(18, 'Master Maintenance'),
+(19,'Supervisor')
+(20,'HR-Manager')
+(21,'HR-Generalist')
+(22,'Operations-Manager'),
+(23,'Operations-Blanking Supervisor'),
+(24,'Operations-Slitting Supervisor'),
+(25,'Maintenance-Manager'),
+(26,'Maintenance-Coordinator'),
+(27,'General Manager'),
+(28,'Accounting-Controller'),
+(29,'Accounting-Manager'),
+(30,'Accounting-AR Analyst'),
+(31,'Quality-Manager'),
+(32,'Quality Engineer'),
+(33,'Quality-Supervisor/Liason'),
+(34,'Quality-Technician'),
+(35,'Logistics-Manager'),
+(36,'Sales-Manager'),
+(37,'Sales-Representative'),
+(38,'Safety-Coordinator');
+
+-- Table Structure for 'training_paths'
+--
+CREATE TABLE `training_paths`(
+  training_path_id int(11) ,
+  training_path_name varchar(255) NOT NULL,
+  training_path_file MEDIUMBLOB NOT NULL,
+  FOREIGN KEY (`training_path_id`) REFERENCES `job_titles` (`job_title_id`)
+);
+
+
+-- Table Structure for 'employees' 
+--
+CREATE TABLE `employees`(
+  employee_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  employee_fname varchar(255) NOT NULL,
+  employee_lname varchar(255) NOT NULL,
+  date_hired DATE(255) NOT NULL,
+  first_day_of_work DATE(255) NOT NULL,
+  job_title int(11) NOT NULL,
+  FOREIGN KEY (`job_title`) REFERENCES `job_titles` (`job_title_id`)
+);
+
+-- Table Structure for 'employee_training`
+--
+CREATE TABLE `employee_training`(
+  employee_id int(11) NOT NULL,
+  training_path_id int(11) NOT NULL,
+  completion_status varchar(255) DEFAULT 'incomplete',
+  FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`),
+  FOREIGN KEY (`training_path_id`) REFERENCES `training_paths` (`training_path_id`)
+);

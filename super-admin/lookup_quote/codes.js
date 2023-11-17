@@ -140,7 +140,7 @@ else if(lineProduced==21)
 var blankingPerPieceCost=parseFloat(hourlyRate/partsPerHour).toFixed(3);
 var packagingPerPieceCost= parseFloat((palletCost/pcsPerSkid)+(25/pcsPerSkid)).toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
-var freightPerPiece=total_freight/pcsPerTruck;
+var freightPerPiece=(total_freight/pcsPerTruck).toFixed(3);
 var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+(parseFloat(wash_and_lube)/pcsPerTruck)+parseFloat(material_cost_markup)).toFixed(3);
 var blanksPerMinute=partsPerHour/60;
 

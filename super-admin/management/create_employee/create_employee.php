@@ -110,6 +110,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
                 <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="user_role" name="user_role" required>
                     <option value="Sales">Sales</option>
                     <option value="Management">Management</option>
+                    <option value="Human Resources">Human Resources</option>
                 </select>
             </div>
             <div class="flex items-center justify-between">

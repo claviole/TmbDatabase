@@ -6,7 +6,7 @@
     $_SESSION["usertype"]="";
 
     // Set the new timezone
-    date_default_timezone_set('Usa/Chicago');
+    date_default_timezone_set('America/Chicago');
     $date = date('Y-m-d');
 
     $_SESSION["date"]=$date;
@@ -22,14 +22,15 @@
                 $row=$result->fetch_assoc();
                 $_SESSION["user"]=$row["username"];
                 $_SESSION["user_type"]=$row["user_type"];
-                if($_SESSION["user_type"]=="admin"){
-                    header("Location: Admin/index.php");
+                if($_SESSION["user_type"]=="Sales"){
+                    header("Location: sales/index.php");
                 }
                 elseif($_SESSION["user_type"]=="super-admin"){
                     header("Location: super-admin/index.php");
                 }
-                else{
-                    header("Location: User/index.php");
+                elseif($_SESSION["user_type"]=="Human Resources"){
+                    header("Location: human_resources/index.php");
+                  
                 }
             }
             else{

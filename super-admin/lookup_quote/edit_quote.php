@@ -172,14 +172,18 @@ button:hover {
     background-color: lightgray;
 }
 #parts_table {
-    width: 100%;
-    table-layout: fixed;
+    width: 80%;
+    table-layout: auto;
     border-collapse: collapse;
+    
+}
+#parts_table input {
+    width: 90%; /* Adjust this value as needed */
 }
 
 #parts_table th, #parts_table td {
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 0px;
     text-align: left;
 }
 
@@ -270,6 +274,11 @@ label[for="pdf_format"] {
             text-align: right;
             margin-right: 10px;
         }
+
+        #parts_table .part-number {
+        white-space: normal;
+        word-wrap: break-word;
+    }
 </style>
 </head>
 <body>
@@ -797,6 +806,24 @@ $(document).ready(function() {
     // Show the "Submit Changes" button when the "Add Part" button is clicked
     $('#add-part').click(function() {
         $('#submit-button').show();
+    });
+
+    // Handle click event for "Submit Recalculated Part" button
+    $("#submit-button").click(function() {
+        var pdfFormat = $('#pdf_format').val(); // Get the selected PDF format
+
+        if (!pdfFormat) {
+            Swal.fire({
+                title: 'Success',
+                text: 'Changes submitted successfully',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
+        } 
     });
 });
 </script>
