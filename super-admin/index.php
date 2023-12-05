@@ -60,11 +60,11 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     
     <div class ="flex justify-center">
     <div class ="flex flex-col justify-content: center  py-10 px-0 "  >
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='New_Quote/start_new_invoice.php'">Start New Quote</button>
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='add_new_customer/add_new_customer.php'">Add New Customer</button>
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='lookup_quote/lookup_quote.php'">Look Up Quote</button>
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;"class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='award_quotes/award_quotes.php'">Award Quotes</button>
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;"class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='management/management.php'">Management Menu</button>
+    <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="startNewQuote()">Start New Quote</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='add_new_customer/add_new_customer.php'">Add New Customer</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='lookup_quote/lookup_quote.php'">Look Up Quote</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='award_quotes/award_quotes.php'">Award Quotes</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='management/management.php'">Management Menu</button>
     </div>
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
@@ -95,6 +95,32 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
 </body>
 
 <script>
+    function startNewQuote() {
+    Swal.fire({
+        title: 'Select Quote Type',
+        input: 'radio',
+        inputOptions: {
+            'blanking': 'Blanking Quote',
+            'slitting': 'Slitting Quote'
+        },
+        inputValidator: (value) => {
+            if (!value) {
+                return 'You need to choose something!'
+            }
+        },
+        showCancelButton: true, // This will show the cancel button
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (result.value === 'blanking') {
+                window.location.href = 'New_Quote/start_new_invoice.php';
+            } else if (result.value === 'slitting') {
+                window.location.href = 'slitting_quote/new_slitting_quote.php';
+            }
+        }
+    });
+}
 function getPasswordChangeForm() {
     return `
         <form id="password-change-form" style="display: flex; flex-direction: column; align-items: center;">
@@ -154,5 +180,72 @@ document.getElementById('settings-icon').addEventListener('click', function() {
         }
     });
 });
+
+document.querySelector('button[onclick="window.location.href=\'add_new_customer/add_new_customer.php\'"]').onclick = function() {
+    Swal.fire({
+    title: 'Add New Customer',
+    width:'700px',
+    html: `
+        <style>
+            .swal2-input {
+                width: 85% !important;
+            }
+        </style>
+        <input id="swal-input1" class="swal2-input" placeholder="Customer Name">
+        <input id="swal-input2" class="swal2-input" placeholder="Customer Address">
+        <input id="swal-input3" class="swal2-input" placeholder="Customer City">
+        <input id="swal-input4" class="swal2-input" placeholder="Customer State">
+        <input id="swal-input5" class="swal2-input" placeholder="Customer Zip">
+        <input id="swal-input6" class="swal2-input" placeholder="Customer Phone">
+        <input id="swal-input7" class="swal2-input" placeholder="Customer Email">
+        <input id="swal-input8" class="swal2-input" placeholder="Customer Contact">
+    `,
+        preConfirm: () => {
+    const values = [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value,
+        document.getElementById('swal-input4').value,
+        document.getElementById('swal-input5').value,
+        document.getElementById('swal-input6').value,
+        document.getElementById('swal-input7').value,
+        document.getElementById('swal-input8').value
+    ];
+    // Check if any of the fields are empty
+    if (values.some(value => value === '')) {
+        Swal.showValidationMessage('Please fill out all fields');
+        return;
+    }
+    return values;
+}
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var formData = new FormData();
+            formData.append('customerName', result.value[0]);
+            formData.append('customerAddress', result.value[1]);
+            formData.append('customerCity', result.value[2]);
+            formData.append('customerState', result.value[3]);
+            formData.append('customerZip', result.value[4]);
+            formData.append('customerPhone', result.value[5]);
+            formData.append('customerEmail', result.value[6]);
+            formData.append('customerContact', result.value[7]);
+
+            fetch('add_new_customer/submit_new_customer.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.status === 'error') {
+                    throw new Error(response.message);
+                }
+                Swal.fire('Success', 'New customer added successfully', 'success');
+            })
+            .catch(error => {
+                Swal.fire('Error', `Request failed: ${error}`, 'error');
+            });
+        }
+    });
+};
 </script>
 </html>

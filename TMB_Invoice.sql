@@ -328,3 +328,64 @@ CREATE TABLE `employee_training`(
   FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`),
   FOREIGN KEY (`training_path_id`) REFERENCES `training_paths` (`training_path_id`)
 );
+
+--Table Structure for 'employee_incident
+--
+CREATE TABLE `accident_report`(
+  accident_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  employee_id int(11) NOT NULL,
+  foreman_id int(11) NULL,
+  accident_type varchar(255)  NULL,
+  date_added varchar(255)  NULL,
+  accident_date varchar(255)  NULL,
+  accident_time varchar(255) NULL,
+  shift varchar(255)  NULL,
+  time_sent_to_clinic varchar(255) NULL,
+  date_sent_to_clinic varchar(255) NULL,
+  accident_location varchar(255) NULL,
+  time_of_report varchar(255) NULL,
+  shift_start_time varchar(255) NULL,
+  accident_description MEDIUMBLOB NULL,
+  consecutive_days_worked int(11)  NULL,
+  proper_ppe_used varchar(255) NULL,
+  proper_ppe_used_explain MEDIUMBLOB NULL,
+  procedure_followed varchar(255) NULL,
+  procedure_followed_explain MEDIUMBLOB NULL,
+  potential_severity varchar(255) NULL,
+  potential_severity_explain MEDIUMBLOB NULL,
+  enverionmental_impact varchar(255)  NULL,
+  enverionmental_impact_explain MEDIUMBLOB NULL,
+  prevent_reoccurance MEDIUMBLOB NULL,
+  immediate_corrective_action MEDIUMBLOB NULL,
+  irp_required varchar(255) NULL,
+  irp_names varchar(255) NULL,
+  equip_out_of_service varchar(255) NULL,
+  equip_out_of_service_explain MEDIUMBLOB NULL,
+
+  FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`))
+
+
+  -- Table Structure for 'accident_files'
+  --
+  CREATE TABLE `accident_files`(
+    accident_id int(11) NOT NULL,
+    file_name varchar(255) NOT NULL,
+    file_path MEDIUMBLOB NOT NULL
+  );
+
+
+  --Last SQL UPDATE 11/21/23 06:43 PM
+
+
+  -- Table Structure for 'observations'
+  --
+  CREATE TABLE `observations`(
+    observation_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    observation_score int(11) NOT NULL,
+    employee_id int(11) NOT NULL,
+    observation_date varchar(255) NOT NULL,
+    observation_time varchar(255) NOT NULL,
+    observation_description MEDIUMBLOB NOT NULL
+  )
+
+);

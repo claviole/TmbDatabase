@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php';
+include '../../../connection.php';
 
 // Fetch the most recently added employee
 $result = $database->query("SELECT * FROM `employees` ORDER BY `employee_id` DESC LIMIT 1");

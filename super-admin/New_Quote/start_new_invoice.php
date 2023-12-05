@@ -188,6 +188,14 @@ label[for="pdf_format"] {
     font-size: 16px;
     color: #333;
 }
+#add-part {
+        background-color: green;
+        color: white;
+    }
+
+    #add-part:hover {
+        background-color: darkgreen;
+    }
 
     </style>
 
@@ -576,23 +584,58 @@ $(document).ready(function(){
     <?php endforeach; ?>
 
     Swal.fire({
-        title: 'Select a customer',
-        input: 'select',
-        inputOptions: customerOptions,
-        showCancelButton: true,
-        inputValidator: function (value) {
-            return new Promise(function (resolve, reject) {
-                if (value !== '') {
-                    resolve();
-                } else {
-                    resolve('You need to select a customer');
-                }
+    title: 'Select a customer',
+    input: 'select',
+    inputOptions: customerOptions,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    allowEnterKey: false,
+    showCancelButton: false,
+    inputValidator: function (value) {
+        return new Promise(function (resolve, reject) {
+            if (value !== '') {
+                resolve();
+            } else {
+                resolve('You need to select a customer');
+            }
+        });
+    }
+}).then(function (result) {
+    if (result.isConfirmed) {
+        $('#customer').val(result.value);
+        $('#customer').trigger('change'); // Trigger the change event to fetch customer details
+    }
+});
+});
+
+$(document).ready(function(){
+    $('#submit-button').click(function(e){
+        // Check if the parts table is empty
+        if($('#parts_table tr').length == 0) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please Add a Part to your quote before submitting',
             });
-        }
-    }).then(function (result) {
-        if (result.isConfirmed) {
-            $('#customer').val(result.value);
-            $('#customer').trigger('change'); // Trigger the change event to fetch customer details
+        } else {
+            // Only call submitInvoice() and fetch if the parts table is not empty
+            submitInvoice();
+            fetch('Admin/fetch_invoice.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ invoiceId: invoiceId }) // Send the invoice ID to the server
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('invoice').innerText = JSON.stringify(data.invoice, null, 2);
+                document.getElementById('parts').innerText = JSON.stringify(data.parts, null, 2);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         }
     });
 });

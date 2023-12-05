@@ -1,16 +1,7 @@
 <?php
 session_start();
-include '../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
-
-
-
-// Check if the user is logged in and is an admin
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'Human Resources'){
-    // Not logged in or not an admin, redirect to login page
-    header("Location: ../index.php");
-    exit();
-}
 
 ?>
 
@@ -25,23 +16,44 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'Human Resources'){
     <script src="https://cdn.tailwindcss.com"></script>
     <title>HR Dashboard</title>
     <style>
-        
+        .return-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1B145D;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: 700;
+        }
+
+        .return-button:hover {
+            background-color: #111;
+        }
+
+        .return-button-container {
+            text-align: right;
+            margin-right: 10px;
+        }
     </style>
     
 </head>
-<body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<div class="return-button-container">
+    <a href="../index.php" class="return-button">Return to Main Menu</a>
+</div>
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
- </h1>
+        <img src="../../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
+ 
  
 </div>
      
-    
+    </h1>
     
     <div class ="flex justify-center">
     <div class ="flex flex-col justify-content: center  py-10 px-0 "  >
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='HR/index.php'">Human Resources</button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='safety/index.php'">Safety</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='add_new_hire/index.php'">Add New Hire</button>
+
     </div>
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
@@ -61,11 +73,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'Human Resources'){
         <input type="submit" value="Change Password">
     </form>
 </div>
-<div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
-<form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
-    <input type="submit" value="Log Out">
-</form>
-</div>
+
 
 
 

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../../connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
 
 
@@ -8,7 +8,7 @@ date_default_timezone_set('America/Chicago');
 // Check if the user is logged in and is an admin
 if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'Human Resources'){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit();
 }
 
@@ -49,12 +49,12 @@ $job_titles = $result->fetch_all(MYSQLI_ASSOC);
     </style>
     
 </head>
-<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('../../../images/steel_coils.jpg'); background-size: cover;">
 <div class="return-button-container">
-    <a href="../index.php" class="return-button">Return to Dashboard</a>
+    <a href="../index.php" class="return-button">Return to Hr Menu</a>
 </div>
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
+        <img src="../../../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
     </h1>
     
     <div id="employee-info" class="flex justify-center">

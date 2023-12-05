@@ -80,9 +80,9 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     
     <div class ="flex justify-center">
     <div class ="flex flex-col justify-content: center  py-10 px-0 "  >
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='create_employee/create_employee.php'">Create New User</button>
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='reset_emp_password/reset_emp_password.php'">Reset Employee Password</button>
-        <button style="width:400px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='manage_employees/manage_employees.php'">Manage User Accounts</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;"class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='create_employee/create_employee.php'">Create New User</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;"class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='reset_emp_password/reset_emp_password.php'">Reset Employee Password</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='manage_employees/manage_employees.php'">Manage User Accounts</button>
         
     </div>
     </div>

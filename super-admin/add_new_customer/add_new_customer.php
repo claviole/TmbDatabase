@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="codes.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <title>Add New Customer</title>
     <style>
-        body {
+       body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
 }
@@ -81,8 +88,8 @@ form button:hover {
 }
 </style>
 </head>
-<body style="background-image: url('../../images/die-press.jpg'); background-size: cover;">
-    <form action="submit_new_customer.php" method="post">
+<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<form id="customerForm" action="submit_new_customer.php" method="post">
     <div class="form-container">
         <div>
         <label for="customerName">Customer Name:</label>
@@ -108,8 +115,39 @@ form button:hover {
         <label for="customerContact">Customer Contact:</label>
         <input type="text" id="customerContact" name="customerContact">
         </div>
-        <button type="submit">Submit</button>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </div>
     </form>
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </body>
+<script>
+    $(document).ready(function() {
+    $('#customerForm').on('submit', function(e) {
+        // Prevent the form from being submitted
+        e.preventDefault();
+
+        // Check if all fields are filled
+        var allFilled = true;
+        $('#customerForm input[type="text"]').each(function() {
+            if ($(this).val() === '') {
+                allFilled = false;
+            }
+        });
+
+        // If all fields are filled, submit the form
+        if (allFilled) {
+            this.submit();
+        } else {
+            // If not, show a SweetAlert2 message
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please fill out all fields before submitting!',
+            });
+        }
+    });
+});
+</script>
 </html>

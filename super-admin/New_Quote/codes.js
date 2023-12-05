@@ -291,29 +291,37 @@ elements[0]=invoiceId;
 }
 }
 
-window.onload = function(){
-    
-document.getElementById('submit-button').addEventListener('click', function(event) {
-    event.preventDefault();
-    
-    submitInvoice();
-    fetch('Admin/fetch_invoice.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ invoiceId: invoiceId }) // Send the invoice ID to the server
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('invoice').innerText = JSON.stringify(data.invoice, null, 2);
-        document.getElementById('parts').innerText = JSON.stringify(data.parts, null, 2);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
+$(document).ready(function(){
+    $('#submit-button').click(function(e){
+        // Check if the parts table is empty
+        if($('#parts_table tr').length == 0) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please Add a Part to your quote before submitting',
+            });
+        } else {
+            // Only call submitInvoice() and fetch if the parts table is not empty
+            submitInvoice();
+            fetch('Admin/fetch_invoice.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ invoiceId: invoiceId }) // Send the invoice ID to the server
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('invoice').innerText = JSON.stringify(data.invoice, null, 2);
+                document.getElementById('parts').innerText = JSON.stringify(data.parts, null, 2);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
     });
-    
-})};
+});
 
 
 
@@ -392,12 +400,7 @@ async function submitInvoice() {
         console.error("Error submitting invoice: " + result.error);
     }
 }
-window.onload = function(){
-    document.getElementById('submit-button').addEventListener('click', function(event) {
-        event.preventDefault();
-        submitInvoice();
-    });
-};
+
 
 function clearPartInputs() {
     document.getElementById('volume').value = '';
@@ -437,10 +440,3 @@ function clearPartInputs() {
 
 }
 
-window.onload = function(){
-    
-    document.getElementById('submit-button').addEventListener('click', function(event) {
-        event.preventDefault();
-        submitInvoice();
-    });
-};

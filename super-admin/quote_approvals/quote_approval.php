@@ -193,7 +193,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     <script>
     var currentQuoteId = null;
     
-
+    $(document).ready(function() {
     $(".quote").click(function() {
         var quoteId = $(this).find(".quote-id").text();
         if (currentQuoteId === quoteId) {
@@ -213,6 +213,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     });
 
 $(".approve-quote").click(function() {
+    event.stopPropagation();
     var quoteIdAndVersion = $(this).attr('id').split('-');
     var quoteId = quoteIdAndVersion[1];
     var version = quoteIdAndVersion[2];
@@ -234,6 +235,7 @@ $(".approve-quote").click(function() {
 });
 
 $(".deny-quote").click(function() {
+    event.stopPropagation();
     var quoteIdAndVersion = $(this).attr('id').split('-');
     var quoteId = quoteIdAndVersion[1];
     var version = quoteIdAndVersion[2];
@@ -270,6 +272,7 @@ $(document).on('click', '.quote-files .download-link', function(e) {
             window.location.href = $(this).attr('href');
         }
     });
+});
 });
 </script>
 </body>
