@@ -98,12 +98,12 @@ async function addPart() {
     var material_markup_percent=(document.getElementById('material_markup_percent').value)/100;
     var material_cost_markup=parseFloat((material_cost*material_markup_percent)+material_cost).toFixed(3);
   
- var pcsPerLift= document.getElementById('piecesPerLift').value;
+ var pcsPerLift= Math.floor(13/gaugeIN);
  var stacksPerSkid=document.getElementById('stacksPerSkid').value;
  var pcsPerSkid= pcsPerLift*stacksPerSkid;
  var liftWeight=(pcsPerLift*pcsWeight*stacksPerSkid)+palletWeight;
  var stackHeight=gaugeIN*pcsPerLift;
- var skidsPerTruck=document.getElementById('skidsPerTruck').value;
+ var skidsPerTruck= Math.floor(40000/liftWeight);
  var pcsPerTruck=skidsPerTruck*pcsPerSkid;
  var weightPerTruck = (skidsPerTruck * liftWeight).toFixed(3);
 var annualTruckLoads=volume/pcsPerTruck;
@@ -415,9 +415,7 @@ function clearPartInputs() {
     document.getElementById('materialType').value = '';
     document.getElementById('palletType').value = '';
     document.getElementById('palletSize').value = '';
-    document.getElementById('piecesPerLift').value = '';
     document.getElementById('stacksPerSkid').value = '';
-    document.getElementById('skidsPerTruck').value = '';
     document.getElementById('scrapConsumption').value = '';
     document.getElementById('palletWeight').value = '';
     document.getElementById('palletCost').value = '';

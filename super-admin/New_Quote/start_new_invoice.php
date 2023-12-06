@@ -295,18 +295,15 @@ label[for="pdf_format"] {
         <input type="number" id="palletWeight" name="palletWeight">
         <label for="palletCost">Pallet Cost:</label>
         <input type="number" id="palletCost" name="palletCost">
-        <label for="pallet_uses"># Pallet Uses:</label>
-        <input type="number" id="pallet_uses" name="pallet_uses">
+       
        
         </div>
         <br>
         <div>
-        <label for="piecesPerLift">Pieces per Lift:</label>
-        <input type="number" id="piecesPerLift" name="piecesPerLift">
         <label for="stacksPerSkid">Stacks per Skid:</label>
         <input type="number" id="stacksPerSkid" name="stacksPerSkid">
-        <label for="skidsPerTruck">Skids per Truck:</label>
-        <input type="number" id="skidsPerTruck" name="skidsPerTruck">
+        <label for="pallet_uses"># Pallet Uses:</label>
+        <input type="number" id="pallet_uses" name="pallet_uses">
         </div>
         <br>
         <div>
@@ -438,16 +435,10 @@ $(document).ready(function(){
     <br>
     <label for="pph">PPH:</label>
     <input type="text" id="pph" name="PPH">
-    <br>
-    </div>
-    <div>
     <label for="wash_and_lube">Wash and Lube:</label>
     <input type="checkbox" id="wash_and_lube" name="wash_and_lube">
-    <select id ="steel_or_aluminum" name="steel_or_aluminum">
-    <option value="">Select a material</option>
-    <option value="steel">Steel</option>
-    <option value="aluminum">Aluminum</option>
-    </select>
+
+   
 </div>
 <div>
     <label for= "material_markup_percent">Material Markup % :</label>
@@ -545,9 +536,7 @@ $("#add-part").click(function(){
             palletType: document.getElementById('palletType').value,
             palletSize: document.getElementById('palletSize').value,
             pallet_uses: document.getElementById('pallet_uses').value,
-            piecesPerLift: document.getElementById('piecesPerLift').value,
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
-            skidsPerTruck: document.getElementById('skidsPerTruck').value,
             scrapConsumption: document.getElementById('scrapConsumption').value,
             contingencies: document.getElementById('contingencies').value
         }

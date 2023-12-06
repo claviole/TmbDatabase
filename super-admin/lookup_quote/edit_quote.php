@@ -155,6 +155,7 @@ form select {
     margin-top: 20px;
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
  body button {
@@ -172,7 +173,7 @@ button:hover {
     background-color: lightgray;
 }
 #parts_table {
-    width: 80%;
+    width: 100%;
     table-layout: auto;
     border-collapse: collapse;
     
@@ -183,8 +184,9 @@ button:hover {
 
 #parts_table th, #parts_table td {
     border: 1px solid #ccc;
-    padding: 0px;
+    padding: 4px;
     text-align: left;
+    font-size: 14px;
 }
 
 #parts_table tr:nth-child(even) {
@@ -359,12 +361,9 @@ label[for="pdf_format"] {
         </div>
         <br>
         <div>
-        <label for="piecesPerLift">Pieces per Lift:</label>
-        <input type="number" id="piecesPerLift" name="piecesPerLift">
         <label for="stacksPerSkid">Stacks per Skid:</label>
         <input type="number" id="stacksPerSkid" name="stacksPerSkid">
-        <label for="skidsPerTruck">Skids per Truck:</label>
-        <input type="number" id="skidsPerTruck" name="skidsPerTruck">
+       
         </div>
         <br>
         <div>
@@ -637,9 +636,7 @@ $(".line-item").click(function(){
             $('#palletType').val(data['pallet_type']);
             $('#palletSize').val(data['pallet_size']);
             $('#pallet_uses').val(data['pallet_uses']);
-            $('#piecesPerLift').val(data['Pieces per Lift']);
             $('#stacksPerSkid').val(data['Stacks per Skid']);
-            $('#skidsPerTruck').val(data['Skids per Truck']);
             $('#scrapConsumption').val(data['Scrap Consumption']);
         }
     });
@@ -673,9 +670,7 @@ $("#add-part").click(function(){
             palletType: document.getElementById('palletType').value,
             palletSize: document.getElementById('palletSize').value,
             pallet_uses: document.getElementById('pallet_uses').value,
-            piecesPerLift: document.getElementById('piecesPerLift').value,
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
-            skidsPerTruck: document.getElementById('skidsPerTruck').value,
             scrapConsumption: document.getElementById('scrapConsumption').value,
             contingencies: document.getElementById('contingencies').value,
 

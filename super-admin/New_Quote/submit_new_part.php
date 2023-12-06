@@ -11,14 +11,12 @@ $materialType = $database->real_escape_string($_POST['materialType']);
 $palletType = $database->real_escape_string($_POST['palletType']);
 $palletSize = $database->real_escape_string($_POST['palletSize']);
 $pallet_uses = $database->real_escape_string($_POST['pallet_uses']);
-$piecesPerLift = $database->real_escape_string($_POST['piecesPerLift']);
 $stacksPerSkid = $database->real_escape_string($_POST['stacksPerSkid']);
-$skidsPerTruck = $database->real_escape_string($_POST['skidsPerTruck']);
 $scrapConsumption = $database->real_escape_string($_POST['scrapConsumption']);
 $customer_id = $database->real_escape_string($_POST['customer_id']);
 
-$stmt = $database->prepare("INSERT INTO Part (`Part#`,`supplier_name`,`customer_id`, `Part Name`, `Mill`, `Platform`, `Type`, `Surface`, `Material Type`, `pallet_type`, `pallet_size`,`pallet_uses`, `Pieces per Lift`, `Stacks per Skid`, `Skids per Truck`, `Scrap Consumption`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssissssssssiiddd", $partNumber,$supplier_name,$customer_id, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $piecesPerLift, $stacksPerSkid, $skidsPerTruck, $scrapConsumption);
+$stmt = $database->prepare("INSERT INTO Part (`Part#`,`supplier_name`,`customer_id`, `Part Name`, `Mill`, `Platform`, `Type`, `Surface`, `Material Type`, `pallet_type`, `pallet_size`,`pallet_uses`, `Stacks per Skid`, `Scrap Consumption`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssissssssssidd", $partNumber,$supplier_name,$customer_id, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $stacksPerSkid,  $scrapConsumption);
 
 $stmt->execute();
 

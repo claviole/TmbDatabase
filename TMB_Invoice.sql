@@ -82,9 +82,7 @@ CREATE TABLE `Part` (
   `pallet_type` varchar(255) DEFAULT NULL,
 `pallet_size` varchar(255) DEFAULT NULL,
 `pallet_uses` int DEFAULT NULL,
-  `Pieces per Lift` int DEFAULT NULL,
   `Stacks per Skid` int DEFAULT NULL,
-  `Skids per Truck` int DEFAULT NULL,
   `Scrap Consumption` float DEFAULT NULL
 
 )
