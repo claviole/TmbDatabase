@@ -311,8 +311,8 @@ CREATE TABLE `employees`(
   employee_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   employee_fname varchar(255) NOT NULL,
   employee_lname varchar(255) NOT NULL,
-  date_hired DATE(255) NOT NULL,
-  first_day_of_work DATE(255) NOT NULL,
+  date_hired DATE(255) NULL,
+  first_day_of_work DATE(255) NULL,
   job_title int(11) NOT NULL,
   FOREIGN KEY (`job_title`) REFERENCES `job_titles` (`job_title_id`)
 );
@@ -332,6 +332,7 @@ CREATE TABLE `employee_training`(
 CREATE TABLE `accident_report`(
   accident_id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   employee_id int(11) NOT NULL,
+  non_employee_name varchar(255) NULL,
   foreman_id int(11) NULL,
   accident_type varchar(255)  NULL,
   date_added varchar(255)  NULL,

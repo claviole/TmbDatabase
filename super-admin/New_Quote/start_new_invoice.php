@@ -46,54 +46,51 @@ $lines = $line_result->fetch_all(MYSQLI_ASSOC);
 
     <title>Start New Quote</title>
     <style>
-       body {
-    font-family: Arial, sans-serif;
+      body {
+    font-family: 'Roboto', sans-serif; /* Use a modern, readable font */
     background-color: #f0f0f0;
+    color: #333;
 }
 
 .form-container {
     display: flex;
     justify-content: center;
+    
     margin-bottom: 20px;
     border-radius: 10px;
     width: auto;
-    
-    
-   
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
-
 
 .form-container div {
     display: flex;
     background-color: white;
-    
-    border: 2px solid black;
+    width: 90%;
+    border: 2px solid #ccc;
     border-radius: 10px;
-    padding: 10px;
+    padding: 5px;
     margin: 10px;
     box-sizing: border-box;
 }
 
 .form-container div div {
     flex: 1 0 50%;
-    margin: 10px;
+    margin: auto;
     box-sizing: border-box;
 }
 
-
-
 form label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     padding: 5px;
     font-weight: bold;
 }
 
 form input[type="text"], form input[type="number"] {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -107,6 +104,7 @@ form input[type="text"]:focus, form input[type="number"]:focus {
     box-shadow: 0 0 10px rgba(27, 20, 93, 0.1);
     outline: none;
 }
+
 form select {
     width: 100%;
     padding: 10px;
@@ -114,7 +112,6 @@ form select {
     border: 1px solid #ccc;
     margin-bottom: 10px;
 }
-
 
 .parts-table {
     border: 1px solid #ccc;
@@ -124,20 +121,22 @@ form select {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
- body button {
-    background-color: gray;
-    color: black;
+button {
+    background-color: #4da6ff; /* light blue */
+ 
     padding: 10px 20px;
-    border: black solid 2px;
+    border: black;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
     width: 200px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: lightgray;
+    background-color: #007bff; /* darker blue on hover */
 }
+
 #parts_table {
     width: 100%;
     table-layout: fixed;
@@ -150,9 +149,15 @@ button:hover {
     text-align: left;
 }
 
+#parts_table td {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
 #parts_table tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+
 .return-button {
     display: inline-block;
     padding: 10px 20px;
@@ -171,6 +176,7 @@ button:hover {
     text-align: right;
     margin-right: 10px;
 }
+
 label[for="pdf_format"] {
     display: block;
     margin-top: 20px;
@@ -188,15 +194,25 @@ label[for="pdf_format"] {
     font-size: 16px;
     color: #333;
 }
+
 #add-part {
-        background-color: green;
-        color: white;
-    }
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+}
 
-    #add-part:hover {
-        background-color: darkgreen;
-    }
+#add-part:hover {
+    background-color: darkgreen;
+}
+#submit-button {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+}
 
+#submit-button:hover {
+    background-color: darkgreen;
+}
     </style>
 
 </head>
@@ -204,12 +220,12 @@ label[for="pdf_format"] {
 <div class= "button-container">
 <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
-<div class="form-container">
+
    
-    <form action="submit_invoice.php" method="post">
-        <div class="form-container">
-        <label for="customer">Customer:</label>
-        <select id="customer" name="customer">
+    <form action="submit_invoice.php" method="post" style="display:none;">
+
+   
+        <select id="customer" name="customer" style="display:none;">
         <option value="">Select a customer</option>
             <?php foreach($customers as $Customer): ?>
                 <option value="<?= $Customer['Customer Name'] ?>"><?= $Customer['Customer Name'] ?></option>
@@ -246,9 +262,9 @@ label[for="pdf_format"] {
 <input type="hidden" id="customer_id" name="customer_id">
 <br>
 <input type="hidden" id="user" value="<?php echo $_SESSION['user']; ?>">
-</div>
+
     </form>
-</div>
+
 <div class="form-container">
     
     <div class="form-container">
@@ -304,12 +320,11 @@ label[for="pdf_format"] {
         <input type="number" id="stacksPerSkid" name="stacksPerSkid">
         <label for="pallet_uses"># Pallet Uses:</label>
         <input type="number" id="pallet_uses" name="pallet_uses">
-        </div>
-        <br>
-        <div>
         <label for="scrapConsumption">Scrap Consumption %:</label>
         <input type="number" id="scrapConsumption" name="scrapConsumption" step="0.01">
         </div>
+        
+        
         
         </form>
     </div>
@@ -377,14 +392,21 @@ $(document).ready(function(){
 
     <input type="number" id="volume" name="volume">
     </div>
+    <br>
 
 
     <div>
     <label for="Density">Density:</label>
     <input type="number" id="Density" name="Density">
-    <label for="trap">Trap:</label>
-    <input type="text" id="trap" name="trap">
+    <label for="Width(mm)">Width(mm):</label>
+    <input type="number" id="width" name="width">
+    <label for="Pitch">Pitch(mm):</label>
+    <input type="number" id="pitch" name="pitch">
+    <label for="Gauge">Gauge(mm):</label>
+    <input type="number" id="gauge" name="gauge">
+    
     </div>
+    <br>
 
     <div>
     <label for="nom?">Select Measurement Type:</label>
@@ -401,25 +423,20 @@ $(document).ready(function(){
     <option value="NO">NO</option>
 
 </select>
+<label for="trap">Trap:</label>
+    <input type="text" id="trap" name="trap">
     </div>
-    <div>
 
-    <label for="Width(mm)">Width(mm):</label>
-    <input type="number" id="width" name="width">
+    
     <br>
-    <label for="Pitch">Pitch(mm):</label>
-    <input type="number" id="pitch" name="pitch">
-    <br>
-    </div>
+
+ 
+
+
     <div>
-    <label for="Gauge">Gauge(mm):</label>
-    <input type="number" id="gauge" name="gauge">
-    <br>
     <label for="# Out"># Out:</label>
     <input type="number" id="# Out" name="# Out">
-    <br>
-    </div>
-    <div>
+ 
     <label for="line_produced">Line Produced On:</label>
 <select id="line_produced" name="line_produced">
 <option value="">Select a line</option>
@@ -428,11 +445,12 @@ $(document).ready(function(){
 <?php endforeach; ?>
 </select>
     </div>
-    <div>
     <br>
+
+    <div>
+
     <label for="Uptime">Uptime %:</label>
     <input type="text" id="uptime" name="uptime">
-    <br>
     <label for="pph">PPH:</label>
     <input type="text" id="pph" name="PPH">
     <label for="wash_and_lube">Wash and Lube:</label>
@@ -440,11 +458,14 @@ $(document).ready(function(){
 
    
 </div>
+<br>
+
+
 <div>
     <label for= "material_markup_percent">Material Markup % :</label>
     <input type="number" id="material_markup_percent" name="material_markup_percent">
-    </div>
-    <div>
+ 
+
     <label for="freight">Freight Cost</label>
     <input type="number" id="freight" name="freight">
     <label for="cost_per_lb">Material Cost / lb:</label>

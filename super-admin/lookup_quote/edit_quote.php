@@ -54,40 +54,40 @@ $author_initials = $author_parts[0][0] . $author_parts[1][0];
 
     <style>
        body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif; /* Use a modern, readable font */
     background-color: #f0f0f0;
+    color: #333;
 }
 
 .form-container {
     display: flex;
     justify-content: center;
+    
     margin-bottom: 20px;
     border-radius: 10px;
     width: auto;
-    
-    
-   
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
-
 
 .form-container div {
     display: flex;
     background-color: white;
-    
-    border: 2px solid black;
+    width: 90%;
+    border: 2px solid #ccc;
     border-radius: 10px;
-    padding: 10px;
+    padding: 5px;
     margin: 10px;
     box-sizing: border-box;
 }
 
 .form-container div div {
     flex: 1 0 50%;
-    margin: 10px;
+    margin: auto;
     box-sizing: border-box;
 }
+
 #generate-pdf-button {
     background-color: #4CAF50; /* Green background */
     border: none; /* No border */
@@ -109,24 +109,14 @@ $author_initials = $author_parts[0][0] . $author_parts[1][0];
 
 form label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     padding: 5px;
     font-weight: bold;
 }
 
 form input[type="text"], form input[type="number"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    color: #333;
-    background-color: #f9f9f9;
-    transition: all 0.3s ease;
-}
-form input[type="text"], form input[type="float"] {
-    width: 100%;
-    padding: 10px;
+    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -140,6 +130,7 @@ form input[type="text"]:focus, form input[type="number"]:focus {
     box-shadow: 0 0 10px rgba(27, 20, 93, 0.1);
     outline: none;
 }
+
 form select {
     width: 100%;
     padding: 10px;
@@ -314,7 +305,7 @@ label[for="pdf_format"] {
     <div class="form-container">
     <form id="submit_new_part" action="submit_new_part.php" method="post">
                 
-        <div>
+    <div>
         <label for="supplier_name">Supplier Name:</label>
         <input type="text" id="supplier_name" name="supplier_name">
         </div>
@@ -355,21 +346,20 @@ label[for="pdf_format"] {
         <input type="number" id="palletWeight" name="palletWeight">
         <label for="palletCost">Pallet Cost:</label>
         <input type="number" id="palletCost" name="palletCost">
-        <label for="pallet_uses"># Pallet Uses:</label>
-        <input type="number" id="pallet_uses" name="pallet_uses">
+       
        
         </div>
         <br>
         <div>
         <label for="stacksPerSkid">Stacks per Skid:</label>
         <input type="number" id="stacksPerSkid" name="stacksPerSkid">
-       
-        </div>
-        <br>
-        <div>
+        <label for="pallet_uses"># Pallet Uses:</label>
+        <input type="number" id="pallet_uses" name="pallet_uses">
         <label for="scrapConsumption">Scrap Consumption %:</label>
         <input type="number" id="scrapConsumption" name="scrapConsumption" step="0.01">
         </div>
+        
+        
         
         </form>
     </div>
@@ -392,14 +382,21 @@ label[for="pdf_format"] {
 
     <input type="number" id="volume" name="volume">
     </div>
+    <br>
 
 
     <div>
     <label for="Density">Density:</label>
-    <input type="float" id="Density" name="Density">
-    <label for="trap">Trap:</label>
-    <input type="text" id="trap" name="trap">
+    <input type="number" id="Density" name="Density">
+    <label for="Width(mm)">Width(mm):</label>
+    <input type="number" id="width" name="width">
+    <label for="Pitch">Pitch(mm):</label>
+    <input type="number" id="pitch" name="pitch">
+    <label for="Gauge">Gauge(mm):</label>
+    <input type="number" id="gauge" name="gauge">
+    
     </div>
+    <br>
 
     <div>
     <label for="nom?">Select Measurement Type:</label>
@@ -416,25 +413,20 @@ label[for="pdf_format"] {
     <option value="NO">NO</option>
 
 </select>
+<label for="trap">Trap:</label>
+    <input type="text" id="trap" name="trap">
     </div>
-    <div>
 
-    <label for="Width(mm)">Width(mm):</label>
-    <input type="number" id="width" name="width">
+    
     <br>
-    <label for="Pitch">Pitch(mm):</label>
-    <input type="number" id="pitch" name="pitch">
-    <br>
-    </div>
+
+ 
+
+
     <div>
-    <label for="Gauge">Gauge(mm):</label>
-    <input type="float" id="gauge" name="gauge">
-    <br>
     <label for="# Out"># Out:</label>
     <input type="number" id="# Out" name="# Out">
-    <br>
-    </div>
-    <div>
+ 
     <label for="line_produced">Line Produced On:</label>
 <select id="line_produced" name="line_produced">
 <option value="">Select a line</option>
@@ -443,33 +435,39 @@ label[for="pdf_format"] {
 <?php endforeach; ?>
 </select>
     </div>
-    <div>
     <br>
+
+    <div>
+
     <label for="Uptime">Uptime %:</label>
     <input type="text" id="uptime" name="uptime">
-    <br>
     <label for="pph">PPH:</label>
     <input type="text" id="pph" name="PPH">
-    <br>
-    
-
     <label for="wash_and_lube">Wash and Lube:</label>
     <input type="checkbox" id="wash_and_lube" name="wash_and_lube">
-    </div>
+
+   
+</div>
+<br>
+
+
 <div>
     <label for= "material_markup_percent">Material Markup % :</label>
-    <input type="float" id="material_markup_percent" name="material_markup_percent">
-    </div>
-    <div>
+    <input type="number" id="material_markup_percent" name="material_markup_percent">
+ 
+
     <label for="freight">Freight Cost</label>
-    <input type="double" id="freight" name="freight">
+    <input type="number" id="freight" name="freight">
     <label for="cost_per_lb">Material Cost / lb:</label>
-    <input type="float" id="cost_per_lb" name="cost_per_lb">
+    <input type="number" id="cost_per_lb" name="cost_per_lb">
     </div>
     
-    <button id="add-part" type="button">Add Changes</button>
+    <button id="add-part" type="button">Add Part</button>
     </div>
     </div>
+    <div class="parts-table">
+
+    
     
     <table class="parts-table" id="parts_table">
 
@@ -501,7 +499,7 @@ label[for="pdf_format"] {
     <tbody>
     <?php foreach ($line_items as $item): ?>
         <tr class="line-item" data-item='<?php echo json_encode($item); ?>'>
-        <td><input type="text"id="part-number"class ="part-number" value="<?php echo $item['Part#']; ?>"> </td>
+        <td><?php echo $item['Part#']; ?></td>
         <td><?php echo $item['Volume']; ?></td>
         <td><?php echo $item['Width(mm)']; ?></td>
         <td><?php echo $item['Pitch(mm)']; ?></td>
@@ -526,7 +524,7 @@ label[for="pdf_format"] {
 
 </table>
 
-
+</div>
 </div>
 <style>
     .form-container {

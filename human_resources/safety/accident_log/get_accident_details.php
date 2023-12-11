@@ -29,6 +29,7 @@ $files = mysqli_fetch_all($result, MYSQLI_ASSOC);
 <div class="modal-body">
     <p><strong>Accident ID:</strong> <?= $accident['accident_id'] ?></p>
     <p><strong>Employee ID:</strong> <?= $accident['employee_id'] ?></p>
+    <p><strong>Non-Employee Name:</strong> <?= $accident['non_employee_name'] ?></p>
     <p><strong>Foreman ID:</strong> <?= $accident['foreman_id'] ?></p>
     <p><strong>Accident Type:</strong> <?= $accident['accident_type'] ?></p>
     <p><strong>Date Added:</strong> <?= $accident['date_added'] ?></p>

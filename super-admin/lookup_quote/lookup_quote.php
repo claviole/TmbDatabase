@@ -231,7 +231,17 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 .delete-btn:hover {
     background-color: #da190b;
 }
+#quote-search {
+    display: block;
+    width: 20%;
+    margin: 20px auto;
 
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+
+}
     </style>
 </head>
 <body>
@@ -246,8 +256,11 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
      
     </h1>
     <!-- ... -->
+     <div>
+    <input type="text" id="quote-search" placeholder="Search quotes...">.
+    </div>
     <div class="quote-list">
-        <input type="text" id="quote-search" placeholder="Search quotes...">
+       
         <div class="quote-header">
             <span class="quote-id-header">Quote ID</span>
             <span class="customer-name-header">Customer Name</span>

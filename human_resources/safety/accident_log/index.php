@@ -188,13 +188,14 @@ $employees = mysqli_query($database, $query);
                         <option>Injury</option>
                     </select>
                     <label for="employeeName">Employee Name</label>
-<select id="employeeName" class="form-control">
+                    <select id="employeeName" class="form-control">
     <?php while ($row = mysqli_fetch_assoc($employees)): ?>
         <option value="<?php echo $row['employee_id']; ?>">
             <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
         </option>
     <?php endwhile; ?>
 </select>
+<input type="text" id="nonEmployeeName" class="form-control" style="display: none;">
                     <label for="currentDate">Current Date</label>
                     <input type="date" id="currentDate" class="form-control" readonly>
                 </div>
@@ -323,11 +324,13 @@ document.querySelector('.btn-primary').addEventListener('click', function (e) {
         var formData = new FormData(document.querySelector('#newAccidentForm'));
 
         // Append form data...
+        
 formData.append('employee_id', document.querySelector('#employeeName').value);
 formData.append('accident_type', document.querySelector('#accidentType').value);
 formData.append('date_added', document.querySelector('#currentDate').value);
 formData.append('accident_date', document.querySelector('#accidentDate').value);
 formData.append('accident_time', document.querySelector('#accidentTime').value);
+formData.append('non_employee_name', document.querySelector('#nonEmployeeName').value);
 formData.append('shift', document.querySelector('#shift').value);
 formData.append('time_sent_to_clinic', document.querySelector('#timeSentToClinic').value);
 formData.append('accident_location', document.querySelector('#accidentLocation').value);
@@ -432,6 +435,10 @@ document.querySelectorAll('.accident-id').forEach(function(element) {
                 $('#accidentDetailsModal').modal('show');
             });
     });
+});
+document.querySelector('#employeeName').addEventListener('change', function () {
+    var selectedText = this.options[this.selectedIndex].text;
+    document.querySelector('#nonEmployeeName').style.display = selectedText === 'non employee' ? 'block' : 'none';
 });
     </script>
 </body>
