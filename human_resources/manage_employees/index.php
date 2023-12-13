@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../connection.php'; 
 date_default_timezone_set('America/Chicago');
 
 ?>
@@ -40,10 +40,11 @@ date_default_timezone_set('America/Chicago');
             margin-right: 10px;
         }
         .employee-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-    }
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    border: 2px solid #000; /* Add this line */
+}
 
     .employee-table th, .employee-table td {
         border: 1px solid #ddd;
@@ -148,11 +149,11 @@ date_default_timezone_set('America/Chicago');
         color: #fff;
     }
     .scrollable-table {
-    overflow-y: auto;
-    max-height: 500px; /* Adjust this value according to your needs */
     width: 100%;
 }
-.scrollable-table thead tr {
+
+.scrollable-table thead,
+.scrollable-table tbody tr {
     display: table;
     width: 100%;
     table-layout: fixed;
@@ -162,14 +163,10 @@ date_default_timezone_set('America/Chicago');
     display: block;
     overflow-y: auto;
     max-height: 500px; /* Adjust this value according to your needs */
-    width: 100%;
-    table-layout: fixed;
 }
 
-.scrollable-table tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
+.scrollable-table thead {
+    width: calc( 100% - 1em ) /* scrollbar is average 1em/16px width, remove it from thead width */
 }
     </style>
     
