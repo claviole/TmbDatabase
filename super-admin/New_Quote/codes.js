@@ -5,7 +5,8 @@ var data = {
     invoiceDate: '',
     parts: [],
     invoice_author: '',
-    contingencies: ''
+    contingencies: '',
+    die_reviewer: '',
 };
 user=window.user;
 
@@ -37,6 +38,8 @@ async function addPart() {
     var partName = document.getElementById('partName').value;
     // Get values from input fields
     var invoiceId = $('#invoice_number').val();
+    // Get the value from the die_reviewer input field
+    
     var partNumber = document.getElementById('part').value
     var volume = document.getElementById('volume').value;
     var width = parseFloat(document.getElementById('width').value);
@@ -334,6 +337,8 @@ async function submitInvoice() {
     data.invoice_author = user;
     data.pdf_format = $('#pdf_format').val();
     data.contingencies = $('#contingencies').val();
+    // Assign the value to data.die_reviewer
+    data.die_reviewer = $('#die_reviewer_input').val();
     console.log('Data: ', data);
         
     // First, send the JSON data

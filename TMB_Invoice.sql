@@ -186,6 +186,7 @@ CREATE TABLE `Line_Item` (
   `version` int(11) DEFULT 1,
   invoice_date varchar(255) DEFAULT NULL,
   customer_id int(11) DEFAULT NULL,
+  die_reviewer varchar(255) DEFAULT NULL,
   invoice_author varchar(255) NOT NULL,
   approval_status varchar(255) DEFAULT "Awaiting Approval",
   award_total decimal(12,3) DEFAULT NULL,

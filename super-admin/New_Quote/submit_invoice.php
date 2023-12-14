@@ -35,6 +35,8 @@ $author_fullname = $database->real_escape_string($data['invoice_author']);
 $author_parts = explode(' ', $author_fullname);
 $author = $author_parts[0][0] . $author_parts[1][0];
 $contingencies = $database->real_escape_string($data['contingencies']);
+$die_reviewer = $database->real_escape_string($data['die_reviewer']);
+
 
 // Start a transaction
 $database->begin_transaction();
@@ -43,8 +45,8 @@ $database->begin_transaction();
 try {
     // Get the ID of the inserted invoice
     $invoice_id = $database->insert_id;
-    // Insert the invoice into the invoice tabl
-    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies')");
+
+
 
 
 
@@ -109,7 +111,7 @@ try {
     }
     
     
-    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`,`award_total`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies','$award_total')");
+    $database->query("INSERT INTO invoice (`Customer name`, `customer_id`, `invoice_date`,`invoice_id`, `invoice_author`,`contingencies`,`award_total`,`die_reviewer`) VALUES ('$customer', '$customerId', '$invoiceDate','$invoice_id', '$author','$contingencies','$award_total','$die_reviewer')");
     
 
     

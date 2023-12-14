@@ -38,48 +38,93 @@ $lines = $line_result->fetch_all(MYSQLI_ASSOC);
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="codes.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script>
          window.user = "<?php echo $_SESSION['user']; ?>";
     </script>
+        <script>
+function openTab(evt, tabId) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = ""; // Reset the background color
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabId).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
    
 
     <title>Start New Quote</title>
     <style>
       body {
-    font-family: 'Roboto', sans-serif; /* Use a modern, readable font */
-    background-color: #f0f0f0;
-    color: #333;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-.form-container {
-    display: flex;
-    justify-content: center;
-    
+
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
     margin-bottom: 20px;
-    border-radius: 10px;
-    width: auto;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
 }
 
-.form-container div {
-    display: flex;
-    background-color: white;
-    width: 90%;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 5px;
-    margin: 10px;
-    box-sizing: border-box;
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
 }
 
-.form-container div div {
-    flex: 1 0 50%;
-    margin: auto;
-    box-sizing: border-box;
+.tab button:hover {
+    background-color: #ddd;
 }
+
+.tab button.active {
+    background-color: #ccc;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+
 
 form label {
     display: block;
@@ -89,7 +134,7 @@ form label {
 }
 
 form input[type="text"], form input[type="number"] {
-    width: 100%;
+    width: 25%;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -106,7 +151,7 @@ form input[type="text"]:focus, form input[type="number"]:focus {
 }
 
 form select {
-    width: 100%;
+    width: 25%;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -175,6 +220,7 @@ button:hover {
 .button-container {
     text-align: right;
     margin-right: 10px;
+    margin-top: 5px;
 }
 
 label[for="pdf_format"] {
@@ -213,121 +259,287 @@ label[for="pdf_format"] {
 #submit-button:hover {
     background-color: darkgreen;
 }
+
+.nav-tabs {
+    border-bottom: 3px solid #343a40; /* Dark grey */
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    color: #fff; /* White text */
+    background-color: #343a40; /* Dark grey background */
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #343a40;
+    background-color: #495057; /* Darker grey on hover */
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff; /* White text */
+    background-color: #495057; /* Darker grey background */
+    border-color: #343a40 #343a40 #fff; /* Dark grey border */
+}
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.container {
+    background-color: #fff;
+  width: 40%; /* Adjust this to change the form width */
+  padding: 5px;
+  border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+ 
+}
+button.next-tab {
+    background-color: #007BFF !important; /* Change to your preferred color */
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    font-size: 16px !important;
+    margin: 4px 2px !important;
+    transition-duration: 0.4s !important;
+    cursor: pointer !important;
+    border-radius: 5px !important;
+}
+
+button.next-tab:hover {
+    background-color: #0069D9 !important; /* Change to your preferred color */
+    color: white !important;
+}
+
+
     </style>
 
 </head>
-<body style=" background-color: white;">
-<div class= "button-container">
-<a href="../index.php" class="return-button">Return to Dashboard</a>
+<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<div class="button-container">
+    <a href="../index.php" class="return-button">Return to Dashboard</a>
+</div>
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+       
+
+     
+    </h1>
+<div class="form-wrapper">
+  <div class="container">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#Tab1">Customer Information</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#Tab2">Part Information</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#Tab3">Measurements</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#Tab4">Operations</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#Tab5">Freight Information</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#Tab6">Review Quote</a>
+    </li>
+  </ul>
+    <div class="tab-content">
+    <div class="tab-pane fade show active" id="Tab1">
+   
+    <form>
+    <div style="text-align: left; margin-top: 20px;">
+        <button id="add-customer-btn" class="btn btn-primary">Add New Customer</button>
+        </div>
+        <br>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="flex: 1; margin-right: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="customer" style="width: 30%;">Select Customer:</label>
+                    <select id="customer" name="customer" style="width: 50%;">
+                        <option value="">Select a customer</option>
+                        <?php foreach($customers as $Customer): ?>
+                            <option value="<?= $Customer['Customer Name'] ?>"><?= $Customer['Customer Name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_city" style="width: 30%;">City:</label>
+                    <input type="text" id="customer_city" name="customer_city" readonly style="width: 50%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_state" style="width: 30%;">State:</label>
+                    <input type="text" id="customer_state" name="customer_state" readonly style="width: 50%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_contact" style="width: 30%;">Contact:</label>
+                    <input type="text" id="customer_contact" name="customer_contact" readonly style="width: 50%;">
+                </div>
+                <br>
+            </div>
+            <div style="flex: 1; margin-left: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_address" style="width: 30%;">Address:</label>
+                    <input type="text" id="customer_address" name="customer_address" readonly style="width: 50%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_zip" style="width: 30%;">Zipcode:</label>
+                    <input type="text" id="customer_zip" name="customer_zip" readonly style="width: 50%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_phone" style="width: 30%;">Phone:</label>
+                    <input type="text" id="customer_phone" name="customer_phone" readonly style="width: 50%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="customer_email" style="width: 30%;">Email:</label>
+                    <input type="text" id="customer_email" name="customer_email" readonly style="width: 50%;">
+                </div>
+                <br>
+                <input type="hidden" id="customer_id" name="customer_id">
+                <input type="hidden" id="user" value="<?php echo $_SESSION['user']; ?>">
+            </div>
+        </div>
+       
+        <div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-primary next-tab">Next</button>
+        </div>
+    </form>
 </div>
 
-   
-    <form action="submit_invoice.php" method="post" style="display:none;">
 
-   
-        <select id="customer" name="customer" style="display:none;">
-        <option value="">Select a customer</option>
-            <?php foreach($customers as $Customer): ?>
-                <option value="<?= $Customer['Customer Name'] ?>"><?= $Customer['Customer Name'] ?></option>
-            <?php endforeach; ?>
 
-            .</select>
-            
-            <label for="customer_address"></label>
-<input type="hidden" id="customer_address" name="customer_address" readonly>
-<br>
-<label for="customer_city"></label>
-<input type="hidden" id="customer_city" name="customer_city" readonly>
 
-<br>
-
-<label for="customer_state"></label>
-<input type="hidden" id="customer_state" name="customer_state" readonly>
-<br>
-<label for="customer_zip"></label>
-<input type="hidden"id="customer_zip" name="customer_zip" readonly>
-
-<br>
-
-<label for="customer_phone"></label>
-<input type="hidden"id="customer_phone" name="customer_phone" readonly>
-<br>
-<label for="customer_email"></label>
-<input type="hidden" id="customer_email" name="customer_email" readonly>
-
-<br>
-<label for="customer_contact"></label>
-<input type="hidden"id="customer_contact" name="customer_contact" readonly>
-<br>
-<input type="hidden" id="customer_id" name="customer_id">
-<br>
-<input type="hidden" id="user" value="<?php echo $_SESSION['user']; ?>">
-
-    </form>
-
-<div class="form-container">
     
-    <div class="form-container">
+
+
+    <div class="tab-pane fade" id="Tab2">
+    <style>
+#customer_supplied_material {
+    transform: scale(1.5);
+}
+#customer_provided_die {
+    align-items: right;
+    transform: scale(1.5);
+}
+</style>
     <form id="submit_new_part" action="submit_new_part.php" method="post">
-                
-        <div>
-        <label for="supplier_name">Supplier Name:</label>
-        <input type="text" id="supplier_name" name="supplier_name">
+    <br>    
+    <div style="display: flex; align-items: center; justify-content: space-evenly">
+    <div style="display: flex; align-items: center;">
+    <label for="customer_supplied_material">Customer Supplied Material? :</label>
+    <input type="checkbox" id="customer_supplied_material" name="customer_supplied_material">
+    </div>
+    <div style="display: flex; align-items: center;">
+     
+
+        <label for="customer_provided_die">Did the Customer Provide a Die?:</label>
+        <input type="checkbox" id="customer_provided_die" name="customer_provided_die" onchange="toggleDieReviewer()">
+   </div>
+    </div>
+        
+        
+        <br>
+        <div style="display: flex; justify-content: space-between;">
+    <div style="flex: 1; margin-right: 10px; padding: 10px;">
+        <div id="supplier_name_div"style="display: flex; align-items: center;">
+            <label for="supplier_name" style="width: 30%;">Supplier Name:</label>
+            <input type="text" id="supplier_name" name="supplier_name"style="width: 30%;">
         </div>
         <br>
-        <div>
-        <label for="partNumber">Part Number:</label>
-        <input type="text" id="partNumber" name="partNumber">
-        <label for="partName">Part Name:</label>
-        <input type="text" id="partName" name="partName">
+        <div style="display: flex; align-items: center;">
+            <label for="partNumber" style="width: 30%;">Part Number:</label>
+            <input type="text" id="partNumber" name="partNumber" style="width: 30%;">
         </div>
         <br>
-        <div>
-        <label for="mill">Mill:</label>
-        <input type="text" id="mill" name="mill">
-        <label for="platform">Platform:</label>
-        <input type="text" id="platform" name="platform">
-        <label for="model_year">Model Year(if applicable):</label>
-        <input type="number" id="model_year" name="model_year">
+        <div style="display: flex; align-items: center;">
+            <label for="mill" style="width: 30%;">Mill:</label>
+            <input type="text" id="mill" name="mill" style="width: 30%;">
         </div>
         <br>
-        <div>
-        <label for="type">Type:</label>
-        <input type="text" id="type" name="type">
-        <label for="surface">Surface:</label>
-        <input type="text" id="surface" name="surface">
-        <label for="materialType">Material Type:</label>
-        <input type="text" id="materialType" name="materialType">
-        </div> 
+        <div style="display: flex; align-items: center;">
+            <label for="model_year" style="width: 30%;">Model Year(if applicable):</label>
+            <input type="number" id="model_year" name="model_year" style="width: 30%;">
+        </div>
         <br>
-        <div>
+        <div style="display: flex; align-items: center;">
+            <label for="surface" style="width: 30%;">Surface:</label>
+            <select id="surface" name="surface" style="width: 30%;">
+                <option value="">Select a surface</option>
+                <option value="Exposed">Exposed</option>
+                <option value="Unexposed">Unexposed</option>
+                <option value="Semi-exposed">Semi-exposed</option>
+            </select>
+        </div>
+        <br>
+        <div style="display: flex; align-items: center;">
+        <label for="# Out" style="width: 30%;"># Out:</label>
+        <input type="number" id="# Out" name="# Out"style="width: 30%;">
+        </div>
+        <br>
+    </div>
+    <div style="flex: 1; margin-left: 10px; padding: 10px;">
+         <div id="die_reviewer" style="display: none; align-items: center;">
+            <label for="die_reviewer_input" style="width: 30%;">Die Reviewer:</label>
+            <input type="text" id="die_reviewer_input" name="die_reviewer_input" style="width: 30%;">
+        </div>
+        <br>
+        <div style="display: flex; align-items: center;">
+            <label for="partName" style="width: 30%;">Part Name:</label>
+            <input type="text" id="partName" name="partName" style="width: 30%;">
+        </div>
+        <br>
+        <div style="display: flex; align-items: center;">
+            <label for="platform" style="width: 30%;">Platform:</label>
+            <input type="text" id="platform" name="platform" style="width: 30%;">
+        </div>
+        <br>
+        <div style="display: flex; align-items: center;">
+            <label for="type" style="width: 30%;">Type:</label>
+            <select id="type" name="type" style="width: 30%;">
+                <option value="">Select a type</option>
+                <option value="Configured">Configured</option>
+                <option value="Cut To Length">Cut To Length</option>
+            </select>
+        </div>
+        <br>
+        <div style="display: flex; align-items: center;">
+            <label for="materialType" style="width: 30%;">Material Type:</label>
+            <input type="text" id="materialType" name="materialType" style="width: 30%;">
+        </div>
+        <br>
+        <div style="display: flex; align-items: center;">
+            <label for="scrapConsumption" style="width: 30%;">Head/Tail Scrap Allowance(0-6%):</label>
+            <input type="number" id="scrapConsumption" name="scrapConsumption" step="1.00" max="6" style="width: 30%;">
+        </div>
+    </div>
+</div>
+<div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-primary next-tab">Next</button>
+        </div>
        
-        <label for="palletType">Pallet Type:</label>
-        <input type="text" id="palletType" name="palletType">
-        <br>
-        <label for="palletSize">Pallet Size:</label>
-        <input type="text" id="palletSize" name="palletSize">
-        <label for="palletWeight">Pallet Weight(Lbs):</label>
-        <input type="number" id="palletWeight" name="palletWeight">
-        <label for="palletCost">Pallet Cost:</label>
-        <input type="number" id="palletCost" name="palletCost">
-       
-       
-        </div>
-        <br>
-        <div>
-        <label for="stacksPerSkid">Stacks per Skid:</label>
-        <input type="number" id="stacksPerSkid" name="stacksPerSkid">
-        <label for="pallet_uses"># Pallet Uses:</label>
-        <input type="number" id="pallet_uses" name="pallet_uses">
-        <label for="scrapConsumption">Scrap Consumption %:</label>
-        <input type="number" id="scrapConsumption" name="scrapConsumption" step="0.01">
-        </div>
+
         
         
         
         </form>
-    </div>
+        </div>
+
     
     
 <script>
@@ -366,13 +578,8 @@ $(document).ready(function(){
 });
 </script>
 
-<div class= "form-container">
-
-
-<form action="submit_invoice.php" method="post">
-
-    <div>
-    <label for="part"></label>
+<div class="tab-pane fade" id="Tab3">
+    <form>
     <input type="hidden" id="part" name="part">
     <script>
     $(document).ready(function(){
@@ -382,106 +589,187 @@ $(document).ready(function(){
 });
     </script>
  
-    <label for="date"></label>
+
     <input type="hidden" id="date" name="date" value="<?= $current_date ?>" readonly>
-    
-    
     <input type="hidden" id="invoice_number" name="invoice_number" readonly>
-
-    <label for="volume">Volume:</label>
-
-    <input type="number" id="volume" name="volume">
-    </div>
-    <br>
-
-
-    <div>
-    <label for="Density">Density:</label>
-    <input type="number" id="Density" name="Density">
-    <label for="Width(mm)">Width(mm):</label>
-    <input type="number" id="width" name="width">
-    <label for="Pitch">Pitch(mm):</label>
-    <input type="number" id="pitch" name="pitch">
-    <label for="Gauge">Gauge(mm):</label>
-    <input type="number" id="gauge" name="gauge">
-    
-    </div>
-    <br>
-
-    <div>
-    <label for="nom?">Select Measurement Type:</label>
-<select id="nom?" name="nom?">
-    <option value="">Select a format</option>
-    <option value="NOM">NOM</option>
-    <option value="MIN">MIN</option>
-    <option value="MAX">MAX</option>
-</select>
-<label for="blank_die?">Blank Die?</label>
-<select id="blank_die?" name="blank_die?">
-    <option value="">Select YES/NO</option>
-    <option value="YES">YES</option>
-    <option value="NO">NO</option>
-
-</select>
-<label for="trap">Trap:</label>
-    <input type="text" id="trap" name="trap">
-    </div>
-
-    
-    <br>
-
- 
-
-
-    <div>
-    <label for="# Out"># Out:</label>
-    <input type="number" id="# Out" name="# Out">
- 
-    <label for="line_produced">Line Produced On:</label>
-<select id="line_produced" name="line_produced">
-<option value="">Select a line</option>
-<?php foreach($lines as $line): ?>
-    <option value="<?= $line['line_id'] ?>"><?= $line['Line_Location'] . ' - ' . $line['Line_Name'] ?></option>
-<?php endforeach; ?>
-</select>
-    </div>
-    <br>
-
-    <div>
-
-    <label for="Uptime">Uptime %:</label>
-    <input type="text" id="uptime" name="uptime">
-    <label for="pph">PPH:</label>
-    <input type="text" id="pph" name="PPH">
-    <label for="wash_and_lube">Wash and Lube:</label>
-    <input type="checkbox" id="wash_and_lube" name="wash_and_lube">
-
-   
+        <div style="display: flex; justify-content: space-between;">
+            <div style="flex: 1; margin-right: 10px; padding: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="volume" style="width: 30%;">Volume:</label>
+                    <input type="number" id="volume" name="volume" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="Density" style="width: 30%;">Density:</label>
+                    <input type="number" id="Density" name="Density" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="Width(mm)" style="width: 30%;">Width(mm):</label>
+                    <input type="number" id="width" name="width" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="Pitch" style="width: 30%;">Pitch(mm):</label>
+                    <input type="number" id="pitch" name="pitch" style="width: 30%;">
+                </div>
+            </div>
+            <div style="flex: 1; margin-left: 10px; padding: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="Gauge" style="width: 30%;">Gauge(mm):</label>
+                    <input type="number" id="gauge" name="gauge" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="nom?" style="width: 30%;">Select Measurement Type:</label>
+                    <select id="nom?" name="nom?" style="width: 30%;">
+                        <option value="">Select a format</option>
+                        <option value="NOM">NOM</option>
+                        <option value="MIN">MIN</option>
+                        <option value="MAX">MAX</option>
+                    </select>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="blank_die?" style="width: 30%;">Blank Die?</label>
+                    <select id="blank_die?" name="blank_die?" style="width: 30%;">
+                        <option value="">Select YES/NO</option>
+                        <option value="YES">YES</option>
+                        <option value="NO">NO</option>
+                    </select>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="trap" style="width: 30%;">Trap:</label>
+                    <input type="text" id="trap" name="trap" style="width: 30%;">
+                </div>
+            </div>
+        </div>
+        <div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-primary next-tab">Next</button>
+        </div>
+    </form>
 </div>
-<br>
+<div class="tab-pane fade" id="Tab4">
+    <br>
+    <form>
+    <input type="hidden" id="invoice_number" name="invoice_number" readonly>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="flex: 1; margin-right: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="line_produced" style="width: 30%;">Line Produced On:</label>
+                    <select id="line_produced" name="line_produced" style="width: 50%;">
+                        <option value="">Select a line</option>
+                        <?php foreach($lines as $line): ?>
+                            <option value="<?= $line['line_id'] ?>"><?= $line['Line_Location'] . ' - ' . $line['Line_Name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="Uptime" style="width: 30%;">Uptime %:</label>
+                    <input type="text" id="uptime" name="uptime" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="pph" style="width: 30%;">PPH:</label>
+                    <input type="text" id="pph" name="PPH" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="wash_and_lube" style="width: 30%;">Wash and Lube:</label>
+                    <input type="checkbox" id="wash_and_lube" name="wash_and_lube" style="width: 30%; transform: scale(1.5);">
+                </div>
+            </div>
+            <div style="flex: 1; margin-left: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="material_markup_percent" style="width: 30%;">Material Markup % :</label>
+                    <input type="number" id="material_markup_percent" name="material_markup_percent" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="cost_per_lb" style="width: 30%;">Material Cost / lb:</label>
+                    <input type="number" id="cost_per_lb" name="cost_per_lb" style="width: 30%;">
+                </div>
+                <!-- Add more fields here -->
+            </div>
+        </div>
+        <div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-primary next-tab">Next</button>
+        </div>
+    </form>
+</div>
 
 
-<div>
-    <label for= "material_markup_percent">Material Markup % :</label>
-    <input type="number" id="material_markup_percent" name="material_markup_percent">
+
+
+<div class="tab-pane fade" id="Tab5">
+    <form>
+        <div style="display: flex; justify-content: space-between;">
+            <div style="flex: 1; margin-right: 10px; padding: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="freight" style="width: 30%;">Freight Cost:</label>
+                    <input type="number" id="freight" name="freight" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="palletType" style="width: 30%;">Pallet Type:</label>
+                    <select id="palletType" name="palletType" style="width: 30%;" onchange="updatePalletCost()">
+                    <option value="">Select a type</option>
+                    <option value="Wood">Wood</option>
+                    <option value="Metal">Metal</option>
+                    </select>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                 <label for="palletSize" style="width: 30%;">Pallet Size:</label>
+                    <select id="palletSize" name="palletSize" style="width: 30%;" onchange="updatePalletCost()">
+                        <option value="">Select a size</option>
+                        <option value="Small">Small</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Large">Large</option>
+                    </select>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="palletWeight" style="width: 30%;">Pallet Weight(Lbs):</label>
+                    <input type="number" id="palletWeight" name="palletWeight" style="width: 30%;">
+                </div>
+            </div>
+            <div style="flex: 1; margin-left: 10px; padding: 10px;">
+                <div style="display: flex; align-items: center;">
+                    <label for="palletCost" style="width: 30%;">Pallet Cost:</label>
+                    <!-- Assuming you have an input field for palletCost -->
+                    <input type="number" id="palletCost" name="palletCost" style="width: 30%;" readonly>
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="stacksPerSkid" style="width: 30%;">Stacks per Skid:</label>
+                    <input type="number" id="stacksPerSkid" name="stacksPerSkid" step="1.00" max="5" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="pallet_uses" style="width: 30%;"># Pallet Returns:</label>
+                    <input type="number" id="pallet_uses" name="pallet_uses" step="1.00" min="0"style="width: 30%;">
+                </div>
+            </div>
+        </div>
+        <button id="add-part" type="button">Add Part to Quote</button>
+    </form>
+</div>
  
-
-    <label for="freight">Freight Cost</label>
-    <input type="number" id="freight" name="freight">
-    <label for="cost_per_lb">Material Cost / lb:</label>
-    <input type="number" id="cost_per_lb" name="cost_per_lb">
-    </div>
     
-    <button id="add-part" type="button">Add Part</button>
-    </div>
-    </div>
-    <div class="parts-table">
+        
+<div class="tab-pane fade" id="Tab6">
+<button id="add-part-btn" class="btn btn-primary">Add Another Part</button>
+<div class="parts-table">
 
 <table id="parts_table">
 <!-- Table headers go here -->
 </table>
 </div>
-<style>
+
+   <style>
     .form-container {
         width: 100%; /* Ensures that the form container takes up the full width of its parent */
         text-align: center; /* Aligns the text to the left */
@@ -489,18 +777,8 @@ $(document).ready(function(){
         margin-bottom: 30px;
     border-radius: 10px;
     }
-    .form-container textarea {
-        width: 100%; /* Ensures that the textarea takes up the full width of its parent */
-        padding: 10px;
-    border: 3px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    color: #333;
-    background-color: #f9f9f9;
-    transition: all 0.3s ease;
-
-    }
-</style>
+    
+    </style>
 <div class="form-container">
     <label for="contingencies">Contingencies:</label>
     <textarea id="contingencies" name="contingencies" rows="4" cols="50" style="resize: both;"></textarea>
@@ -516,6 +794,7 @@ $(document).ready(function(){
 </select>
     <button id="submit-button" type="button">Submit</button>
 </form>
+</div>
 </div>
 
 
@@ -559,7 +838,8 @@ $("#add-part").click(function(){
             pallet_uses: document.getElementById('pallet_uses').value,
             stacksPerSkid: document.getElementById('stacksPerSkid').value,
             scrapConsumption: document.getElementById('scrapConsumption').value,
-            contingencies: document.getElementById('contingencies').value
+            contingencies: document.getElementById('contingencies').value,
+            die_reviewer_input: document.getElementById('die_reviewer_input').value,
         }
 
         submitNewPartForm(formData).then(function() {
@@ -575,6 +855,7 @@ $("#add-part").click(function(){
 
                     addPart().then(function() {
                         clearPartInputs();
+                        $('#tab6-tab').tab('show');
                     });
                     
                 }
@@ -649,6 +930,267 @@ $(document).ready(function(){
         }
     });
 });
+$(document).ready(function(){
+    $('#scrapConsumption').on('input', function() {
+        if ($(this).val() > 6) {
+            $(this).val(6);
+        }
+    });
+});
+$(document).ready(function(){
+    $('#stacksPerSkid').on('input', function() {
+        if ($(this).val() > 5) {
+            $(this).val(5);
+        }
+    });
+});
+$(document).ready(function() {
+    $('#customer_supplied_material').change(function() {
+        if ($(this).is(':checked')) {
+            // Checkbox is checked
+            $('#supplier_name').val($('#customer').val());
+            $('#supplier_name_div').hide();
+        } else {
+            // Checkbox is unchecked
+            $('#supplier_name').val('');
+            $('#supplier_name_div').show();
+        }
+    });
+});
+
+$(document).ready(function() {
+    $(".next-tab").click(function() {
+        var currentTab = $('.nav-tabs .active').attr('id'); // Get current active tab's id
+        var nextTab = $("#" + currentTab).parent().next().find('a').attr('id'); // Get next tab's id
+        $('#' + nextTab).tab('show'); // Set next tab as active
+    });
+});
+document.querySelector('#add-customer-btn').onclick = function() {
+    event.preventDefault();
+    Swal.fire({
+    title: 'Add New Customer',
+    width:'700px',
+    html: `
+        <style>
+            .swal2-input {
+                width: 85% !important;
+            }
+        </style>
+        <input id="swal-input1" class="swal2-input" placeholder="Customer Name">
+        <input id="swal-input2" class="swal2-input" placeholder="Customer Address">
+        <input id="swal-input3" class="swal2-input" placeholder="Customer City">
+        <input id="swal-input4" class="swal2-input" placeholder="Customer State">
+        <input id="swal-input5" class="swal2-input" placeholder="Customer Zip">
+        <input id="swal-input6" class="swal2-input" placeholder="Customer Phone">
+        <input id="swal-input7" class="swal2-input" placeholder="Customer Email">
+        <input id="swal-input8" class="swal2-input" placeholder="Customer Contact">
+    `,
+        preConfirm: () => {
+    const values = [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value,
+        document.getElementById('swal-input4').value,
+        document.getElementById('swal-input5').value,
+        document.getElementById('swal-input6').value,
+        document.getElementById('swal-input7').value,
+        document.getElementById('swal-input8').value
+    ];
+    // Check if any of the fields are empty
+    if (values.some(value => value === '')) {
+        Swal.showValidationMessage('Please fill out all fields');
+        return;
+    }
+    return values;
+}
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var formData = new FormData();
+            formData.append('customerName', result.value[0]);
+            formData.append('customerAddress', result.value[1]);
+            formData.append('customerCity', result.value[2]);
+            formData.append('customerState', result.value[3]);
+            formData.append('customerZip', result.value[4]);
+            formData.append('customerPhone', result.value[5]);
+            formData.append('customerEmail', result.value[6]);
+            formData.append('customerContact', result.value[7]);
+
+            fetch('../add_new_customer/submit_new_customer.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.status === 'error') {
+                    throw new Error(response.message);
+                }
+                Swal.fire('Success', 'New customer added successfully', 'success')
+                    .then(() => {
+                        location.reload(); // Refresh the page
+                    });
+                })
+                .catch(error => {
+                    Swal.fire('Error', `Request failed: ${error}`, 'error');
+               
+            });
+        }
+    });
+}
+
+$(document).ready(function() {
+    $("#add-part-btn").click(function() {
+        $('.nav-tabs a[href="#Tab2"]').tab('show');
+    });
+});
+function updatePalletCost() {
+    var palletSize = document.getElementById('palletSize').value;
+    var palletType = document.getElementById('palletType').value;
+    var palletCost;
+
+    if (palletType === 'Metal') {
+        palletCost = 0;
+    } else {
+        switch(palletSize) {
+            case 'Small':
+                palletCost = 80;
+                break;
+            case 'Medium':
+                palletCost = 125;
+                break;
+            case 'Large':
+                palletCost = 250;
+                break;
+            default:
+                palletCost = 0;
+        }
+    }
+
+    document.getElementById('palletCost').value = palletCost;
+}
+function toggleDieReviewer() {
+    var checkbox = document.getElementById('customer_provided_die');
+    var dieReviewer = document.getElementById('die_reviewer');
+
+    if (checkbox.checked) {
+        dieReviewer.style.display = 'flex';
+    } else {
+        dieReviewer.style.display = 'none';
+    }
+}
+function openExcelItemsPopup() {
+    Swal.fire({
+        title: 'Select Excel Items',
+        html: generateExcelItemsFormHTML(), // Generate the HTML for the form
+        focusConfirm: false,
+        preConfirm: () => {
+            // Get selected item names
+            var selectedItemNames = Array.from(document.querySelectorAll('input[name="excel-item"]:checked')).map(function(checkbox) {
+                return checkbox.value;
+            });
+            return selectedItemNames;
+        }
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            // Send selected item names to the server
+            $.ajax({
+                url: 'generate_excel.php',
+                method: 'POST',
+                data: { itemNames: result.value },
+                success: function(response) {
+                    // Handle response
+                }
+            });
+        }
+    });
+}
+function generateExcelItemsFormHTML() {
+    var items = [
+        'invoice_id',
+        'Part#',
+        'Part Name',
+        'model_year',
+        'Material Type',
+        'blank_die?',
+        '# Outputs',
+        'Volume',
+        'Width(mm)',
+        'width(in)',
+        'Pitch(mm)',
+        'nom?',
+        'trap',
+        'Pitch(in)',
+        'Gauge(mm)',
+        'Gauge(in)',
+        'Density',
+        'Blank Weight(kg)',
+        'Blank Weight(lb)',
+        'Scrap Consumption',
+        'Pcs Weight(kg)',
+        'Pcs Weight(lb)',
+        'Scrap Weight(kg)',
+        'Scrap Weight(lb)',
+        'Pallet Type',
+        'Pallet Size',
+        'Pallet Weight(lb)',
+        'Pcs per Lift',
+        'Stacks per Skid',
+        'Pcs per Skid',
+        'Lift Weight+Skid Weight(lb)',
+        'Stack Height',
+        'Skids per Truck',
+        'Pieces per Truck',
+        'Truck Weight(lb)',
+        'Annual Truckloads',
+        'UseSkidPcs',
+        'Skid cost per piece',
+        'Line Produced on',
+        'PPH',
+        'Uptime',
+        'Blanking per piece cost',
+        'Packaging Per Piece Cost',
+        'freight per piece cost',
+        'Total Cost per Piece',
+        'wash_and_lube',
+        'material_cost',
+        'material_markup_percent',
+        'material_cost_markup',
+        'palletCost',
+        'supplier_name',
+        'customer_id',
+        'Part#',
+        'Part Name',
+        'Mill',
+        'Platform',
+        'Type',
+        'Surface',
+        'Material Type',
+        'pallet_type',
+        'pallet_size',
+        'pallet_uses',
+        'Stacks per Skid',
+        'Scrap Consumption',
+        'invoice_id',
+        'invoice_number',
+        'version',
+        'invoice_date',
+        'customer_id',
+        'die_reviewer',
+        'invoice_author',
+        'approval_status',
+        'award_total',
+        'award_status',
+        'approved_by',
+        'Customer Name',
+        'contingencies'
+    ];
+    var html = '<form id="excel-items-form">';
+    items.forEach(function(item) {
+        html += '<input type="checkbox" id="' + item + '" name="excel-item" value="' + item + '">';
+        html += '<label for="' + item + '">' + item + '</label><br>';
+    });
+    html += '</form>';
+    return html;
+}
 </script>
 
 </body>
