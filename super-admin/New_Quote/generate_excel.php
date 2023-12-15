@@ -191,9 +191,44 @@ $spreadsheet->getActiveSheet()->setTitle('Sheet 1');
 
 $spreadsheet->setActiveSheetIndex(0);
 
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="01simple.xlsx"');
-header('Cache-Control: max-age=0');
+// Set the filename to the invoice_id
+$filename = $invoice_id . '.xlsx';
 
+// Create a temporary in-memory PHP stream
+$temp_file = tmpfile();
+
+// Create a new Writer
 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$writer->save('../../uploads/excel/01simple.xlsx');
+
+// Save the Excel file to the temporary stream
+$writer->save(stream_get_meta_data($temp_file)['uri']);
+
+// Read the contents of the temporary stream
+rewind($temp_file);
+$file_contents = stream_get_contents($temp_file);
+
+// Prepare an SQL statement to insert the file into the database
+$stmt = $database->prepare("INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_contents`) VALUES (?, ?, ?)");
+$null = NULL;
+$stmt->bind_param("ssb", $invoice_id, $filename, $null);
+$stmt->send_long_data(2, $file_contents);
+
+// Execute the statement
+$stmt->execute();
+
+// Check for errors
+if ($stmt->error) {
+    echo "Error occurred: " . $stmt->error;
+} else {
+    echo "File successfully uploaded to the database.";
+
+    // Redirect to the download script
+    header('Location: download.php?quoteId=' . urlencode($invoice_id) . '&file_name=' . urlencode($filename));
+    exit;
+}
+
+// Close the statement
+$stmt->close();
+
+// Close the temporary stream
+fclose($temp_file);
