@@ -882,36 +882,7 @@ $("#add-part").click(function(){
     }
 });
 
-$(document).ready(function(){
-    var customerOptions = {};
-    <?php foreach($customers as $Customer): ?>
-        customerOptions["<?= $Customer['Customer Name'] ?>"] = "<?= $Customer['Customer Name'] ?>";
-    <?php endforeach; ?>
 
-    Swal.fire({
-    title: 'Select a customer',
-    input: 'select',
-    inputOptions: customerOptions,
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    allowEnterKey: false,
-    showCancelButton: false,
-    inputValidator: function (value) {
-        return new Promise(function (resolve, reject) {
-            if (value !== '') {
-                resolve();
-            } else {
-                resolve('You need to select a customer');
-            }
-        });
-    }
-}).then(function (result) {
-    if (result.isConfirmed) {
-        $('#customer').val(result.value);
-        $('#customer').trigger('change'); // Trigger the change event to fetch customer details
-    }
-});
-});
 
 
 $(document).ready(function(){
@@ -1086,9 +1057,33 @@ function openExcelItemsPopup() {
                 data: { itemNames: result.value,
                     invoice_id: invoiceId
                  },
-                success: function(response) {
-                    // Handle response
-                }
+                 success: function(response) {
+                    // Parse the JSON response
+                     var data = JSON.parse(response);
+
+                     // Check if there was an error
+                    if (data.error) {
+                    // If there was an error, show an error message
+                        Swal.fire('Error', data.message, 'error');
+                    }   
+                    else 
+                    {
+                    // If there was no error, show the download prompt
+                    Swal.fire({
+                    title: 'Download File',
+                    text: "Would you like to download the file?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, download it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "../quote_approvals/download.php?quoteId=" + encodeURIComponent(data.invoice_id) + "&file_name=" + encodeURIComponent(data.filename);
+            }
+        });
+    }
+}
             });
         }
     });

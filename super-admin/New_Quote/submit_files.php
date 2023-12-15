@@ -16,14 +16,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fileTmpName = $_FILES['invoice_files']['tmp_name'][$i];
     
         // Use the original file name
-        $destination = '../../uploads/' . $fileName;
+        $destination = $_SERVER['DOCUMENT_ROOT'] . '/' . $fileName;
     
         // Move the file
         if (move_uploaded_file($fileTmpName, $destination)) {
             // Insert file info into the database table
             $sql = "INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_path`) VALUES (?, ?, ?)";
             $stmt = $database->prepare($sql);
-            $stmt->bind_param("iss", $invoice_id, $fileName, $destination);
+            $stmt->bind_param("sss", $invoice_id, $fileName, $destination);
             $stmt->execute();
         }
     }

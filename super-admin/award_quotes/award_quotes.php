@@ -47,6 +47,7 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #ddd;
+            overflow: visible; /* Add this line */
         }
 
         .quote:last-child {
@@ -114,12 +115,7 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
             text-align: right;
             margin-right: 10px;
         }
-        .quote-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #ddd;
-}
+        
 
 .quote-id-header, .customer-name-header,.version-header,.award-total-header {
     font-weight: bold;
@@ -144,7 +140,7 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
     background-color: #fff; /* Add this line */
     z-index: 10; /* Add this line */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     padding: 10px;
     background-color: #ddd;
 }
@@ -181,15 +177,8 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
     color: blue;
     cursor: pointer;
 }
-.customer-name{
-    margin-left: 50px;
-}
-.version{
-    margin-left: 60px;
-}
-.award-total{
-    margin-left: -50px;
-}
+
+
 .quote-btn {
         padding: 10px 20px;
         margin: 10px;
@@ -234,6 +223,16 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
 .button-container button:hover {
     background-color: #45a049; /* Darker green */
 }
+.quote-header, .quote {
+    display: flex;
+    justify-content: space-between;
+}
+
+.quote-id-header, .customer-name-header, .award-total-header,
+.quote-id, .customer-name, .award-total {
+    flex-basis: 33.33%;
+    text-align: left;
+}
 
     </style>
 </head>
@@ -253,116 +252,133 @@ $awarded_quotes = $award_result->fetch_all(MYSQLI_ASSOC);
     <button id="awarded-quotes-btn">Awarded Quotes</button>
 </div>
 
-<div id="pending-quotes-table" class="quote-list">
-
+<div class="quote-list" id="pending-quotes-table">
+    <!-- Pending Quotes Table -->
     <div class="quote-header">
-        <span class="quote-id-header">Quote#</span>
-        <span class="version-header">Version</span>
+        <span class="quote-id-header">Invoice ID</span>
         <span class="customer-name-header">Customer Name</span>
         <span class="award-total-header">Award Total</span>
-        <span></span> <!-- Empty placeholders for buttons -->
-        <span></span>
     </div>
     <?php foreach($quotes as $quote): ?>
-        <div class="quote" id="quote-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">
+        <div class="quote">
             <span class="quote-id"><?= $quote['invoice_id'] ?></span>
-            <span class="version"><?= $quote['version'] ?></span>
             <span class="customer-name"><?= $quote['Customer Name'] ?></span>
-            <span class="award-total"><?= '$'.number_format($quote['award_total'])?></span>
-            <button class="award-quote" id="award-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Award</button>
-            <button class="refuse-quote" id="refuse-<?= $quote['invoice_id'] ?>-<?= $quote['version'] ?>">Refuse</button>
+            <span class="award-total"><?= '$'.number_format($quote['award_total']) ?></span>
         </div>
     <?php endforeach; ?>
 </div>
-
-<div id="awarded-quotes-table" class="quote-list" style="display: none;">
+<div class="quote-list" id="awarded-quotes-table" style="display: none;">
+    <!-- Awarded Quotes Table -->
     <div class="quote-header">
-        <span class="quote-id-header">Quote#</span>
-        <span class="version-header">Version</span>
+        <span class="quote-id-header">Invoice ID</span>
         <span class="customer-name-header">Customer Name</span>
         <span class="award-total-header">Award Total</span>
-        <span></span> <!-- Empty placeholders for buttons -->
-        <span></span>
     </div>
-    <?php foreach($awarded_quotes as $awarded ): ?>
-        <div class="quote" id="quote-<?= $awarded['invoice_id'] ?>-<?= $awarded['version'] ?>">
+    <?php foreach($awarded_quotes as $awarded): ?>
+        <div class="quote">
             <span class="quote-id"><?= $awarded['invoice_id'] ?></span>
-            <span class="version"><?= $awarded['version'] ?></span>
             <span class="customer-name"><?= $awarded['Customer Name'] ?></span>
-            <span class="award-total"><?= '$'.number_format($awarded['award_total'])?></span>
+            <span class="award-total"><?= '$'.number_format($awarded['award_total']) ?></span>
         </div>
     <?php endforeach; ?>
 </div>
-
-
+<div class="quote-files" style="display: none;"></div>
     <script>
-$(".award-quote").click(function() {
-    var quoteIdAndVersion = $(this).attr('id').split('-');
-    var quoteId = quoteIdAndVersion[1];
-    var version = quoteIdAndVersion[2];
-    $.ajax({
-        url: 'award_quote.php',
-        method: 'POST',
-        data: {quoteId:quoteId, version:version},
-        dataType: 'json',
-        success: function(data) {
-            Swal.fire({
-                title: data.success ? 'Success' : 'Error',
-                text: data.message,
-                icon: data.success ? 'success' : 'error'
-            }).then(function() {
-                location.reload();
-            });
-        }
-    });
-});
 
-$(".refuse-quote").click(function() {
-    var quoteIdAndVersion = $(this).attr('id').split('-');
-    var quoteId = quoteIdAndVersion[1];
-    var version = quoteIdAndVersion[2];
-    $.ajax({
-        url: 'refuse_quote.php',
-        method: 'POST',
-        data: {quoteId:quoteId, version:version},
-        dataType: 'json',
-        success: function(data) {
-            Swal.fire({
-                title: data.success ? 'Success' : 'Error',
-                text: data.message,
-                icon: data.success ? 'success' : 'error'
-            }).then(function() {
-                location.reload();
-            });
-        }
-    });
-});
+
 $("#pending-quotes-btn").click(function() {
     $("#pending-quotes-table").show();
+     $(".quote-files").hide();
     $("#awarded-quotes-table").hide();
 });
 
 $("#awarded-quotes-btn").click(function() {
     $("#pending-quotes-table").hide();
+      $(".quote-files").hide();
     $("#awarded-quotes-table").show();
 });
 
+var currentQuoteId = null;
+
+var currentQuoteId = null;
+
 $(".quote").click(function() {
     var quoteId = $(this).find(".quote-id").text();
-    var version = $(this).find(".version").text();
+    var $quoteFiles = $(".quote-files"); // Changed this line
 
-    var pdfUrl = "get_pdf.php?invoice_id=" + quoteId + "&version=" + version;
-
+    if (currentQuoteId === quoteId) {
+        $quoteFiles.slideUp();
+        currentQuoteId = null;
+    } else {
+        $.ajax({
+            url: 'get_files.php',
+            method: 'POST',
+            data: {quoteId: quoteId},
+            success: function(data) {
+                $quoteFiles.html(data);
+                $quoteFiles.append(`
+        <button class="award-quote">Award</button>
+        <button class="refuse-quote">Reject</button>
+    `);
+                $quoteFiles.slideDown();
+            }
+        });
+        currentQuoteId = quoteId;
+    }
+});
+$(document).on('click', '.quote-files a', function(e) {
+    e.preventDefault();
+    var fileName = $(this).text();
     Swal.fire({
         title: 'Confirm download',
-        text: 'Do you want to download the awarded Quote?',
+        text: 'Do you want to download ' + fileName + '?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, download it!',
-        cancelButtonText: 'No, cancel!'
+        confirmButtonText: 'Download',
+        cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            window.open(pdfUrl, '_blank');
+            // Download the file
+            window.location.href = $(this).attr('href');
+        }
+    });
+});
+$(document).on('click', '.award-quote', function() {
+    // Handle award click
+    $.ajax({
+        url: 'award_quote.php',
+        method: 'POST',
+        data: {quoteId: currentQuoteId, version: 1},
+        success: function(response) {
+            // Handle the response from the server
+            var data = JSON.parse(response);
+            if (data.success) {
+                Swal.fire('Success', data.message, 'success').then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire('Error', data.message, 'error');
+            }
+        }
+    });
+});
+
+$(document).on('click', '.refuse-quote', function() {
+    // Handle reject click
+    $.ajax({
+        url: 'refuse_quote.php',
+        method: 'POST',
+        data: {quoteId: currentQuoteId, version: 1 },
+        success: function(response) {
+            // Handle the response from the server
+            var data = JSON.parse(response);
+            if (data.success) {
+                Swal.fire('Success', data.message, 'success').then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire('Error', data.message, 'error');
+            }
         }
     });
 });

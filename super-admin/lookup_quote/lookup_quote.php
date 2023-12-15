@@ -132,21 +132,21 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
 }
 .award-total-header {
     max-width: 50%; /* Adjust as needed */
-    margin-left: 500px;
+    margin-left: 275px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .customer-name-header{
     max-width: 50%;
-    margin-left: 500px;
+    margin-left: 350px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .award-status-header{
     max-width: 50%;
-    margin-left: 300px;
+    margin-left: 200px;
     text-overflow: ellipsis;
     white-space: nowrap;
 
@@ -319,7 +319,6 @@ $(".quote").click(function() {
                 $(".quote-files").hide().html(data);
                 var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
                 var deleteButton = '<a href="#" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
-                $(".quote-files").append(editButton);
                 $(".quote-files").append(deleteButton);
                 $(".quote-files").slideDown();
             }   

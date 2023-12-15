@@ -23,7 +23,7 @@ $spreadsheet->setActiveSheetIndex(0);
 $columns = implode(",", array_map(function($item) use ($database) {
     return '`' . $database->real_escape_string($item) . '`';
 }, $itemNames));
-$stmt = $database->prepare("SELECT $columns FROM `line_item` WHERE `invoice_id` = ?");
+$stmt = $database->prepare("SELECT $columns FROM `Line_Item` WHERE `invoice_id` = ?");
 $stmt->bind_param("s", $invoice_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -43,7 +43,7 @@ foreach ($line_items as $line_item) {
         }
         if ($column_name == 'Line Produced on') {
             $line_id = intval($value);
-            $stmt = $database->prepare("SELECT `Line_Name`, `Line_Location` FROM `lines` WHERE `line_id` = ?");
+            $stmt = $database->prepare("SELECT `Line_Name`, `Line_Location` FROM `Lines` WHERE `line_id` = ?");
             $stmt->bind_param("i", $line_id);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -60,11 +60,7 @@ foreach ($line_items as $line_item) {
         $rowValues[] = $value;
     }
     $officialValues[] = $rowValues;
-     // Debugging output
-     echo "Row Values: ";
-     print_r($rowValues);
-     echo "Official Values: ";
-     print_r($officialValues);
+
 }
 
 $middleColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(ceil(count($officialHeaders) / 2));
@@ -217,10 +213,20 @@ $stmt->execute();
 
 // Check for errors
 if ($stmt->error) {
-    echo "Error occurred: " . $stmt->error;
+    // If there was an error, return a JSON response with the error message
+    echo json_encode([
+        'error' => true,
+        'message' => "Error occurred: " . $stmt->error
+    ]);
 } else {
-    echo "File successfully uploaded to the server and path stored in the database.";
+    // If there was no error, return a JSON response with the invoice id and filename
+    echo json_encode([
+        'success' => true,
+        'invoice_id' => $invoice_id,
+        'filename' => $filename
+    ]);
 }
 
 // Close the statement
 $stmt->close();
+exit;
