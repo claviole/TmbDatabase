@@ -20,13 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
         // Move the file
         if (move_uploaded_file($fileTmpName, $destination)) {
-            // Read the file contents
-            $fileContents = file_get_contents($destination);
-    
             // Insert file info into the database table
-            $sql = "INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_contents`) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO `invoice_files` (`invoice_id`, `file_name`, `file_path`) VALUES (?, ?, ?)";
             $stmt = $database->prepare($sql);
-            $stmt->bind_param("sss", $invoice_id, $fileName, $fileContents);
+            $stmt->bind_param("iss", $invoice_id, $fileName, $destination);
             $stmt->execute();
         }
     }

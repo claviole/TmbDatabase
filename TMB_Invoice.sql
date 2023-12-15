@@ -220,7 +220,7 @@ CREATE TABLE `Line_Item` (
 CREATE TABLE `invoice_files`(
   `invoice_id` int(11) NOT NULL
   `file_name`  varchar(255) NOT NULL, 
-  `file_contents` MEDIUMBLOB NOT NULL
+  `file_path` varchar(255) NOT NULL,
   FOREIGN KEY (`invoice_id`) REFERENCES `invoice` (`invoice_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
