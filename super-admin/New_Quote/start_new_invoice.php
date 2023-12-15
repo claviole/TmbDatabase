@@ -26,6 +26,16 @@ $parts = $result_part->fetch_all(MYSQLI_ASSOC);
 // Fetch lines for dropdown
 $line_result = $database->query("SELECT `line_id`, `Line_Location`, `Line_Name` FROM `Lines`");
 $lines = $line_result->fetch_all(MYSQLI_ASSOC);
+// Count the number of invoices in the database
+$result = $database->query("SELECT COUNT(*) as invoiceCount FROM `invoice`");
+$invoiceCount = $result->fetch_assoc()['invoiceCount'];
+
+// Increment the invoice count
+$newInvoiceId = $invoiceCount + 1;
+
+// Set the invoice_id
+$invoice_id = "TWB_" . $author_initials . "_" . $newInvoiceId;
+
 ?>
 
 <!DOCTYPE html>
@@ -539,7 +549,7 @@ button.next-tab:hover {
         
         </form>
         </div>
-
+       
     
     
 <script>
@@ -592,6 +602,11 @@ $(document).ready(function(){
 
     <input type="hidden" id="date" name="date" value="<?= $current_date ?>" readonly>
     <input type="hidden" id="invoice_number" name="invoice_number" readonly>
+    <script>
+$(document).ready(function(){
+    $('#invoice_number').val('<?php echo $invoice_id; ?>');
+});
+</script>
         <div style="display: flex; justify-content: space-between;">
             <div style="flex: 1; margin-right: 10px; padding: 10px;">
                 <div style="display: flex; align-items: center;">
@@ -642,6 +657,11 @@ $(document).ready(function(){
                 <div style="display: flex; align-items: center;">
                     <label for="trap" style="width: 30%;">Trap:</label>
                     <input type="text" id="trap" name="trap" style="width: 30%;">
+                </div>
+                <br>
+                <div style="display: flex; align-items: center;">
+                    <label for="parts_per_blank" style="width: 30%;">Parts per Blank:</label>
+                    <input type="text" id="parts_per_blank" name="parts_per_blank" style="width: 30%;">
                 </div>
             </div>
         </div>
@@ -780,14 +800,14 @@ $(document).ready(function(){
     
     </style>
 <div class="form-container">
-    <label for="contingencies">Contingencies:</label>
-    <textarea id="contingencies" name="contingencies" rows="4" cols="50" style="resize: both;"></textarea>
+    <button id="add-contingencies" type="button">Add Contingencies</button>
+    <input type="hidden" id="contingencies" name="contingencies">
     <label for="invoice_files">Upload Files:</label>
     <input type="file" id="invoice_files" name="invoice_files[]" multiple>
 </div>
 <div>
-<label for="pdf_format">Select PDF format:</label>
-<select id="pdf_format" name="pdf_format">
+
+<select id="pdf_format" name="pdf_format" style="display:none;">
     <option value="">Select a format</option>
     <option value="ford">Ford</option>
     <option value="thai_summit">Thai Summit</option>
@@ -800,13 +820,7 @@ $(document).ready(function(){
 
 
 <script>
-$(document).ready(function(){
-    $('#partNumber').on('input', function() {
-        var partNumber = $(this).val();
-        var authorInitials = "<?php echo $author_initials; ?>";
-        $('#invoice_number').val(authorInitials + '_' + partNumber);
-    });
-});
+
 $(document).ready(function(){
     // Show an alert if the submit button is clicked without a customer selected
     $('#submit-button').click(function(e){
@@ -899,37 +913,7 @@ $(document).ready(function(){
 });
 });
 
-$(document).ready(function(){
-    $('#submit-button').click(function(e){
-        // Check if the parts table is empty
-        if($('#parts_table tr').length == 0) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please Add a Part to your quote before submitting',
-            });
-        } else {
-            // Only call submitInvoice() and fetch if the parts table is not empty
-            submitInvoice();
-            fetch('Admin/fetch_invoice.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ invoiceId: invoiceId }) // Send the invoice ID to the server
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('invoice').innerText = JSON.stringify(data.invoice, null, 2);
-                document.getElementById('parts').innerText = JSON.stringify(data.parts, null, 2);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-    });
-});
+
 $(document).ready(function(){
     $('#scrapConsumption').on('input', function() {
         if ($(this).val() > 6) {
@@ -1077,6 +1061,9 @@ function toggleDieReviewer() {
         dieReviewer.style.display = 'none';
     }
 }
+
+
+
 function openExcelItemsPopup() {
     Swal.fire({
         title: 'Select Excel Items',
@@ -1091,11 +1078,14 @@ function openExcelItemsPopup() {
         }
     }).then(function(result) {
         if (result.isConfirmed) {
+            var invoiceId = document.getElementById('invoice_number').value; 
             // Send selected item names to the server
             $.ajax({
                 url: 'generate_excel.php',
                 method: 'POST',
-                data: { itemNames: result.value },
+                data: { itemNames: result.value,
+                    invoice_id: invoiceId
+                 },
                 success: function(response) {
                     // Handle response
                 }
@@ -1103,94 +1093,148 @@ function openExcelItemsPopup() {
         }
     });
 }
+var presets = {
+    'Ford': ['supplier_name','Part#','Part Name','Material Type','Mill','Platform','Surface','Volume','Gauge(mm)','Width(mm)','Pitch(mm)','Blank Weight(kg)','Pallet Type','cost_per_kg','total_steel_cost(kg)','Blanking per piece cost','freight per piece cost','Packaging Per Piece Cost','material_cost_markup','Total Cost per Piece'],
+    'Rivian': ['Material Type', 'Volume', 'Width(mm)'],
+    'Thai Summit':['Part#', 'Part Name','blank_die?','Type','Gauge(mm)','nom?','Width(mm)','Pitch(mm)','trap','Gauge(in)','Pitch(in)','Blank Weight(lb)','parts_per_blank','blanks_per_mt','Surface','Scrap Consumption','Blanking per piece cost','freight per piece cost','Total Cost per Piece']
+    // ... add more presets here ...
+};
+function applyPreset() {
+    var preset = document.getElementById("preset").value;
+    if (preset) {
+        presets[preset].forEach(function(item) {
+            document.getElementById(item).checked = true;
+        });
+    }
+}
+
 function generateExcelItemsFormHTML() {
     var items = [
-        'invoice_id',
-        'Part#',
-        'Part Name',
-        'model_year',
-        'Material Type',
-        'blank_die?',
-        '# Outputs',
-        'Volume',
-        'Width(mm)',
-        'width(in)',
-        'Pitch(mm)',
-        'nom?',
-        'trap',
-        'Pitch(in)',
-        'Gauge(mm)',
-        'Gauge(in)',
-        'Density',
-        'Blank Weight(kg)',
-        'Blank Weight(lb)',
-        'Scrap Consumption',
-        'Pcs Weight(kg)',
-        'Pcs Weight(lb)',
-        'Scrap Weight(kg)',
-        'Scrap Weight(lb)',
-        'Pallet Type',
-        'Pallet Size',
-        'Pallet Weight(lb)',
-        'Pcs per Lift',
-        'Stacks per Skid',
-        'Pcs per Skid',
-        'Lift Weight+Skid Weight(lb)',
-        'Stack Height',
-        'Skids per Truck',
-        'Pieces per Truck',
-        'Truck Weight(lb)',
-        'Annual Truckloads',
-        'UseSkidPcs',
-        'Skid cost per piece',
-        'Line Produced on',
-        'PPH',
-        'Uptime',
-        'Blanking per piece cost',
-        'Packaging Per Piece Cost',
-        'freight per piece cost',
-        'Total Cost per Piece',
-        'wash_and_lube',
-        'material_cost',
-        'material_markup_percent',
-        'material_cost_markup',
-        'palletCost',
-        'supplier_name',
-        'customer_id',
-        'Part#',
-        'Part Name',
-        'Mill',
-        'Platform',
-        'Type',
-        'Surface',
-        'Material Type',
-        'pallet_type',
-        'pallet_size',
-        'pallet_uses',
-        'Stacks per Skid',
-        'Scrap Consumption',
-        'invoice_id',
-        'invoice_number',
-        'version',
-        'invoice_date',
-        'customer_id',
-        'die_reviewer',
-        'invoice_author',
-        'approval_status',
-        'award_total',
-        'award_status',
-        'approved_by',
-        'Customer Name',
-        'contingencies'
-    ];
-    var html = '<form id="excel-items-form">';
+    'supplier_name',    
+    'Part#',
+    'Part Name',
+    'model_year',
+    'Material Type',
+    'Mill',
+    'Platform',
+    'Volume',
+    'Width(mm)',
+    'width(in)',
+    'Pitch(mm)',
+    'Pitch(in)',
+    'Gauge(mm)',
+    'Gauge(in)',
+    'Density',
+    'nom?',
+    'trap',
+    'Type',
+    'blank_die?',
+    'Blank Weight(kg)',
+    'Blank Weight(lb)',
+    'Scrap Consumption',
+    'Pcs Weight(kg)',
+    'Pcs Weight(lb)',
+    'Scrap Weight(kg)',
+    'Scrap Weight(lb)',
+    'parts_per_blank',
+    'blanks_per_mt',
+    'Surface',
+    'Pallet Type',
+    'Pallet Size',
+    'Pcs per Lift',
+    'Stacks per Skid',
+    'Pcs per Skid',
+    'Lift Weight+Skid Weight(lb)',
+    'Skids per Truck',
+    'Pieces per Truck',
+    'Truck Weight(lb)',
+    'Annual Truckloads',
+    'UseSkidPcs',
+    'Skid cost per piece',
+    'Line Produced on',
+    'PPH',
+    'Uptime',
+    'cost_per_lb',
+    'cost_per_kg',
+    'total_steel_cost(kg)',
+    'total_steel_cost(lb)',
+    'Blanking per piece cost',
+    'Packaging Per Piece Cost',
+    'freight per piece cost',
+    'material_cost',
+    'material_markup_percent',
+    'material_cost_markup',
+    'palletCost',
+    'Total Cost per Piece',
+];
+
+    var html = '<form id="excel-items-form" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px;">';
+
+    // Add dropdown for presets
+    html += '<div style="grid-column: span 2; text-align: center;">';
+    html += '<select id="preset" onchange="applyPreset()">';
+    html += '<option value="">Select a preset</option>';
+    for (var preset in presets) {
+        html += '<option value="' + preset + '">' + preset + '</option>';
+    }
+    html += '</select>';
+    html += '</div>';
+
     items.forEach(function(item) {
+        html += '<div style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; margin: 5px;">';
         html += '<input type="checkbox" id="' + item + '" name="excel-item" value="' + item + '">';
-        html += '<label for="' + item + '">' + item + '</label><br>';
+        html += '<label for="' + item + '" style="margin-left: 5px;">' + item + '</label>';
+        html += '</div>';
     });
+
     html += '</form>';
+
     return html;
 }
+
+document.getElementById('add-contingencies').addEventListener('click', function() {
+    var contingencies = [
+        'Quote is based on information provided and could be re-negotiated should material price, blank nesting, blank processing, packaging, and or freight change.',
+        'Exposed parts will be ran top side prime, Light defects could occur during loading and unloading of blanks on the laser.',
+        'If Exposed defects can not be accomidated due to sheet feed proceedure, TMB respecfully No Quotes Exposed laser processing.',
+        'Quoted pricing with blanks packaged on returnable skids.',
+        'All scrap will be retained by TMB.',
+        'Material pricing will change with Rivian negotiated contracts and will increase/decrease percentage based adders such as scrap rate, financing, gross margin, and SG&A.',
+        'Stampers required to take full truckload quantities.',
+        'Pricing does not include slitting and coils are expected to come in with slit edge and at widths designated.',
+        'Any surcharges, customs, duties, or other charges are to be a pass through.',
+        'Blank processing at  Target Metal Blanking New Boston and Sauk Village based on freight.'
+
+        // Add more contingencies here
+    ];
+
+    var html = '<form id="contingencies-form" style="display: grid; gap: 10px; max-width: 500px;">';
+    contingencies.forEach(function(contingency, index) {
+    var backgroundColor = index % 2 === 0 ? '#ffffff' : '#f0f0f0'; // Use a lighter grey for every other contingency
+    html += '<div style="display: flex; align-items: center; background-color: ' + backgroundColor + ';">';
+    html += '<input type="checkbox" id="' + contingency + '" name="contingency" value="' + contingency + '">';
+    html += '<label for="' + contingency + '" style="margin-left: 5px;">' + contingency + '</label>';
+    html += '</div>';
+});
+html += '</form>';
+
+    Swal.fire({
+        title: 'Select Contingencies',
+        html: html,
+        preConfirm: function() {
+            var selectedContingencies = [];
+            document.querySelectorAll('#contingencies-form input:checked').forEach(function(checkbox) {
+                selectedContingencies.push(checkbox.value);
+            });
+            return selectedContingencies;
+        }
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            document.getElementById('contingencies').value = result.value.join('\n');
+        }
+    });
+});
+
 </script>
 
 </body>

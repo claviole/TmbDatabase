@@ -83,6 +83,17 @@ async function addPart() {
     var total_freight=document.getElementById('freight').value;
     var material_type=document.getElementById('materialType').value;
     var cost_per_lb=document.getElementById('cost_per_lb').value;
+    var cost_per_kg=cost_per_lb/2.20462;
+    var supplier_name=document.getElementById('supplier_name').value;
+    var customer_id=document.getElementById('customer_id').value;
+    var Mill=document.getElementById('mill').value;
+    var Platform=document.getElementById('platform').value;
+    var Type=document.getElementById('type').value;
+    var Surface=document.getElementById('surface').value;
+    var parts_per_blank=document.getElementById('parts_per_blank').value;
+
+    
+
 
     if(wash_and_lube_choice==true)
     {
@@ -101,7 +112,8 @@ async function addPart() {
   
     var material_markup_percent=(document.getElementById('material_markup_percent').value)/100;
     var material_cost_markup=parseFloat((material_cost*material_markup_percent)+material_cost).toFixed(3);
-  
+    console.log('gaugeIN:', gaugeIN);
+    console.log('13/gaugeIN:', 13/gaugeIN);
  var pcsPerLift= Math.floor(13/gaugeIN);
  var stacksPerSkid=document.getElementById('stacksPerSkid').value;
  var pcsPerSkid= pcsPerLift*stacksPerSkid;
@@ -148,6 +160,9 @@ var freightPerPiece=total_freight/pcsPerTruck;
 var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+(parseFloat(wash_and_lube)/pcsPerTruck)+parseFloat(material_cost_markup)).toFixed(3);
 var blanksPerMinute=partsPerHour/60;
 
+var blanks_per_mt=Math.floor(1000/blankWeightKg);
+var total_steel_cost_kg=(cost_per_kg*blankWeightKg).toFixed(3);
+var total_steel_cost_lbs=material_cost;
 
 elements[0]=invoiceId;
 elements[1]=partNumber;
@@ -199,6 +214,20 @@ elements[46]=blank_die;
 elements[47]=model_year;
 elements[48]=trap;
 elements[49]=palletCost;
+elements[50]=pallet_uses;
+elements[51]=supplier_name;
+elements[52]=customer_id;
+elements[53]=Mill;
+elements[54]=Platform;
+elements[55]=Type;
+elements[56]=Surface;
+elements[57]=parts_per_blank;
+elements[58]=blanks_per_mt;
+elements[59]=total_steel_cost_kg;
+elements[60]=total_steel_cost_lbs;
+elements[61]=cost_per_kg
+elements[62]=cost_per_lb
+
 var part = {
     invoiceId: elements[0],
     partNumber: elements[1],
@@ -249,7 +278,20 @@ var part = {
     blank_die: elements[46],
     model_year: elements[47],
     trap: elements[48],
-    palletCost: elements[49]
+    palletCost: elements[49],
+    pallet_uses: elements[50],
+    supplier_name: elements[51],
+    customer_id: elements[52],
+    Mill: elements[53],
+    Platform: elements[54],
+    Type: elements[55],
+    Surface: elements[56],
+    parts_per_blank: elements[57],
+    blanks_per_mt: elements[58],
+    total_steel_cost_kg: elements[59],
+    total_steel_cost_lbs: elements[60],
+    cost_per_kg: elements[61],
+    cost_per_lb: elements[62]
 
 }
 data.parts.push(part);
@@ -292,9 +334,36 @@ elements[0]=invoiceId;
     console.error('Form submission failed:', error);
 }
 }
+function openExcelItemsPopup() {
+    Swal.fire({
+        title: 'Select Excel Items',
+        html: generateExcelItemsFormHTML(), // Generate the HTML for the form
+        focusConfirm: false,
+        preConfirm: () => {
+            // Get selected item names
+            var selectedItemNames = Array.from(document.querySelectorAll('input[name="excel-item"]:checked')).map(function(checkbox) {
+                return checkbox.value;
+            });
+            return selectedItemNames;
+        }
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            // Send selected item names to the server
+            $.ajax({
+                url: 'generate_excel.php',
+                method: 'POST',
+                data: { itemNames: result.value },
+                success: function(response) {
+                    // Handle response
+                }
+            });
+        }
+    });
+}
 
 $(document).ready(function(){
     $('#submit-button').click(function(e){
+       
         // Check if the parts table is empty
         if($('#parts_table tr').length == 0) {
             e.preventDefault();
@@ -304,27 +373,13 @@ $(document).ready(function(){
                 text: 'Please Add a Part to your quote before submitting',
             });
         } else {
-            // Only call submitInvoice() and fetch if the parts table is not empty
-            submitInvoice();
-            fetch('Admin/fetch_invoice.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ invoiceId: invoiceId }) // Send the invoice ID to the server
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('invoice').innerText = JSON.stringify(data.invoice, null, 2);
-                document.getElementById('parts').innerText = JSON.stringify(data.parts, null, 2);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            // Only call submitInvoice() and openExcelItemsPopup if the parts table is not empty
+            submitInvoice(); // Call the function here
+            openExcelItemsPopup(); // Call the function here
+            
         }
     });
 });
-
 
 
 async function submitInvoice() {
@@ -393,12 +448,7 @@ async function submitInvoice() {
         // Increment the invoice number
         var currentInvoiceNumber = $('#invoice_number').val();
     
-        // If the invoice was successfully submitted, generate the PDF
-        if (data.pdf_format == 'ford') {
-            window.location.href = 'generate_ford_quote_pdf.php?invoice_id=' + currentInvoiceNumber;
-        } else if (data.pdf_format == 'thai_summit') {
-            window.location.href = 'generate_thai_summit_quote.php?invoice_id=' + currentInvoiceNumber;
-        }
+        
     } else {
         // Handle error
         console.error("Error submitting invoice: " + result.error);
