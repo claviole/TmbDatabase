@@ -177,6 +177,7 @@ CREATE TABLE `Line_Item` (
   `material_cost_markup` float DEFAULT NULL,
   `palletCost` float DEFAULT NULL,
   `parts_per_blank` int DEFAULT NULL,
+  `blanks_per_ton` float DEFAULT NULL,
   `blanks_per_mt` float DEFAULT NULL,
   `total_steel_cost(kg)` float DEFAULT NULL,
   `total_steel_cost(lb)` float DEFAULT NULL,
@@ -402,4 +403,4 @@ CREATE TABLE `accident_report`(
     observation_description MEDIUMBLOB NOT NULL
   )
 
-);
+;

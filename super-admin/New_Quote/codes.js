@@ -163,6 +163,7 @@ var blanksPerMinute=partsPerHour/60;
 var blanks_per_mt=Math.floor(1000/blankWeightKg);
 var total_steel_cost_kg=(cost_per_kg*blankWeightKg).toFixed(3);
 var total_steel_cost_lbs=material_cost;
+var blanks_per_ton=Math.floor(2000/blankWeight);
 
 elements[0]=invoiceId;
 elements[1]=partNumber;
@@ -225,8 +226,10 @@ elements[57]=parts_per_blank;
 elements[58]=blanks_per_mt;
 elements[59]=total_steel_cost_kg;
 elements[60]=total_steel_cost_lbs;
-elements[61]=cost_per_kg
-elements[62]=cost_per_lb
+elements[61]=cost_per_kg;
+elements[62]=cost_per_lb;
+elements[63]=blanks_per_ton;
+
 
 var part = {
     invoiceId: elements[0],
@@ -291,7 +294,8 @@ var part = {
     total_steel_cost_kg: elements[59],
     total_steel_cost_lbs: elements[60],
     cost_per_kg: elements[61],
-    cost_per_lb: elements[62]
+    cost_per_lb: elements[62],
+    blanks_per_ton: elements[63],
 
 }
 data.parts.push(part);

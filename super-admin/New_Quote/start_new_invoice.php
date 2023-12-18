@@ -48,6 +48,7 @@ $invoice_id = "TWB_" . $author_initials . "_" . $newInvoiceId;
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="codes.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLEYS7vn5FTgmGoHl7-5kdWcCE62CMhc8&libraries=places"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -328,7 +329,107 @@ button.next-tab:hover {
     color: white !important;
 }
 
+/* Style for the address form */
+#stops {
+    background-color: #f9f9f9; /* Light grey background */
+    border: 1px solid #ccc; /* Grey border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding */
+    margin-bottom: 10px; /* Space below the form */
+}
 
+/* Style for the address input fields */
+.address {
+    width: 50%; /* Almost full width */
+    padding: 5px; /* Padding */
+    border: 1px solid #ccc; /* Grey border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Larger font size */
+    margin-bottom: 10px; /* Space below each input field */
+}
+
+/* Style for the "Add Another Stop" button */
+#add_stop {
+    background-color: #007BFF; /* Blue background */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Necessary for padding to take effect */
+    font-size: 16px; /* Larger font size */
+    margin: 4px 2px; /* Some margin */
+    transition-duration: 0.4s; /* Transition effect */
+    cursor: pointer; /* Cursor changes when hovering over the button */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Style for the "Add Another Stop" button when hovered over */
+#add_stop:hover {
+    background-color: #0069D9; /* Darker blue background */
+    color: white; /* White text */
+}
+/* Style for the "Calculate Distance" button */
+#calculate_distance {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Necessary for padding to take effect */
+    font-size: 16px; /* Larger font size */
+    margin: 4px 2px; /* Some margin */
+    transition-duration: 0.4s; /* Transition effect */
+    cursor: pointer; /* Cursor changes when hovering over the button */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Style for the "Calculate Distance" button when hovered over */
+#calculate_distance:hover {
+    background-color: #218838; /* Darker green background */
+    color: white; /* White text */
+}
+
+/* Style for the "Calculate Shipping" button */
+#calculate_shipping {
+    background-color: #ffc107; /* Yellow background */
+    color: black; /* Black text */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Necessary for padding to take effect */
+    font-size: 16px; /* Larger font size */
+    margin: 4px 2px; /* Some margin */
+    transition-duration: 0.4s; /* Transition effect */
+    cursor: pointer; /* Cursor changes when hovering over the button */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Style for the "Calculate Shipping" button when hovered over */
+#calculate_shipping:hover {
+    background-color: #e0a800; /* Darker yellow background */
+    color: black; /* Black text */
+}
+/* Style for the "Delete Stop" button */
+.delete-stop {
+    background-color: transparent; /* Transparent background */
+    color: #333; /* Dark grey text */
+    border: none; /* No border */
+    padding: 5px; /* Padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Necessary for padding to take effect */
+    font-size: 16px; /* Larger font size */
+    margin: 4px 2px; /* Some margin */
+    cursor: pointer; /* Cursor changes when hovering over the button */
+}
+
+/* Style for the "Delete Stop" button when hovered over */
+.delete-stop:hover {
+    color: #ff0000 !important ; /* Red text on hover */
+}
     </style>
 
 </head>
@@ -361,8 +462,8 @@ button.next-tab:hover {
       <a class="nav-link" id="tab5-tab" data-toggle="tab" href="#Tab5">Freight Information</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="tab6-tab" data-toggle="tab" href="#Tab6">Review Quote</a>
-    </li>
+    <a class="nav-link disabled" id="tab6-tab" data-toggle="tab" href="#Tab6" role="tab" aria-controls="Tab6" aria-selected="false">Review Quote</a>
+</li>
   </ul>
     <div class="tab-content">
     <div class="tab-pane fade show active" id="Tab1">
@@ -724,9 +825,27 @@ $(document).ready(function(){
 
 
 <div class="tab-pane fade" id="Tab5">
+<div style="display: flex; align-items: center;">
+    <button type="button" id="calculate_shipping">Calculate Freight</button>
+</div>
+<br>
+<div id="shippingModal" style="display: none;">
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <label for="rate_per_mile" style="width: 7%; font-weight: bold; margin-right: 10px;">Rate Per Mile:</label>
+        <input type="number" id="rate_per_mile" name="rate_per_mile" style="width: 7%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; color: #333; background-color: #f9f9f9; text-align: center;">
+    </div>
+    <div id="stops">
+        <div class="stop">
+            <input type="text" class="address" placeholder="Starting Address">
+        </div>
+    </div>
+    <button type="button" id="add_stop">Add Another Stop</button>
+    <button type="button" id="calculate_distance">Calculate Freight Cost</button>
+</div>
     <form>
         <div style="display: flex; justify-content: space-between;">
             <div style="flex: 1; margin-right: 10px; padding: 10px;">
+                
                 <div style="display: flex; align-items: center;">
                     <label for="freight" style="width: 30%;">Freight Cost:</label>
                     <input type="number" id="freight" name="freight" style="width: 30%;">
@@ -757,6 +876,8 @@ $(document).ready(function(){
                 </div>
             </div>
             <div style="flex: 1; margin-left: 10px; padding: 10px;">
+               
+                <br>
                 <div style="display: flex; align-items: center;">
                     <label for="palletCost" style="width: 30%;">Pallet Cost:</label>
                     <!-- Assuming you have an input field for palletCost -->
@@ -875,6 +996,8 @@ $("#add-part").click(function(){
                 }
             });
         });
+         // Enable the tab
+         $('#tab6-tab').removeClass('disabled');
     } else {
         clearPartInputs();
          // Clear all the input fields
@@ -1097,6 +1220,12 @@ var presets = {
 function applyPreset() {
     var preset = document.getElementById("preset").value;
     if (preset) {
+        // Uncheck all checkboxes inside the form
+        document.querySelectorAll('#excel-items-form input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+
+        // Check the checkboxes for the selected preset
         presets[preset].forEach(function(item) {
             document.getElementById(item).checked = true;
         });
@@ -1133,6 +1262,7 @@ function generateExcelItemsFormHTML() {
     'Scrap Weight(lb)',
     'parts_per_blank',
     'blanks_per_mt',
+    'blanks_per_ton',
     'Surface',
     'Pallet Type',
     'Pallet Size',
@@ -1167,7 +1297,7 @@ function generateExcelItemsFormHTML() {
 
     // Add dropdown for presets
     html += '<div style="grid-column: span 2; text-align: center;">';
-    html += '<select id="preset" onchange="applyPreset()">';
+    html += '<select id="preset" onchange="applyPreset()" style="width: 70%;">';
     html += '<option value="">Select a preset</option>';
     for (var preset in presets) {
         html += '<option value="' + preset + '">' + preset + '</option>';
@@ -1229,7 +1359,61 @@ html += '</form>';
         }
     });
 });
+document.getElementById('calculate_shipping').addEventListener('click', function() {
+    document.getElementById('shippingModal').style.display = 'block';
+    initAutocomplete();
+});
 
+function addStop() {
+    var stop = document.createElement('div');
+    stop.className = 'stop';
+    stop.innerHTML = '<input type="text" class="address" placeholder="Enter Stop Address">';
+    
+    var deleteButton = document.createElement('button');
+    deleteButton.innerHTML = '🗑️';
+    deleteButton.className = 'delete-stop';
+    deleteButton.addEventListener('click', function() {
+        stop.remove();
+    });
+
+    stop.appendChild(deleteButton);
+    document.getElementById('stops').appendChild(stop);
+    initAutocomplete();
+}
+
+document.getElementById('calculate_distance').addEventListener('click', function() {
+    var stops = Array.from(document.getElementsByClassName('stop'));
+    var addresses = stops.map(function(stop) {
+        return stop.getElementsByClassName('address')[0].value;
+    });
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'calculate_distance.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('addresses=' + encodeURIComponent(JSON.stringify(addresses)));
+
+    xhr.onload = function() {
+        if (this.status == 200) {
+            var distance = parseFloat(this.responseText);
+            var ratePerMile = parseFloat(document.getElementById('rate_per_mile').value); // Get the rate per mile
+          var freight_cost = (distance * ratePerMile).toFixed(3);
+
+            // Update the freight cost input field
+            document.getElementById('freight').value = freight_cost;
+
+            // Close the modal
+            document.getElementById('shippingModal').style.display = 'none';
+        }
+    };
+});
+
+function initAutocomplete() {
+    // Initialize the autocomplete feature for each address input field
+    Array.from(document.getElementsByClassName('address')).forEach(function(input) {
+        new google.maps.places.Autocomplete(input);
+    });
+}
+document.getElementById('add_stop').addEventListener('click', addStop);
 </script>
 
 </body>
