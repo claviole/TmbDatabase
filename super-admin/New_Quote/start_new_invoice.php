@@ -1229,6 +1229,7 @@ function openExcelItemsPopup() {
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = "../quote_approvals/download.php?quoteId=" + encodeURIComponent(data.invoice_id) + "&file_name=" + encodeURIComponent(data.filename);
+               
             }
         });
     }
@@ -1447,62 +1448,6 @@ $('form').on('change', function() {
     localStorage.setItem('form_data_' + form_id, form_data);
 });
 
-// Load data from localStorage
-$(document).ready(function() {
-    $('form').each(function() {
-        var form_id = $(this).attr('id');
-        var form_data = localStorage.getItem('form_data_' + form_id);
-        if (form_data) {
-            var data_parts = form_data.split('&');
-            for (var i = 0; i < data_parts.length; i++) {
-                var data_part = data_parts[i].split('=');
-                var input_name = decodeURIComponent(data_part[0]);
-                var input_value = decodeURIComponent(data_part[1]);
-                $('#' + form_id + ' [name="' + input_name + '"]').val(input_value);
-            }
-        }
-    });
-});
-
-// Clear localStorage on form submission
-$('form').on('submit', function() {
-    var form_id = $(this).attr('id');
-    localStorage.removeItem('form_data_' + form_id);
-});
-// Save table data to localStorage
-function saveTableData() {
-    var tableData = [];
-    $('#parts_table tr').each(function() {
-        var rowData = [];
-        $(this).find('td').each(function() {
-            rowData.push($(this).text());
-        });
-        tableData.push(rowData);
-    });
-    localStorage.setItem('table_data', JSON.stringify(tableData));
-}
-
-// Load table data from localStorage
-function loadTableData() {
-    var tableData = JSON.parse(localStorage.getItem('table_data'));
-    if (tableData) {
-        var table = $('#parts_table');
-        table.empty(); // Clear the table
-        for (var i = 0; i < tableData.length; i++) {
-            var row = $('<tr>');
-            for (var j = 0; j < tableData[i].length; j++) {
-                row.append($('<td>').text(tableData[i][j]));
-            }
-            table.append(row);
-        }
-    }
-}
-
-// Call saveTableData() whenever the table changes
-$('#parts_table').on('change', 'input, select', saveTableData);
-
-// Call loadTableData() when the page loads
-$(document).ready(loadTableData);
 </script>
 
 </body>

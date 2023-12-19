@@ -451,7 +451,8 @@ async function submitInvoice() {
         $("#parts_table").find("tr:gt(0)").remove();
         // Increment the invoice number
         var currentInvoiceNumber = $('#invoice_number').val();
-    
+        var form_id = $('form').attr('id');
+ 
         
     } else {
         // Handle error
