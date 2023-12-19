@@ -45,7 +45,7 @@ async function addPart() {
     var width = parseFloat(document.getElementById('width').value);
     var pitch = parseFloat(document.getElementById('pitch').value);
     var gauge = parseFloat(document.getElementById('gauge').value);
-    var numOutputs = document.getElementById('# Out').value;
+    var numOutputs =document.getElementById('# Out').value;
     var lineProduced = document.getElementById('line_produced').value;
     var uptime = document.getElementById('uptime').value;
     var uptime_multiplier=uptime/100;
@@ -57,8 +57,8 @@ async function addPart() {
     var hourlyRate;
     var hours_to_run=volume/partsPerHour;
     var Density=parseFloat(document.getElementById('Density').value);
-    var blankWeight=parseFloat(gaugeIN*widthIN*pitchIN*Density).toFixed(3);
-    var blankWeightKg= parseFloat(blankWeight/2.20462).toFixed(3);
+    var blankWeightKg=parseFloat((width/1000)*(pitch/1000)*gauge*Density).toFixed(3);
+    var blankWeight=parseFloat(blankWeightKg*2.205).toFixed(3);
     var scrapConsumption = document.getElementById('scrapConsumption').value;
     var scrap_multiply= scrapConsumption/100;
     var scrapLbs = scrap_multiply*blankWeight;

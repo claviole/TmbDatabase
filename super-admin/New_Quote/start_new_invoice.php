@@ -468,7 +468,7 @@ button.next-tab:hover {
     <div class="tab-content">
     <div class="tab-pane fade show active" id="Tab1">
    
-    <form>
+    <form id=customer_informations>
     <div style="text-align: left; margin-top: 20px;">
         <button id="add-customer-btn" class="btn btn-primary">Add New Customer</button>
         </div>
@@ -638,9 +638,9 @@ button.next-tab:hover {
             <label for="scrapConsumption" style="width: 30%;">Head/Tail Scrap Allowance(0-6%):</label>
             <input type="number" id="scrapConsumption" name="scrapConsumption" step="1.00" max="6" style="width: 30%;">
         </div>
-    </div>
-</div>
-<div style="text-align: right; margin-top: 20px;">
+        </div>
+        </div>
+        <div style="text-align: right; margin-top: 20px;">
             <button type="button" class="btn btn-primary next-tab">Next</button>
         </div>
        
@@ -690,7 +690,7 @@ $(document).ready(function(){
 </script>
 
 <div class="tab-pane fade" id="Tab3">
-    <form>
+    <form id="measurements_tab">
     <input type="hidden" id="part" name="part">
     <script>
     $(document).ready(function(){
@@ -716,7 +716,7 @@ $(document).ready(function(){
                 </div>
                 <br>
                 <div style="display: flex; align-items: center;">
-                    <label for="Density" style="width: 30%;">Density:</label>
+                    <label for="Density" style="width: 30%;">Density (kg/m³):</label>
                     <input type="number" id="Density" name="Density" style="width: 30%;">
                 </div>
                 <br>
@@ -773,7 +773,7 @@ $(document).ready(function(){
 </div>
 <div class="tab-pane fade" id="Tab4">
     <br>
-    <form>
+    <form id="operations_tab">
     <input type="hidden" id="invoice_number" name="invoice_number" readonly>
         <div style="display: flex; justify-content: space-between;">
             <div style="flex: 1; margin-right: 10px;">
@@ -842,7 +842,7 @@ $(document).ready(function(){
     <button type="button" id="add_stop">Add Another Stop</button>
     <button type="button" id="calculate_distance">Calculate Freight Cost</button>
 </div>
-    <form>
+    <form id="shipping_tab">
         <div style="display: flex; justify-content: space-between;">
             <div style="flex: 1; margin-right: 10px; padding: 10px;">
                 
@@ -951,57 +951,83 @@ $(document).ready(function(){
         }
     });
 });
-$("#add-part").click(function(){
+$("#add-part").click(function(e){
     var partNumber = $("#part").val();
     var wash_and_lube = document.getElementById('wash_and_lube').checked;
-    if (partNumber != "") {
-        // Capture form data before it's cleared
-        const formData = {
-           
-            pdf_format:document.getElementById('pdf_format').value,
-            partNumber: document.getElementById('partNumber').value,
-            supplier_name: document.getElementById('supplier_name').value,
-            partName: document.getElementById('partName').value,
-            mill: document.getElementById('mill').value,
-            customer_id: document.getElementById('customer_id').value,
-            platform: document.getElementById('platform').value,
-            type: document.getElementById('type').value,
-            surface: document.getElementById('surface').value,
-            materialType: document.getElementById('materialType').value,
-            palletType: document.getElementById('palletType').value,
-            palletSize: document.getElementById('palletSize').value,
-            pallet_uses: document.getElementById('pallet_uses').value,
-            stacksPerSkid: document.getElementById('stacksPerSkid').value,
-            scrapConsumption: document.getElementById('scrapConsumption').value,
-            contingencies: document.getElementById('contingencies').value,
-            die_reviewer_input: document.getElementById('die_reviewer_input').value,
+
+    // List of required field IDs
+    var requiredFields = ['customer','supplier_name','partNumber','mill','model_year','surface','partName','platform','type','materialType','scrapConsumption','volume','Density','width','pitch','gauge','parts_per_blank','line_produced','uptime','pph','material_markup_percent','cost_per_lb','freight','palletWeight','stacksPerSkid','pallet_uses'];
+    var emptyFields = [];
+
+    // Check each required field
+    requiredFields.forEach(function(fieldId) {
+        var field = document.getElementById(fieldId);
+        if (!field || !field.value) {
+            // If the field is empty or doesn't exist, add it to the list of empty fields
+            emptyFields.push(fieldId);
         }
+    });
 
-        submitNewPartForm(formData).then(function() {
-            $.ajax({
-                url: 'fetch_part.php',
-                method: 'POST',
-                data: {partNumber:partNumber},
-                success: function(data) {
-                    var partData = JSON.parse(data);
-                    console.log('Part data:', partData);
-                    window.partData= partData;
+    if (emptyFields.length > 0) {
+        // If there are any empty fields, prevent the form from being submitted
+        e.preventDefault();
 
+        // Create a message with the names of the empty fields
+        var message = 'Cannot submit an incomplete form. Please fill out the following fields: ' + emptyFields.join(', ');
 
-                    addPart().then(function() {
-                        clearPartInputs();
-                        $('#tab6-tab').tab('show');
-                    });
-                    
-                }
-            });
+        // Display the message using SweetAlert2
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: message
         });
-         // Enable the tab
-         $('#tab6-tab').removeClass('disabled');
     } else {
-        clearPartInputs();
-         // Clear all the input fields
-        
+        // If all fields are filled, proceed with the form submission
+        if (partNumber != "") {
+            // Capture form data before it's cleared
+            const formData = {
+                pdf_format:document.getElementById('pdf_format').value,
+                partNumber: document.getElementById('partNumber').value,
+                supplier_name: document.getElementById('supplier_name').value,
+                partName: document.getElementById('partName').value,
+                mill: document.getElementById('mill').value,
+                customer_id: document.getElementById('customer_id').value,
+                platform: document.getElementById('platform').value,
+                type: document.getElementById('type').value,
+                surface: document.getElementById('surface').value,
+                materialType: document.getElementById('materialType').value,
+                palletType: document.getElementById('palletType').value,
+                palletSize: document.getElementById('palletSize').value,
+                pallet_uses: document.getElementById('pallet_uses').value,
+                stacksPerSkid: document.getElementById('stacksPerSkid').value,
+                scrapConsumption: document.getElementById('scrapConsumption').value,
+                contingencies: document.getElementById('contingencies').value,
+                die_reviewer_input: document.getElementById('die_reviewer_input').value,
+            }
+
+            submitNewPartForm(formData).then(function() {
+                $.ajax({
+                    url: 'fetch_part.php',
+                    method: 'POST',
+                    data: {partNumber:partNumber},
+                    success: function(data) {
+                        var partData = JSON.parse(data);
+                        console.log('Part data:', partData);
+                        window.partData= partData;
+
+                        addPart().then(function() {
+                            clearPartInputs();
+                            $('#tab6-tab').tab('show');
+                        });
+                    }
+                });
+            });
+            // Enable the tab
+            $('#tab6-tab').removeClass('disabled');
+        } else {
+            clearPartInputs();
+            // Clear all the input fields
+        }
     }
 });
 
@@ -1414,6 +1440,69 @@ function initAutocomplete() {
     });
 }
 document.getElementById('add_stop').addEventListener('click', addStop);
+// Save data to localStorage
+$('form').on('change', function() {
+    var form_id = $(this).attr('id');
+    var form_data = $(this).serialize();
+    localStorage.setItem('form_data_' + form_id, form_data);
+});
+
+// Load data from localStorage
+$(document).ready(function() {
+    $('form').each(function() {
+        var form_id = $(this).attr('id');
+        var form_data = localStorage.getItem('form_data_' + form_id);
+        if (form_data) {
+            var data_parts = form_data.split('&');
+            for (var i = 0; i < data_parts.length; i++) {
+                var data_part = data_parts[i].split('=');
+                var input_name = decodeURIComponent(data_part[0]);
+                var input_value = decodeURIComponent(data_part[1]);
+                $('#' + form_id + ' [name="' + input_name + '"]').val(input_value);
+            }
+        }
+    });
+});
+
+// Clear localStorage on form submission
+$('form').on('submit', function() {
+    var form_id = $(this).attr('id');
+    localStorage.removeItem('form_data_' + form_id);
+});
+// Save table data to localStorage
+function saveTableData() {
+    var tableData = [];
+    $('#parts_table tr').each(function() {
+        var rowData = [];
+        $(this).find('td').each(function() {
+            rowData.push($(this).text());
+        });
+        tableData.push(rowData);
+    });
+    localStorage.setItem('table_data', JSON.stringify(tableData));
+}
+
+// Load table data from localStorage
+function loadTableData() {
+    var tableData = JSON.parse(localStorage.getItem('table_data'));
+    if (tableData) {
+        var table = $('#parts_table');
+        table.empty(); // Clear the table
+        for (var i = 0; i < tableData.length; i++) {
+            var row = $('<tr>');
+            for (var j = 0; j < tableData[i].length; j++) {
+                row.append($('<td>').text(tableData[i][j]));
+            }
+            table.append(row);
+        }
+    }
+}
+
+// Call saveTableData() whenever the table changes
+$('#parts_table').on('change', 'input, select', saveTableData);
+
+// Call loadTableData() when the page loads
+$(document).ready(loadTableData);
 </script>
 
 </body>
