@@ -28,7 +28,6 @@ function submitNewPartForm(formData) {
 
 async function addPart() {
     try {
-      try {
        
 
     elements=[];
@@ -37,10 +36,8 @@ async function addPart() {
     if (window.partData) {
     var partName = document.getElementById('partName').value;
     // Get values from input fields
-    var invoiceId = $('#invoice_number').val();
-    // Get the value from the die_reviewer input field
-    
-    var partNumber = document.getElementById('part').value
+    var invoiceId = document.getElementById('invoice_number').value;
+    var partNumber = document.getElementById('partNumber').value
     var volume = document.getElementById('volume').value;
     var width = parseFloat(document.getElementById('width').value);
     var pitch = parseFloat(document.getElementById('pitch').value);
@@ -50,7 +47,6 @@ async function addPart() {
     var uptime = document.getElementById('uptime').value;
     var uptime_multiplier=uptime/100;
     var partsPerHour = document.getElementById('pph').value*uptime_multiplier;
-    var partsPerHour = document.getElementById('pph').value*uptime;
     var widthIN = width/25.4;
     var pitchIN= pitch/25.4;
     var gaugeIN= gauge/25.4;
@@ -83,17 +79,6 @@ async function addPart() {
     var total_freight=document.getElementById('freight').value;
     var material_type=document.getElementById('materialType').value;
     var cost_per_lb=document.getElementById('cost_per_lb').value;
-    var cost_per_kg=cost_per_lb/2.20462;
-    var supplier_name=document.getElementById('supplier_name').value;
-    var customer_id=document.getElementById('customer_id').value;
-    var Mill=document.getElementById('mill').value;
-    var Platform=document.getElementById('platform').value;
-    var Type=document.getElementById('type').value;
-    var Surface=document.getElementById('surface').value;
-    var parts_per_blank=document.getElementById('parts_per_blank').value;
-
-    
-
 
     if(wash_and_lube_choice==true)
     {
@@ -112,8 +97,7 @@ async function addPart() {
   
     var material_markup_percent=(document.getElementById('material_markup_percent').value)/100;
     var material_cost_markup=parseFloat((material_cost*material_markup_percent)+material_cost).toFixed(3);
-    console.log('gaugeIN:', gaugeIN);
-    console.log('13/gaugeIN:', 13/gaugeIN);
+  
  var pcsPerLift= Math.floor(13/gaugeIN);
  var stacksPerSkid=document.getElementById('stacksPerSkid').value;
  var pcsPerSkid= pcsPerLift*stacksPerSkid;
@@ -156,14 +140,10 @@ else if(lineProduced==21)
 var blankingPerPieceCost=parseFloat(hourlyRate/partsPerHour).toFixed(3);
 var packagingPerPieceCost= parseFloat((palletCost/pcsPerSkid)+(25/pcsPerSkid)).toFixed(3);
 var proccessingAndPackagingCost=blankingPerPieceCost+packagingPerPieceCost;
-var freightPerPiece=total_freight/pcsPerTruck;
+var freightPerPiece=(total_freight/pcsPerTruck).toFixed(3);
 var totalPerPiece = (parseFloat(blankingPerPieceCost) + parseFloat(packagingPerPieceCost) + parseFloat(freightPerPiece)+(parseFloat(wash_and_lube)/pcsPerTruck)+parseFloat(material_cost_markup)).toFixed(3);
 var blanksPerMinute=partsPerHour/60;
 
-var blanks_per_mt=Math.floor(1000/blankWeightKg);
-var total_steel_cost_kg=(cost_per_kg*blankWeightKg).toFixed(3);
-var total_steel_cost_lbs=material_cost;
-var blanks_per_ton=Math.floor(2000/blankWeight);
 
 elements[0]=invoiceId;
 elements[1]=partNumber;
@@ -215,24 +195,9 @@ elements[46]=blank_die;
 elements[47]=model_year;
 elements[48]=trap;
 elements[49]=palletCost;
-elements[50]=pallet_uses;
-elements[51]=supplier_name;
-elements[52]=customer_id;
-elements[53]=Mill;
-elements[54]=Platform;
-elements[55]=Type;
-elements[56]=Surface;
-elements[57]=parts_per_blank;
-elements[58]=blanks_per_mt;
-elements[59]=total_steel_cost_kg;
-elements[60]=total_steel_cost_lbs;
-elements[61]=cost_per_kg;
-elements[62]=cost_per_lb;
-elements[63]=blanks_per_ton;
-
 
 var part = {
-    invoiceId: elements[0],
+    invoice_id: elements[0],
     partNumber: elements[1],
     partName: elements[2],
     materialType: elements[3],
@@ -281,21 +246,7 @@ var part = {
     blank_die: elements[46],
     model_year: elements[47],
     trap: elements[48],
-    palletCost: elements[49],
-    pallet_uses: elements[50],
-    supplier_name: elements[51],
-    customer_id: elements[52],
-    Mill: elements[53],
-    Platform: elements[54],
-    Type: elements[55],
-    Surface: elements[56],
-    parts_per_blank: elements[57],
-    blanks_per_mt: elements[58],
-    total_steel_cost_kg: elements[59],
-    total_steel_cost_lbs: elements[60],
-    cost_per_kg: elements[61],
-    cost_per_lb: elements[62],
-    blanks_per_ton: elements[63],
+    palletCost: elements[49]
 
 }
 data.parts.push(part);
