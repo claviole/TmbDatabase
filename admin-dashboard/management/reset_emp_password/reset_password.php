@@ -1,8 +1,7 @@
 <?php
 session_start();
 include '../../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
-$pepper = "Krdh%RA-kPm1248)v2y52WqE&+b}r7T6p/Jn@.?wA(L8"; // Replace with your actual pepper
-
+$pepper = $PEPPER; // Replace with your actual pepper
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the email from the form data
     $email = $_POST['email'];
