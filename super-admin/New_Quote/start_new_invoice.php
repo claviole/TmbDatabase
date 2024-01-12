@@ -1229,6 +1229,9 @@ function openExcelItemsPopup() {
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = "../quote_approvals/download.php?quoteId=" + encodeURIComponent(data.invoice_id) + "&file_name=" + encodeURIComponent(data.filename);
+                setTimeout(function(){ // Delay for file download initiation
+            location.reload(); // Refresh the page
+        }, 2000); // Delay for 5 seconds
                
             }
         });
@@ -1317,7 +1320,7 @@ function generateExcelItemsFormHTML() {
     'material_markup_percent',
     'material_cost_markup',
     'palletCost',
-    'Total Cost per Piece',
+    'Total Cost per Piece'
 ];
 
     var html = '<form id="excel-items-form" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px;">';

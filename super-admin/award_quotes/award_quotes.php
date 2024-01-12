@@ -304,7 +304,7 @@ var currentQuoteId = null;
 
 $(".quote").click(function() {
     var quoteId = $(this).find(".quote-id").text();
-    var $quoteFiles = $(".quote-files"); // Changed this line
+    var $quoteFiles = $(".quote-files");
 
     if (currentQuoteId === quoteId) {
         $quoteFiles.slideUp();
@@ -316,10 +316,13 @@ $(".quote").click(function() {
             data: {quoteId: quoteId},
             success: function(data) {
                 $quoteFiles.html(data);
-                $quoteFiles.append(`
-        <button class="award-quote">Award</button>
-        <button class="refuse-quote">Reject</button>
-    `);
+                // Only append the buttons if the pending quotes table is visible
+                if ($("#pending-quotes-table").is(":visible")) {
+                    $quoteFiles.append(`
+                        <button class="award-quote">Award</button>
+                        <button class="refuse-quote">Reject</button>
+                    `);
+                }
                 $quoteFiles.slideDown();
             }
         });

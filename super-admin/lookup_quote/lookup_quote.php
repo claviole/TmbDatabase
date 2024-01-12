@@ -305,7 +305,7 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
         });
         var currentQuoteId = null;
 
-$(".quote").click(function() {
+        $(".quote").click(function() {
     var quoteId = $(this).find(".quote-id").text();
     if (currentQuoteId === quoteId) {
         $(".quote-files").slideUp();
@@ -319,7 +319,9 @@ $(".quote").click(function() {
                 $(".quote-files").hide().html(data);
                 var editButton = '<a href="edit_quote.php?invoice_id=' + quoteId + '" class="btn">Edit Quote</a>';
                 var deleteButton = '<a href="#" onclick="confirmDelete(\'' + quoteId + '\')" class="delete-btn">Delete Quote</a>';
+                var generateExcelButton = '<a href="#" onclick="openExcelItemsPopup(\'' + quoteId + '\')" class="btn">Generate Excel</a>';
                 $(".quote-files").append(deleteButton);
+                $(".quote-files").append(generateExcelButton);
                 $(".quote-files").slideDown();
             }   
         });
@@ -343,6 +345,175 @@ $(document).on('click', '.quote-files .download-link', function(e) {
         }
     });
 });
+function openExcelItemsPopup(quoteId) {
+    Swal.fire({
+        title: 'Select Excel Items:',
+        html: generateExcelItemsFormHTML(quoteId), // Generate the HTML for the form
+        focusConfirm: false,
+        preConfirm: () => {
+            // Get selected item names
+            var selectedItemNames = Array.from(document.querySelectorAll('input[name="excel-item"]:checked')).map(function(checkbox) {
+                return checkbox.value;
+            });
+            return selectedItemNames;
+        }
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            var invoiceId = quoteId;
+            // Send selected item names to the server
+            $.ajax({
+        url: 'generate_excel.php',
+        method: 'POST',
+        data: { itemNames: result.value,
+            invoice_id: quoteId
+        },
+                 success: function(response) {
+                    // Parse the JSON response
+                     var data = JSON.parse(response);
+
+                     // Check if there was an error
+                    if (data.error) {
+                    // If there was an error, show an error message
+                        Swal.fire('Error', data.message, 'error');
+                    }   
+                    else 
+                    {
+                    // If there was no error, show the download prompt
+                    Swal.fire({
+                    title: 'Download File',
+                    text: "Would you like to download the file?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, download it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "../quote_approvals/download.php?quoteId=" + encodeURIComponent(data.invoice_id) + "&file_name=" + encodeURIComponent(data.filename);
+                setTimeout(function(){ // Delay for file download initiation
+            location.reload(); // Refresh the page
+        }, 2000); // Delay for 5 seconds
+               
+            }
+        });
+    }
+}
+            });
+        }
+    });
+}
+var presets = {
+    'Ford': ['supplier_name','Part#','Part Name','Material Type','Mill','Platform','Surface','Volume','Gauge(mm)','Width(mm)','Pitch(mm)','Blank Weight(kg)','Pallet Type','cost_per_kg','total_steel_cost(kg)','Blanking per piece cost','freight per piece cost','Packaging Per Piece Cost','material_cost_markup','Total Cost per Piece'],
+    'Rivian': ['Material Type', 'Volume', 'Width(mm)'],
+    'Thai Summit':['Part#', 'Part Name','blank_die?','Type','Gauge(mm)','nom?','Width(mm)','Pitch(mm)','trap','Gauge(in)','Pitch(in)','Blank Weight(lb)','parts_per_blank','blanks_per_mt','Surface','Scrap Consumption','Blanking per piece cost','freight per piece cost','Total Cost per Piece']
+    // ... add more presets here ...
+};
+function applyPreset() {
+    var preset = document.getElementById("preset").value;
+    if (preset) {
+        // Uncheck all checkboxes inside the form
+        document.querySelectorAll('#excel-items-form input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+
+        // Check the checkboxes for the selected preset
+        presets[preset].forEach(function(item) {
+            document.getElementById(item).checked = true;
+        });
+    }
+}
+
+function generateExcelItemsFormHTML(quoteId) {
+    var items;
+    if (quoteId.includes('QuickQuote')) {
+        items = ['Part#', 'Blank Weight(lb)', 'Pcs Weight(lb)', 'ship_to_location', 'Blanking per piece cost', 'Packaging Per Piece Cost', 'freight per piece cost'];
+    } else {
+        items =[
+    'supplier_name',    
+    'Part#',
+    'Part Name',
+    'model_year',
+    'Material Type',
+    'Mill',
+    'Platform',
+    'Volume',
+    'Width(mm)',
+    'width(in)',
+    'Pitch(mm)',
+    'Pitch(in)',
+    'Gauge(mm)',
+    'Gauge(in)',
+    'Density',
+    'nom?',
+    'trap',
+    'Type',
+    'blank_die?',
+    'Blank Weight(kg)',
+    'Blank Weight(lb)',
+    'Scrap Consumption',
+    'Pcs Weight(kg)',
+    'Pcs Weight(lb)',
+    'Scrap Weight(kg)',
+    'Scrap Weight(lb)',
+    'parts_per_blank',
+    'blanks_per_mt',
+    'blanks_per_ton',
+    'Surface',
+    'Pallet Type',
+    'Pallet Size',
+    'Pcs per Lift',
+    'Stacks per Skid',
+    'Pcs per Skid',
+    'Lift Weight+Skid Weight(lb)',
+    'Skids per Truck',
+    'Pieces per Truck',
+    'Truck Weight(lb)',
+    'Annual Truckloads',
+    'UseSkidPcs',
+    'Skid cost per piece',
+    'Line Produced on',
+    'PPH',
+    'Uptime',
+    'cost_per_lb',
+    'cost_per_kg',
+    'total_steel_cost(kg)',
+    'total_steel_cost(lb)',
+    'Blanking per piece cost',
+    'Packaging Per Piece Cost',
+    'freight per piece cost',
+    'material_cost',
+    'material_markup_percent',
+    'material_cost_markup',
+    'palletCost',
+    'Total Cost per Piece'
+        ];
+    }
+
+
+    var html = '<form id="excel-items-form" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px;">';
+
+    // Add dropdown for presets
+    html += '<div style="grid-column: span 2; text-align: center;">';
+    html += '<select id="preset" onchange="applyPreset()" style="width: 70%;">';
+    html += '<option value="">Select a preset</option>';
+    for (var preset in presets) {
+        html += '<option value="' + preset + '">' + preset + '</option>';
+    }
+    html += '</select>';
+    html += '</div>';
+
+    items.forEach(function(item) {
+        html += '<div style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; margin: 5px;">';
+        html += '<input type="checkbox" id="' + item + '" name="excel-item" value="' + item + '">';
+        html += '<label for="' + item + '" style="margin-left: 5px;">' + item + '</label>';
+        html += '</div>';
+    });
+
+    html += '</form>';
+
+    return html;
+}
+
 </script>
 </body>
 </html>

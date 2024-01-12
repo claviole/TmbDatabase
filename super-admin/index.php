@@ -100,8 +100,8 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
         title: 'Select Quote Type',
         input: 'radio',
         inputOptions: {
-            'blanking': 'Blanking Quote',
-            'slitting': 'Slitting Quote'
+            'blanking': 'Detail Blanking Quote',
+            'quick': 'Quick Blanking Quote'
         },
         inputValidator: (value) => {
             if (!value) {
@@ -115,8 +115,8 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
         if (result.isConfirmed) {
             if (result.value === 'blanking') {
                 window.location.href = 'New_Quote/start_new_invoice.php';
-            } else if (result.value === 'slitting') {
-                window.location.href = 'slitting_quote/new_slitting_quote.php';
+            } else if (result.value === 'quick') {
+                window.location.href = 'quick_quote/new_quick_quote.php';
             }
         }
     });
