@@ -31,7 +31,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
+        <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
  </h1>
  
 </div>
@@ -66,7 +66,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     </form>
 </div>
 <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
-<form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
+<form action="../logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
     <input type="submit" value="Log Out">
 </form>
 </div>

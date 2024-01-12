@@ -81,9 +81,11 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
         <input type="submit" value="Change Password">
     </form>
 </div>
+<?php if ($_SESSION['user_type'] == 'super-admin') { ?>
 <div class="return-button-container">
 <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='../admin-dashboard/index.php'">Return to Manager Menu</button>
 </div>
+<?php } ?>
 <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
 <form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
     <input type="submit" value="Log Out">
