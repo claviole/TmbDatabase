@@ -6,7 +6,7 @@ date_default_timezone_set('America/Chicago');
 
 
 // Check if the user is logged in and is an admin
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../index.php");
     exit();
@@ -23,27 +23,8 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>HR Dashboard</title>
+    <title>Management Dashboard</title>
     <style>
-        .return-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #1B145D;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            font-weight: 700;
-        }
-
-        .return-button:hover {
-            background-color: #111;
-        }
-
-        .return-button-container {
-            text-align: center;
-            margin-right: 10px;
-        }
         
     </style>
     
@@ -59,10 +40,13 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
     
     <div class ="flex justify-center">
     <div class ="flex flex-row justify-content: center  py-10 px-5 "  >
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-right:5px ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='HR/index.php'"> <img src="../images/HR.png" alt="HR"></button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-left: 5px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='safety/index.php'">    <img src="../images/safety.jpg" alt="Safety"></button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-right:5px ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='../human_resources/index.php'"> <img src="../images/HR.png" alt="HR"></button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-right:5px ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='../super-admin/index.php'"> <img src="../images/sales-marketing.webp" alt="sales"></button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-right:5px ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='management/management.php'"> <img src="../images/admin.jpg" alt="admin"></button>
 
     </div>
+
+    
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
@@ -80,9 +64,6 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
         <input type="password" id="confirm-password" name="confirm-password" required>
         <input type="submit" value="Change Password">
     </form>
-</div>
-<div class="return-button-container">
-<button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='../admin-dashboard/index.php'">Return to Manager Menu</button>
 </div>
 <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
 <form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">

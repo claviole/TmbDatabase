@@ -8,7 +8,7 @@ $awaiting_approval_count = $result->fetch_assoc()['count'];
 
 
 // Check if the user is logged in and is an admin
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin'|| 'sales')){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../index.php");
     exit();
@@ -44,16 +44,38 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
         border: 1px solid #ccc;
         
     }
+    .return-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1B145D;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: 700;
+        }
+
+        .return-button:hover {
+            background-color: #111;
+        }
+
+        .return-button-container {
+            text-align: right;
+            margin-right: 10px;
+        }
     </style>
     
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
+
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+        <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
         <div class="notification<?php echo $awaiting_approval_count > 0 ? ' flashing' : ''; ?>">
     <a href="quote_approvals/quote_approval.php" style="color: inherit; text-decoration: none;">
         Quotes Awaiting Approval: <?php echo $awaiting_approval_count; ?>
     </a>
+    <?php } ?>
 </div>
      
     </h1>
@@ -63,8 +85,10 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="startNewQuote()">Start New Quote</button>
         <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='add_new_customer/add_new_customer.php'">Add New Customer</button>
         <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='lookup_quote/lookup_quote.php'">Look Up Quote</button>
+        <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
         <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='award_quotes/award_quotes.php'">Award Quotes</button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='management/management.php'">Management Menu</button>
+        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='../admin-dashboard/index.php'">Return to Manager Menu</button>
+        <?php } ?>
     </div>
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
@@ -85,6 +109,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     </form>
 </div>
 <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
+
 <form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
     <input type="submit" value="Log Out">
 </form>

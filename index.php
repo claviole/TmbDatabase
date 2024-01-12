@@ -23,10 +23,10 @@
                 $_SESSION["user"]=$row["username"];
                 $_SESSION["user_type"]=$row["user_type"];
                 if($_SESSION["user_type"]=="Sales"){
-                    header("Location: sales/index.php");
+                    header("Location: super-admin/index.php");
                 }
                 elseif($_SESSION["user_type"]=="super-admin"){
-                    header("Location: super-admin/index.php");
+                    header("Location: admin-dashboard/index.php");
                 }
                 elseif($_SESSION["user_type"]=="Human Resources"){
                     header("Location: human_resources/index.php");
