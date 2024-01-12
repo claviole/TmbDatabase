@@ -11,7 +11,7 @@
     $_SESSION["date"]=$date;
 
     //import database connection
-    include "connection.php";
+    include "configurations/connection.php";
     $pepper = "Krdh%RA-kPm1248)v2y52WqE&+b}r7T6p/Jn@.?wA(L8"; // Replace with your actual pepper
     if($_POST){
         $useremail=$_POST['useremail'];
