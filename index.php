@@ -1,5 +1,4 @@
 <?php
-
     //Unset all the server side variables
     session_start();
     $_SESSION["user"]="";
@@ -12,14 +11,24 @@
     $_SESSION["date"]=$date;
 
     //import database connection
-        include "connection.php";
-        if($_POST){
-            $useremail=$_POST['useremail'];
-            $userpassword=$_POST['userpassword'];
-            $sql="SELECT * FROM `Users` WHERE `email`='$useremail' AND `password`='$userpassword'";
-            $result=$database->query($sql);
-            if($result->num_rows>0){
-                $row=$result->fetch_assoc();
+    include "connection.php";
+    $pepper = "Krdh%RA-kPm1248)v2y52WqE&+b}r7T6p/Jn@.?wA(L8"; // Replace with your actual pepper
+    if($_POST){
+        $useremail=$_POST['useremail'];
+        $userpassword=$_POST['userpassword'];
+
+        // Prepare the statement
+        $stmt = $database->prepare("SELECT * FROM `Users` WHERE `email` = ?");
+        $stmt->bind_param("s", $useremail);
+
+        // Execute the statement
+        $stmt->execute();
+
+        // Get the result
+        $result = $stmt->get_result();
+        if($result->num_rows>0){
+            $row=$result->fetch_assoc();
+            if(password_verify($pepper . $userpassword, $row['password'])) {
                 $_SESSION["user"]=$row["username"];
                 $_SESSION["user_type"]=$row["user_type"];
                 if($_SESSION["user_type"]=="Sales"){
@@ -30,14 +39,16 @@
                 }
                 elseif($_SESSION["user_type"]=="Human Resources"){
                     header("Location: human_resources/index.php");
-                  
                 }
-            }
-            else{
+                elseif($_SESSION["user_type"]=="maintenance"){
+                    header("Location: production/index.php");
+                }
+            } else {
                 echo "<script>alert('Login Failed')</script>";
             }
         }
-    ?>
+    }
+?>
     <!DOCTYPE html>
 <html lang="en">
 <head>

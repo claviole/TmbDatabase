@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../connection.php';
+include '../configurations/connection.php';
 
 $currentPassword = $_POST['current-password'];
 $newPassword = $_POST['new-password'];

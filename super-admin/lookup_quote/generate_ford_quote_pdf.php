@@ -1,6 +1,6 @@
 <?php
 require_once('../../libraries/TCPDF-main/tcpdf.php');
-include '../../connection.php';
+include '../../configurations/connection.php';
 // Define the savePdfToDatabase function
 function savePdfToDatabase($invoice_id, $file_name, $file_contents) {
     global $database;

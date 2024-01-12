@@ -1,6 +1,6 @@
 <?php
 ob_start(); // Turn on output buffering
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 if (!isset($_GET['invoice_id'])) {
     exit('No invoice ID provided');

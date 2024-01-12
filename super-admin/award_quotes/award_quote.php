@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 $quoteId = $_POST['quoteId'];
 $version = $_POST['version'];

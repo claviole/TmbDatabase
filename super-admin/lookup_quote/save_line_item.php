@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php';
+include '../../configurations/connection.php';
 session_start();
 // Get the new values from the AJAX request
 $partNumber = $_POST['partNumber'];

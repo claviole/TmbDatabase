@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 
 if (!isset($_GET['id'])) {
     http_response_code(400);

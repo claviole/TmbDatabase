@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 $partNumber = $_POST['partNumber'];
 $partName = $_POST['partName'];

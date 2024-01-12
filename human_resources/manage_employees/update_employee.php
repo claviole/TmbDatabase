@@ -2,7 +2,7 @@
 // Start session and include database connection
 
 session_start();
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 // Check if request is POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

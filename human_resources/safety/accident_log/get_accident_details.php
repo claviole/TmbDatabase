@@ -1,5 +1,5 @@
 <?php
-include '../../../connection.php';
+include '../../../configurations/connection.php';
 
 $accidentId = $_GET['id'];
 

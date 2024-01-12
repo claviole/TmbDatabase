@@ -1,6 +1,6 @@
 <?php
 SESSION_START();
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 $customerName = $database->real_escape_string($_POST['customerName']);
 $customerAddress = $database->real_escape_string($_POST['customerAddress']);

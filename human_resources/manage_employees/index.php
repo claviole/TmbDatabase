@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php'; 
+include '../../configurations/connection.php'; 
 date_default_timezone_set('America/Chicago');
 
 ?>
@@ -333,7 +333,7 @@ document.getElementById('settings-icon').addEventListener('click', function() {
             formData.append('new-password', newPassword);
 
             // Send the current and new password to the server
-            return fetch('change_password.php', {
+            return fetch('../../change_password.php', {
                 method: 'POST',
                 body: formData
             })

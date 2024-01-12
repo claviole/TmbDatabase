@@ -1,5 +1,5 @@
 <?php
-include '../../../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 
 // Insert form data into the accident_report table
 $stmt = $database->prepare("INSERT INTO `accident_report` (`employee_id`,`non_employee_name`, `accident_type`, `date_added`, `accident_date`, `accident_time`, `shift`, `time_sent_to_clinic`, `date_sent_to_clinic`, `accident_location`, `time_of_report`, `shift_start_time`, `accident_description`, `consecutive_days_worked`, `proper_ppe_used`, `proper_ppe_used_explain`, `procedure_followed`, `procedure_followed_explain`, `potential_severity`, `potential_severity_explain`, `enverionmental_impact`, `enverionmental_impact_explain`, `prevent_reoccurance`, `immediate_corrective_action`, `irp_required`, `irp_names`, `equip_out_of_service`, `equip_out_of_service_explain`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");

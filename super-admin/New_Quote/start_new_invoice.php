@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 
 // Fetch customers for dropdown
 $result = $database->query("SELECT `Customer Name` FROM Customer");

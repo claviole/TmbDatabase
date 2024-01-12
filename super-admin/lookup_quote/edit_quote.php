@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 $invoice_id = $_GET['invoice_id'];
 

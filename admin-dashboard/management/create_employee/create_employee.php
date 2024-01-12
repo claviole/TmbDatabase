@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
 
 

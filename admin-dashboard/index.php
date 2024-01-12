@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../connection.php'; // Assuming you have a db_connection.php file for database connection
+include '../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
 
 
@@ -41,7 +41,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     }
     @media (min-width: 768px) {
         .button-container button {
-            width: calc(100% / 3 - 20px);
+            width: calc(100% / 4 - 20px);
         }
     }
         
@@ -58,13 +58,16 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     
     
 <div class="button-container">
-    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='../human_resources/index.php'">
+    <button title="Human Resources" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='../human_resources/index.php'">
         <img src="../images/HR.png" alt="HR">
     </button>
-    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='../super-admin/index.php'">
+    <button title="Sales" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='../super-admin/index.php'">
         <img src="../images/sales-marketing.webp" alt="sales">
     </button>
-    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='management/management.php'">
+    <button title="Maintenance" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='../maintenance/index.php'">
+        <img src="../images/maintenance.png" alt="maintenance">
+    </button>
+    <button title="Management" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='management/management.php'">
         <img src="../images/admin.jpg" alt="admin">
     </button>
 </div>
@@ -129,7 +132,7 @@ document.getElementById('settings-icon').addEventListener('click', function() {
             formData.append('new-password', newPassword);
 
             // Send the current and new password to the server
-            return fetch('change_password.php', {
+            return fetch('../change_password.php', {
                 method: 'POST',
                 body: formData
             })

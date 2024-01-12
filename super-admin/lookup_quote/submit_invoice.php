@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['wash_and_lube'])) {

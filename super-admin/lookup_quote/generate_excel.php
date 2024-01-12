@@ -1,7 +1,7 @@
 <?php
 ob_start();
 require '../../vendor/autoload.php';
-include '../../connection.php';
+include '../../configurations/connection.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;

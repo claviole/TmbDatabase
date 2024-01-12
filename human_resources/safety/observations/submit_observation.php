@@ -1,5 +1,5 @@
 <?php
-include '../../../connection.php';
+include '../../../configurations/connection.php';
 
 $observation_score = $_POST['observation_score'];
 $employee_id = $_POST['employee_id'];

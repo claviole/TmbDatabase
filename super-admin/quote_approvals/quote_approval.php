@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 // Fetch quotes for dropdown
 $result = $database->query("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = 'Awaiting Approval'");

@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 if(isset($_POST['invoiceId'])){
     $invoiceId = $_POST['invoiceId'];

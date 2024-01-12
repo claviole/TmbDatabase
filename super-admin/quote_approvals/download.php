@@ -1,5 +1,5 @@
 <?php
-include '../../connection.php';
+include '../../configurations/connection.php';
 session_start();
 if (isset($_GET['quoteId'])) {
  

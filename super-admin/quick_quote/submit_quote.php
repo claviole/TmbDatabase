@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../connection.php';
+include '../../configurations/connection.php';
 
 
 // Get the results from the POST data
