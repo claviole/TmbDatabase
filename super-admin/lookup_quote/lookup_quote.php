@@ -426,7 +426,7 @@ function applyPreset() {
 function generateExcelItemsFormHTML(quoteId) {
     var items;
     if (quoteId.includes('QuickQuote')) {
-        items = ['Part#', 'Blank Weight(lb)', 'Pcs Weight(lb)', 'ship_to_location', 'Blanking per piece cost', 'Packaging Per Piece Cost', 'freight per piece cost'];
+        items = ['Part#', 'Blank Weight(lb)', 'Pcs Weight(lb)', 'ship_to_location', 'Blanking per piece cost', 'Packaging Per Piece Cost', 'freight per piece cost','material_cost'];
     } else {
         items =[
     'supplier_name',    

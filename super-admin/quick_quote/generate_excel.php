@@ -32,13 +32,15 @@ $drawing->setOffsetX(10);
 $drawing->setWorksheet($spreadsheet->getActiveSheet());
 
 // Add headers to the spreadsheet
-$headers = ['Customer Name', 'Part Number', 'Gross Weight', 'Net Weight', 'Shipping Location', 'Blanking Cost Per Piece', 'Packaging Cost Per Piece', 'Freight Per Piece'];
+$headers = ['Customer Name', 'Part Number', 'Gross Weight', 'Net Weight', 'Shipping Location', 'Blanking Cost Per Piece', 'Packaging Cost Per Piece', 'Freight Per Piece', 'Material Cost'];
 $spreadsheet->getActiveSheet()->fromArray($headers, null, 'A5');
 
 // Add values to the spreadsheet
 $row = 6; // Start from the 6th row
 foreach ($results as $result) {
-    $spreadsheet->getActiveSheet()->fromArray(array_slice($result, 0, 8), null, 'A' . $row); // Exclude the contingency from the main data
+    $data = array_slice($result, 0, 8);
+    $data[] = $result[15]; // Add the 16th element
+    $spreadsheet->getActiveSheet()->fromArray($data, null, 'A' . $row);
     $row++;
 }
 
@@ -57,17 +59,17 @@ foreach ($contingencies as $contingency) {
     $row += 2; // Skip one row after each contingency
 }
 // Style the header
-$spreadsheet->getActiveSheet()->getStyle('A5:H5')->getFont()->setBold(true);
-$spreadsheet->getActiveSheet()->getStyle('A5:H5')->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THICK);
-$spreadsheet->getActiveSheet()->getStyle('A5:H5')->getFill()
+$spreadsheet->getActiveSheet()->getStyle('A5:I5')->getFont()->setBold(true);
+$spreadsheet->getActiveSheet()->getStyle('A5:I5')->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THICK);
+$spreadsheet->getActiveSheet()->getStyle('A5:I5')->getFill()
     ->setFillType(Fill::FILL_SOLID)
     ->getStartColor()->setARGB('FFFFFF00'); // Highlighter yellow in ARGB
 
 // Center the contents of each cell
-$spreadsheet->getActiveSheet()->getStyle('A5:H' . $spreadsheet->getActiveSheet()->getHighestDataRow())->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getActiveSheet()->getStyle('A5:I' . $spreadsheet->getActiveSheet()->getHighestDataRow())->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
 // Auto-adjust column width
-foreach (range('A', 'H') as $columnID) {
+foreach (range('A', 'I') as $columnID) {
     $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
 }
 

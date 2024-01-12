@@ -573,6 +573,8 @@ button.next-tab:hover {
                 <div id="steel_cost" style="display: none; align-items: center;">
                     <label for="cost_per_pound" style="width: 30%;">Cost Per Pound:</label>
                     <input type="number" id="cost_per_pound" name="cost_per_pound" value="0" style="width: 10%;">
+                    <label for="markup" style="width: 30%;">Markup %</label>
+                    <input type="number" id="markup" name="markup" value="0" style="width: 10%;">
                 </div>
                 <br>
                 <div style="display: flex; align-items: center;">
@@ -725,6 +727,8 @@ $(document).ready(function() {
         var quote_name = $('#quote_name').val();
         var invoice_id = $('#invoice_id').val() + '_QuickQuote';
         var hourlyRate;
+        var markup = $('#markup').val();
+        markup = markup/100;
 
         if(lineProduced==1|| lineProduced==2 || lineProduced==3 || lineProduced==4 || lineProduced==5 || lineProduced==6 || lineProduced==7 || lineProduced==8 || lineProduced==9 || lineProduced==10)
         {
@@ -777,6 +781,7 @@ $(document).ready(function() {
         console.log(pcsPerTruck);
         var freightPerPiece = (freightCost / pcsPerTruck).toFixed(3);
         console.log(freightPerPiece);
+        var material_cost = (((costPerPound*markup)+costPerPound) * netWeight).toFixed(3);
 
 
 
@@ -786,7 +791,7 @@ $(document).ready(function() {
         var ship_to_location = $('#shipping_location').val();
 
 
-        var result = [customerName,partNumber,grossWeight,netWeight,shippingLocation,blankingCostPerPiece,packagingCostPerPiece,freightPerPiece,invoice_id,contingencies,date,invoice_author,lineProduced,partsPerHour,ship_to_location];
+        var result = [customerName,partNumber,grossWeight,netWeight,shippingLocation,blankingCostPerPiece,packagingCostPerPiece,freightPerPiece,invoice_id,contingencies,date,invoice_author,lineProduced,partsPerHour,ship_to_location,material_cost];
 
    results.push(result);
     console.log(results);
