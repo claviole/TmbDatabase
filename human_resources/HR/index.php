@@ -35,6 +35,7 @@ date_default_timezone_set('America/Chicago');
             text-align: right;
             margin-right: 10px;
         }
+        
     </style>
     
 </head>

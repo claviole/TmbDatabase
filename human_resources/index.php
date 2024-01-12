@@ -44,6 +44,26 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
             text-align: center;
             margin-right: 10px;
         }
+        .button-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 10px 5px;
+    }
+    .button-container button {
+        padding: 20px;
+        font-size: 20px;
+        margin: 10px;
+        border: 2px solid black;
+        width: 90%;
+        max-width: 400px;
+    }
+    @media (min-width: 768px) {
+        .button-container button {
+            width: calc(100% / 3 - 20px);
+        }
+    }
+        
         
     </style>
     
@@ -57,13 +77,14 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
      
     
     
-    <div class ="flex justify-center">
-    <div class ="flex flex-row justify-content: center  py-10 px-5 "  >
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-right:5px ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='HR/index.php'"> <img src="../images/HR.png" alt="HR"></button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-left: 5px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='safety/index.php'">    <img src="../images/safety.jpg" alt="Safety"></button>
-
-    </div>
-    </div>
+<div class="button-container">
+    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='HR/index.php'">
+        <img src="../images/HR.png" alt="HR">
+    </button>
+    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" onclick="window.location.href='safety/index.php'">
+        <img src="../images/safety.jpg" alt="Safety">
+    </button>
+</div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
     echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";

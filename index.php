@@ -129,6 +129,22 @@
     </div>
 </center>
 <script src="https://cdn.tailwindcss.com"></script>
+<script>
+ 
+    // Function to detect if the user is on a mobile device
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    };
 
+    // Function to detect if the device is in landscape mode
+    function isLandscape() {
+        return window.innerWidth > window.innerHeight;
+    };
+
+    // If the user is on a mobile device and not in landscape mode, show a notification
+    if (isMobileDevice() && !isLandscape()) {
+        alert("For the best experience, please use this application in landscape mode.");
+    }
+</script>
 </body>
 </html>
