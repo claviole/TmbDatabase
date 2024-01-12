@@ -1,3 +1,8 @@
 /configurations/
-
 /images/
+/vendor/
+/.vscode/
+/libraries/
+/composer.lock
+/composer.json
+/.cursorignore
