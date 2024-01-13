@@ -3,13 +3,22 @@ session_start();
 include '../configurations/connection.php'; 
 date_default_timezone_set('America/Chicago');
   // Query to get the total count of tickets
-  $count_query = "SELECT COUNT(*) as total FROM orange_tag";
+  $count_query = "SELECT COUNT(*) as total FROM `orange_tag`";
   $count_result = mysqli_query($database, $count_query);
   $data = mysqli_fetch_assoc($count_result);
   $count = $data['total']+1;
 
     $tag_author= $_SESSION['user'];
-   
+
+// Fetch the data from the database
+$query = "SELECT * FROM employees WHERE job_title IN (14,18,19,22,23,24,25,26,27,31,33,38) ";
+$supervisors = mysqli_query($database, $query);
+
+$query = "SELECT * FROM employees WHERE job_title = 25 ";
+$maintenance_managers = mysqli_query($database, $query);
+
+$query = "SELECT * FROM employees WHERE job_title = 38 ";
+$safety_coordinators = mysqli_query($database, $query);
 ?>
 
 <!DOCTYPE html>
@@ -179,51 +188,168 @@ date_default_timezone_set('America/Chicago');
             <div class="modal-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="basic-info-tab" data-toggle="tab" href="#basic-info" role="tab" aria-controls="basic-info" aria-selected="true">Basic Info</a>
+                        <a class="nav-link active" id="ticket-details-tab" data-toggle="tab" href="#ticket-details" role="tab" aria-controls="ticket-details" aria-selected="true">Ticket Details</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="false">Details</a>
+                        <a class="nav-link" id="repairs-maintenance-tab" data-toggle="tab" href="#repairs-maintenance" role="tab" aria-controls="repairs-maintenance" aria-selected="false">Repairs/Maintenance</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="review-info-tab" data-toggle="tab" href="#review-info" role="tab" aria-controls="review-info" aria-selected="false">Review Info</a>
+                        <a class="nav-link" id="follow-up-tab" data-toggle="tab" href="#follow-up" role="tab" aria-controls="follow-up" aria-selected="false">Follow Up</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="basic-info" role="tabpanel" aria-labelledby="basic-info-tab">
-                        <form id="new-ticket-form-basic-info">
-                        <div class="form-group">
-                            <label for="orange_tag_id">Orange Tag ID</label>
-                            <input type="text" class="form-control" id="orange_tag_id" name="orange_tag_id" value="CH-<?php echo $count; ?>" required readonly>
-                        </div>
-                            <div class="form-group">
-                                <label for="ticket_type">Ticket Type</label>
-                                <input type="text" class="form-control" id="ticket_type" name="ticket_type" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="originator">Originator</label>
-                                <input type="text" class="form-control" id="originator" name="originator" value="<?php echo $tag_author; ?>" required readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="location">Location</label>
-                                <input type="text" class="form-control" id="location" name="location" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="priority">Priority</label>
-                                <input type="number" class="form-control" id="priority" name="priority" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="section">Section</label>
-                                <input type="text" class="form-control" id="section" name="section" required>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
-                        <form id="new-ticket-form-details">
-                            <!-- Add your details form fields here -->
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="review-info" role="tabpanel" aria-labelledby="review-info-tab">
-                        <form id="new-ticket-form-review-info">
+                <div class="tab-pane fade show active" id="ticket-details" role="tabpanel" aria-labelledby="ticket-details-tab">
+    <form id="new-ticket-form-ticket-details">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="orange_tag_id">Orange Tag ID</label>
+                    <input type="text" class="form-control" id="orange_tag_id" name="orange_tag_id" value="CH-<?php echo $count; ?>" required readonly>
+                </div>
+                <div class="form-group">
+                    <label for="ticket_type">Ticket Type</label>
+                    <select class="form-control" id="ticket_type" name="ticket_type" required>
+                        <option value="" selected disabled hidden></option>
+                        <option value="Safety">Safety</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Safety Maintenance">Safety Maintenance</option>
+                        <option value="Live Maintenance">Live Maintenance</option>
+                        <option value="Strategic Comp">Strategic Comp</option>
+                        <option value="Die Maintenance">Die Maintenance</option>
+                        <option value="Projects/Improvements">Projects/Improvements</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="originator">Originator</label>
+                    <input type="text" class="form-control" id="originator" name="originator" value="<?php echo $tag_author; ?>" required readonly>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" class="form-control" id="location" name="location" required>
+                </div>
+                <div class="form-group">
+                    <label for="orange_tag_creation_date">Creation Date</label>
+                    <input type="date" class="form-control" id="orange_tag_creation_date" name="orange_tag_creation_date" value="<?php echo date('Y-m-d'); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="orange_tag_creation_time">Creation Time</label>
+                    <input type="time" class="form-control" id="orange_tag_creation_time" name="orange_tag_creation_time" value="<?php echo date('H:i'); ?>" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+            <div class="form-group">
+    <label for="priority">Priority</label>
+    <select class="form-control" id="priority" name="priority" required>
+        <option value="" selected disabled hidden></option>
+        <option value="1" title="The most serious type of unsafe condition, work practice, or maintenance issue that could cause loss of life, permanent disability, loss of limb, or extensive loss of structure, equipment, or material repair. Replace or use alternative means  of control to protect  employees, or remove from service immediately">1</option>
+        <option value="2" title="An unsafe condition, work practice, or maintenance issue that could cause serious injury or damage to structure, equipment, or material repair. Replace or use alternative means of control to protect employees">2</option>
+        <option value="3" title="Minor condition, housekeeping issue, unsafe work practice, or maintenance condition that could require no more than first aid or minor damage to structure, equipment, or material. Schedule to repair, replace, or retrain employee.">3</option>
+    </select>
+</div>
+                
+                <div class="form-group">
+    <label for="supervisor">Supervisor</label>
+    <select class="form-control" id="supervisor" name="supervisor" required>
+        <option value="" selected disabled hidden></option>
+    <?php while ($row = mysqli_fetch_assoc($supervisors)): ?>
+        <option value="<?php echo $row['employee_id']; ?>">
+            <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
+        </option>
+    <?php endwhile; ?>
+    </select>
+</div>
+<div class="form-group">
+    <label for="maintenance_supervisor">Maintenance Supervisor</label>
+    <select class="form-control" id="maintenance_supervisor" name="maintenance_supervisor" required>
+    <option value="" selected disabled hidden></option>
+    <?php while ($row = mysqli_fetch_assoc($maintenance_managers)): ?>
+        <option value="<?php echo $row['employee_id']; ?>">
+            <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
+        </option>
+    <?php endwhile; ?>
+    </select>
+</div>
+<div class="form-group">
+    <label for="safety_coordinator">Safety Coordinator</label>
+    <select class="form-control" id="safety_coordinator" name="safety_coordinator" required>
+    <option value="" selected disabled hidden></option>
+    <?php while ($row = mysqli_fetch_assoc($safety_coordinators)): ?>
+        <option value="<?php echo $row['employee_id']; ?>">
+            <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
+        </option>
+    <?php endwhile; ?>
+    </select>
+</div>
+                <div class="form-group">
+                    <label for="orange_tag_due_date">Due Date</label>
+                    <input type="date" class="form-control" id="orange_tag_due_date" name="orange_tag_due_date" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="orange_tag_description">Description</label>
+                    <textarea class="form-control" id="orange_tag_description" name="orange_tag_description" rows="3" required></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="tab-pane fade" id="repairs-maintenance" role="tabpanel" aria-labelledby="repairs-maintenance-tab">
+    <form id="new-ticket-form-repairs-maintenance">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="repair_technician">Repair Technician</label>
+                <select class="form-control" id="repair_technician" name="repair_technician[]" multiple required></select>
+                <button type="button" id="add_technician" class="btn btn-primary mt-2">Add Technician</button>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="repairs_made">Repairs Made</label>
+                <textarea class="form-control" id="repairs_made" name="repairs_made" rows="3"></textarea>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="root_cause">Root Cause</label>
+                <textarea class="form-control" id="root_cause" name="root_cause" rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+            <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="No" id="area_cleaned" name="area_cleaned" onchange="this.value = this.checked ? 'Yes' : 'No'">
+    <label class="form-check-label" for="area_cleaned">Area Cleaned</label>
+</div>
+
+<div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" value="No" id="follow_up_necessary" name="follow_up_necessary" onchange="this.value = this.checked ? 'Yes' : 'No'">
+    <label class="form-check-label" for="follow_up_necessary">Follow Up Necessary</label>
+</div>
+
+<div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" value="No" id="parts_needed" name="parts_needed" onchange="this.value = this.checked ? 'Yes' : 'No'">
+    <label class="form-check-label" for="parts_needed">Parts Needed</label>
+</div>
+            </div>
+
+            <div class="form-group col-md-3">
+        <label for="total_repair_time">Total Repair Time</label>
+        <input type="number" step="0.01" class="form-control" id="total_repair_time" name="total_repair_time">
+    </div>
+
+    <div class="form-group col-md-3">
+        <label for="equipment_down_time">Equipment Down Time</label>
+        <input type="number" step="0.01" class="form-control" id="equipment_down_time" name="equipment_down_time">
+    </div>
+        </div>
+    </form>
+</div>
+                    <div class="tab-pane fade" id="follow-up" role="tabpanel" aria-labelledby="follow-up-tab">
+                        <form id="new-ticket-form-follow-up">
                             <!-- Add your review info form fields here -->
                         </form>
                     </div>
@@ -236,5 +362,46 @@ date_default_timezone_set('America/Chicago');
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function(){
+    $('#add_technician').click(function(){
+        $.ajax({
+            url: 'fetch_technicians.php', // URL of the PHP file that fetches the technicians
+            type: 'get',
+            success: function(response) {
+                var technicians = response; // response is already a JavaScript object
+
+                var html = '';
+                $.each(technicians, function(key, technician) {
+                    html += `<input type="checkbox" id="technician_${technician.employee_id}" value="${technician.employee_id}">${technician.employee_fname} ${technician.employee_lname}<br>`;
+                });
+
+                Swal.fire({
+                    title: 'Select Technicians',
+                    html: html,
+                    showCancelButton: true,
+                    confirmButtonText: 'Add Technicians',
+                    preConfirm: () => {
+                        var selectedTechnicians = [];
+                        $.each(technicians, function(key, technician) {
+                            if ($('#technician_' + technician.employee_id).is(':checked')) {
+                                selectedTechnicians.push(technician);
+                            }
+                        });
+                        return selectedTechnicians;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.each(result.value, function(key, technician) {
+                            $('#repair_technician').append(new Option(technician.employee_fname + ' ' + technician.employee_lname, technician.employee_id));
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
