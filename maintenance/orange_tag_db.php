@@ -19,6 +19,26 @@ $maintenance_managers = mysqli_query($database, $query);
 
 $query = "SELECT * FROM employees WHERE job_title = 38 ";
 $safety_coordinators = mysqli_query($database, $query);
+
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `ticket_status` = 'Open'";
+$result = mysqli_query($database, $query);
+$data = mysqli_fetch_assoc($result);
+$openTicketCount = $data['total'];
+
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `priority` = 1";
+$result = mysqli_query($database, $query);
+$data = mysqli_fetch_assoc($result);
+$priority1TicketCount = $data['total'];
+
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `priority` = 2";
+$result = mysqli_query($database, $query);
+$data = mysqli_fetch_assoc($result);
+$priority2TicketCount = $data['total'];
+
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `priority` = 3";
+$result = mysqli_query($database, $query);
+$data = mysqli_fetch_assoc($result);
+$priority3TicketCount = $data['total'];
 ?>
 
 <!DOCTYPE html>
@@ -137,12 +157,10 @@ $safety_coordinators = mysqli_query($database, $query);
         padding: 8px;
     }
 
-    .table-striped tr:nth-child(even) {
-        background-color: #f2f2f2; /* Background color for even rows */
-    }
-
+   
     .table-striped tr:hover {
-        background-color: #ddd; /* Background color when hovering over a row */
+   
+        cursor: pointer;
     }
     .modal .btn-primary {
         background-color: #FFA500; /* Background color for the primary button */
@@ -170,6 +188,12 @@ $safety_coordinators = mysqli_query($database, $query);
         background-color: #FFA500; /* Background color for the primary button */
         border-color: #FFA500; /* Border color for the primary button */
         color: #fff; /* Text color for the primary button */
+        
+    }
+    #orange_tag_table th:nth-child(2), /* Creation Date */
+    #orange_tag_table th:nth-child(3) /* Due Date */
+    {
+        min-width: 150px; /* Adjust as needed */
     }
     </style>
 
@@ -189,10 +213,37 @@ $safety_coordinators = mysqli_query($database, $query);
     <div class="container mt-5">
     <div class="row">
         <div class="col-12">
-            <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
-            <button class="btn btn-secondary" onclick="window.location.href='view_closed.php'">View Closed</button>
+        <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
+        <button class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
+        <button class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
         </div>
     </div>
+    <div class="card-deck mt-3">
+    <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Open Tickets</h5>
+            <p class="card-text" style="font-size: 2em;"><?php echo $openTicketCount; ?></p>
+        </div>
+    </div>
+    <div class="card text-white" style="background-color: #b71c1c;">
+        <div class="card-body">
+            <h5 class="card-title">Priority 1</h5>
+            <p class="card-text" style="font-size: 2em;"><?php echo $priority1TicketCount; ?></p>
+        </div>
+    </div>
+    <div class="card text-white" style="background-color: #f57f17;">
+        <div class="card-body">
+            <h5 class="card-title">Priority 2</h5>
+            <p class="card-text" style="font-size: 2em;"><?php echo $priority2TicketCount; ?></p>
+        </div>
+    </div>
+    <div class="card text-white" style="background-color: #fdd835;">
+        <div class="card-body">
+            <h5 class="card-title">Priority 3</h5>
+            <p class="card-text" style="font-size: 2em;"><?php echo $priority3TicketCount; ?></p>
+        </div>
+    </div>
+</div>
     <div class="row mt-3">
         <div class="col-12">
             <div class="table-responsive">
@@ -210,30 +261,42 @@ $safety_coordinators = mysqli_query($database, $query);
                             <th>Work Order Number</th>
                             <th>Repair Technicians</th>
                             <th>Location</th>
+                            <th>Status</th>
                             <th>Description</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $query = "SELECT orange_tag.*, employees.employee_fname, employees.employee_lname 
-                        FROM orange_tag 
-                        LEFT JOIN employees ON orange_tag.repair_technician = employees.employee_id";
-                        $result = mysqli_query($database, $query);
-                        while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr>
-                                <td><?php echo $row['orange_tag_id']; ?></td>
-                                <td><?php echo $row['orange_tag_creation_date']; ?></td>
-                                <td><?php echo $row['orange_tag_due_date']; ?></td>
-                                <td><?php echo $row['originator']; ?></td>
-                                <td><?php echo $row['ticket_type']; ?></td>
-                                <td><?php echo $row['priority']; ?></td>
-                                <td><?php echo $row['section']; ?></td>
-                                <td><?php echo $row['work_order_number']; ?></td>
-                                <td><?php echo $row['employee_fname'] ? $row['employee_fname'] . ' ' . $row['employee_lname'] : 'N/A'; ?></td>
-                                <td><?php echo $row['location']; ?></td>
-                                <td><?php echo $row['orange_tag_description']; ?></td>
-                            </tr>
-                        <?php endwhile; ?>
+                    <?php 
+$query = "SELECT * FROM orange_tag";
+$result = mysqli_query($database, $query);
+while ($row = mysqli_fetch_assoc($result)): ?>
+    <tr class="<?php echo $row['ticket_status']; ?>">
+        <td><?php echo $row['orange_tag_id']; ?></td>
+        <td><?php echo date('m-d-Y', strtotime($row['orange_tag_creation_date'])); ?></td>
+        <td><?php echo date('m-d-Y', strtotime($row['orange_tag_due_date'])); ?></td>
+        <td><?php echo $row['originator']; ?></td>
+        <td><?php echo $row['ticket_type']; ?></td>
+        <td><?php echo $row['priority']; ?></td>
+        <td><?php echo $row['section']; ?></td>
+        <td><?php echo $row['work_order_number']; ?></td>
+        <td>
+            <?php 
+            $technicians = explode(',', $row['repair_technician']);
+            foreach ($technicians as $technician) {
+                if (!empty($technician)) {
+                    $tech_query = "SELECT employee_fname, employee_lname FROM employees WHERE employee_id = $technician";
+                    $tech_result = mysqli_query($database, $tech_query);
+                    $tech_data = mysqli_fetch_assoc($tech_result);
+                    echo $tech_data['employee_fname'] . ' ' . $tech_data['employee_lname'] . '<br>';
+                }
+            }
+            ?>
+        </td>
+        <td><?php echo $row['location']; ?></td>
+        <td><?php echo $row['ticket_status']; ?></td>
+        <td><?php echo $row['orange_tag_description']; ?></td>
+    </tr>
+<?php endwhile; ?>
                     </tbody>
                 </table>
                 </div>
@@ -398,20 +461,20 @@ $safety_coordinators = mysqli_query($database, $query);
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="No" id="area_cleaned" name="area_cleaned" onchange="this.value = this.checked ? 'Yes' : 'No'">
-                                    <label class="form-check-label" for="area_cleaned">Area Cleaned</label>
-                                </div>
+                            <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="No" id="area_cleaned" name="area_cleaned" onchange="this.value = this.checked ? 'on' : 'off'">
+    <label class="form-check-label" for="area_cleaned">Area Cleaned</label>
+</div>
 
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" value="No" id="follow_up_necessary" name="follow_up_necessary" onchange="this.value = this.checked ? 'Yes' : 'No'">
-                                    <label class="form-check-label" for="follow_up_necessary">Follow Up Necessary</label>
-                                </div>
+<div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" id="follow_up_necessary" name="follow_up_necessary" onchange="this.value = this.checked ? 'on' : 'off'">
+    <label class="form-check-label" for="follow_up_necessary">Follow Up Necessary</label>
+</div>
 
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" value="No" id="parts_needed" name="parts_needed" onchange="togglePartsForm(this.checked); this.value = this.checked ? 'Yes' : 'No'">
-                                    <label class="form-check-label" for="parts_needed">Parts Needed</label>
-                                </div>
+<div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" value="No" id="parts_needed" name="parts_needed" onchange="togglePartsForm(this.checked); this.value = this.checked ? 'on' : 'off'">
+    <label class="form-check-label" for="parts_needed">Parts Needed</label>
+</div>
                             </div>
                                     <div class="form-group col-md-3">
                                         <label for="total_repair_time">Total Repair Time</label>
@@ -508,34 +571,33 @@ $safety_coordinators = mysqli_query($database, $query);
 
                 <div class="tab-pane fade" id="follow-up" role="tabpanel" aria-labelledby="follow-up-tab">
                     <form id="new-ticket-form-follow-up">
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="reviewed_by_supervisor" onchange="setReviewDate('supervisor_review_date', this.checked)">
-                                <label class="form-check-label" for="reviewed_by_supervisor">Reviewed By Supervisor</label>
-                            </div>
-                            <input type="date" class="form-control" id="supervisor_review_date" name="supervisor_review_date" readonly>
-                        </div>
+                    <div class="form-group">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="reviewed_by_supervisor" onchange="toggleDateField('supervisor_review_date', this.checked)">
+        <label class="form-check-label" for="reviewed_by_supervisor">Reviewed By Supervisor</label>
+    </div>
+    <input type="date" class="form-control" id="supervisor_review_date" name="supervisor_review_date" style="display: none;">
+</div>
 
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="reviewed_by_safety_coordinator" onchange="setReviewDate('safety_coordinator_review_date', this.checked)">
-                                <label class="form-check-label" for="reviewed_by_safety_coordinator">Reviewed By Safety Coordinator</label>
-                            </div>
-                            <input type="date" class="form-control" id="safety_coordinator_review_date" name="safety_coordinator_review_date" readonly>
-                        </div>
+<div class="form-group">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="reviewed_by_safety_coordinator" onchange="toggleDateField('safety_coordinator_review_date', this.checked)">
+        <label class="form-check-label" for="reviewed_by_safety_coordinator">Reviewed By Safety Coordinator</label>
+    </div>
+    <input type="date" class="form-control" id="safety_coordinator_review_date" name="safety_coordinator_review_date" style="display: none;">
+</div>
 
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="verified" onchange="setReviewDate('date_verified', this.checked)">
-                                <label class="form-check-label" for="verified">Verified</label>
-                            </div>
-                            <input type="date" class="form-control" id="date_verified" name="date_verified" readonly>
-                        </div>
+<div class="form-group">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="verified" onchange="toggleDateField('date_verified', this.checked)">
+        <label class="form-check-label" for="verified">Verified</label>
+    </div>
+    <input type="date" class="form-control" id="date_verified" name="date_verified" style="display: none;">
+</div>
                         <div class="form-group">
                             <label for="ticket_status">Ticket Status</label>
                             <select class="form-control" id="ticket_status" name="ticket_status" required>
-                                <option value="" selected disabled hidden></option>
-                                <option value="Open">Open</option>
+                                <option value="Open" selected>Open</option>
                                 <option value="Closed">Closed</option>
                             </select>
                         </div>
@@ -564,9 +626,15 @@ $(document).ready(function(){
     
     
 });
-function togglePartsForm(isChecked) {
+function togglePartsForm(isChecked, parts) {
     var form = document.getElementById('parts_needed_form');
-    form.style.display = isChecked ? 'block' : 'none';
+    if (parts && parts.length > 0) {
+        // If there are parts, always show the form
+        form.style.display = 'block';
+    } else {
+        // Otherwise, show or hide the form based on isChecked
+        form.style.display = isChecked ? 'block' : 'none';
+    }
 }
 // Initialize an empty array to store the parts
 var parts = [];
@@ -611,6 +679,10 @@ $(document).ready(function() {
     });
 
     $('#save-ticket').click(function() {
+        var repair_technicians = [];
+        $('#repair_technician input:checked').each(function() {
+    repair_technicians.push($(this).val());
+        });
         
     // Collect ticket data
     var ticketData = {
@@ -630,19 +702,17 @@ $(document).ready(function() {
         root_cause: $('#root_cause').val(),
         equipment_down_time: $('#equipment_down_time').val(),
         total_repair_time: $('#total_repair_time').val(),
-        area_cleaned: $('#area_cleaned').val(),
-        follow_up_necessary: $('#follow_up_necessary').val(),
-        parts_needed: $('#parts_needed').val(),
-        reviewed_by_supervisor: $('#reviewed_by_supervisor').val(),
-        reviewed_by_safety_coordinator: $('#reviewed_by_safety_coordinator').val(),
+        area_cleaned: $('#area_cleaned').prop('checked') ? 'on' : 'off',
+        follow_up_necessary: $('#follow_up_necessary').prop('checked') ? 'on' : 'off',
+        parts_needed: $('#parts_needed').prop('checked') ? 'on' : 'off',
+        reviewed_by_supervisor: $('#reviewed_by_supervisor').prop('checked') ? 'on' : 'off',
+    reviewed_by_safety_coordinator: $('#reviewed_by_safety_coordinator').prop('checked') ? 'on' : 'off',
         supervisor_review_date: $('#supervisor_review_date').val(),
         safety_coordinator_review_date: $('#safety_coordinator_review_date').val(),
-        verified: $('#verified').val(),
+        verified: $('#verified').prop('checked') ? 'on' : 'off',
         date_verified: $('#date_verified').val(),
         orange_tag_description: $('#orange_tag_description').val(),
-        repair_technician: $('#repair_technician option:selected').map(function() {
-        return this.value;
-        }).get(),
+        repair_technician: repair_technicians,
         total_cost: $('#total_cost').val(),
         ticket_status: $('#ticket_status').val(),
         work_order_number: $('#work_order_number').val()
@@ -726,12 +796,18 @@ $(document).ready(function(){
 });
 $('#newTicketButton').click(function() {
     // Make an AJAX request to get the count of orange tags
+    $('#newTicketModal').find('form').each(function() {
+    this.reset();
+});
+
+// Uncheck all checkboxes in the modal
+$('#newTicketModal').find('input[type=checkbox]').prop('checked', false);
     $.ajax({
         url: 'get_tag_count.php', // Replace with the URL of your PHP script
         method: 'GET',
         success: function(response) {
             // Generate a new orange tag ID based on the count of existing tags
-            var newOrangeTagId = 'CH-' + (parseInt(response) + 1);
+            var newOrangeTagId = 'CH-' + (parseInt(response));
 
             // Set the new ID as the value of the orange_tag_id field
             $('#orange_tag_id').val(newOrangeTagId);
@@ -813,36 +889,93 @@ $('#update-ticket').show();
     $('#root_cause').val(ticketData.root_cause);
     $('#equipment_down_time').val(ticketData.equipment_down_time);
     $('#total_repair_time').val(ticketData.total_repair_time);
-    $('#area_cleaned').prop('checked', ticketData.area_cleaned === 'Yes');
-    $('#follow_up_necessary').prop('checked', ticketData.follow_up_necessary === 'Yes');
-    $('#parts_needed').prop('checked', ticketData.parts_needed === 'Yes');
+    $('#area_cleaned').prop('checked', ticketData.area_cleaned === 'on');
+    $('#follow_up_necessary').prop('checked', ticketData.follow_up_necessary === 'on');
+    $('#parts_needed').prop('checked', ticketData.parts_needed === 'on');
     $('#reviewed_by_supervisor').prop('checked', ticketData.reviewed_by_supervisor === 'on');
+if ($('#reviewed_by_supervisor').is(':checked')) {
+    $('#supervisor_review_date').show();
+} else {
+    $('#supervisor_review_date').hide();
+}
     $('#reviewed_by_safety_coordinator').prop('checked', ticketData.reviewed_by_safety_coordinator === 'on');
+if ($('#reviewed_by_safety_coordinator').is(':checked')) {
+    $('#safety_coordinator_review_date').show();
+} else {
+    $('#safety_coordinator_review_date').hide();
+}
     $('#supervisor_review_date').val(ticketData.supervisor_review_date);
     $('#safety_coordinator_review_date').val(ticketData.safety_coordinator_review_date);
     $('#verified').prop('checked', ticketData.verified === 'on');
+if ($('#verified').is(':checked')) {
+    $('#date_verified').show();
+} else {
+    $('#date_verified').hide();
+}
+
     $('#date_verified').val(ticketData.date_verified);
     $('#orange_tag_description').val(ticketData.orange_tag_description);
     var repair_technicians = ticketData.repair_technician.split(',');
     $.each(repair_technicians, function(index, technician_id) {
-        $('#technician_' + technician_id).prop('checked', true);
+     $('#technician_' + technician_id).prop('checked', true);
     });
     $('#total_cost').val(ticketData.total_cost);
     $('#ticket_status').val(ticketData.ticket_status);
     $('#work_order_number').val(ticketData.work_order_number);
 
-    // Open the modal
-    $('#newTicketModal').modal('show');
+  // Open the modal
+  $('#newTicketModal').modal('show');
+
+// Make an AJAX request to fetch the parts associated with this tag
+$.ajax({
+    url: 'fetch_parts.php',
+    method: 'GET',
+    data: { orange_tag_id: orange_tag_id },
+    success: function(response) {
+        // 'response' should be an array of parts associated with the tag
+
+        // Clear the parts table
+        $('#parts_list tbody').empty();
+
+        // Parse the JSON string into a JavaScript object
+        var parts = JSON.parse(response);
+
+        // Add each part to the table
+        $.each(parts, function(i, part) {
+            var row = '<tr>' +
+                '<td>' + part.date_used + '</td>' +
+                '<td>' + part.part_description + '</td>' +
+                '<td>' + part.quantity + '</td>' +
+                '<td>' + part.brand_name + '</td>' +
+                '<td>' + part.model_number + '</td>' +
+                '<td>' + part.serial_number + '</td>' +
+                '<td>' + part.dimensions + '</td>' +
+                '</tr>';
+            $('#parts_list tbody').append(row);
+        });
+
+        // Toggle the parts form based on whether there are parts
+        togglePartsForm($('#parts_needed').is(':checked'), parts);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        // Handle any errors
+        console.error(textStatus, errorThrown);
+    }
+});
 },
-        error: function(jqXHR, textStatus, errorThrown) {
-            // Handle any errors
-            console.error(textStatus, errorThrown);
-        }
-    });
+error: function(jqXHR, textStatus, errorThrown) {
+// Handle any errors
+console.error(textStatus, errorThrown);
+}
+});
 });
 
 
 $('#update-ticket').click(function() {
+    var repair_technicians = [];
+$('#repair_technician input:checked').each(function() {
+    repair_technicians.push($(this).val());
+});
     // Collect ticket data
     var ticketData = {
         orange_tag_id: $('#orange_tag_id').val(),
@@ -861,19 +994,17 @@ $('#update-ticket').click(function() {
         root_cause: $('#root_cause').val(),
         equipment_down_time: $('#equipment_down_time').val(),
         total_repair_time: $('#total_repair_time').val(),
-        area_cleaned: $('#area_cleaned').val(),
-        follow_up_necessary: $('#follow_up_necessary').val(),
-        parts_needed: $('#parts_needed').val(),
-        reviewed_by_supervisor: $('#reviewed_by_supervisor').val(),
-        reviewed_by_safety_coordinator: $('#reviewed_by_safety_coordinator').val(),
+        area_cleaned: $('#area_cleaned').prop('checked') ? 'on' : 'off',
+        follow_up_necessary: $('#follow_up_necessary').prop('checked') ? 'on' : 'off',
+        parts_needed: $('#parts_needed').prop('checked') ? 'on' : 'off',
+        reviewed_by_supervisor: $('#reviewed_by_supervisor').prop('checked') ? 'on' : 'off',
+    reviewed_by_safety_coordinator: $('#reviewed_by_safety_coordinator').prop('checked') ? 'on' : 'off',
         supervisor_review_date: $('#supervisor_review_date').val(),
         safety_coordinator_review_date: $('#safety_coordinator_review_date').val(),
-        verified: $('#verified').val(),
+        verified: $('#verified').prop('checked') ? 'on' : 'off',
         date_verified: $('#date_verified').val(),
         orange_tag_description: $('#orange_tag_description').val(),
-        repair_technician: $('#repair_technician option:selected').map(function() {
-        return this.value;
-        }).get(),
+        repair_technician: repair_technicians,
         total_cost: $('#total_cost').val(),
         ticket_status: $('#ticket_status').val(),
         work_order_number: $('#work_order_number').val()
@@ -916,6 +1047,33 @@ $('#update-ticket').click(function() {
     // Clear the parts array
     parts = [];
 });
+
+function toggleDateField(dateFieldId, isChecked) {
+    var dateField = document.getElementById(dateFieldId);
+    dateField.style.display = isChecked ? 'block' : 'none';
+}
+function viewClosedTickets() {
+    // Hide rows where the status is "Open"
+    $('#orange_tag_table tr.Open').hide();
+
+    // Show rows where the status is "Closed"
+    $('#orange_tag_table tr.Closed').show();
+}
+
+function viewOpenTickets() {
+    // Hide rows where the status is "Closed"
+    $('#orange_tag_table tr.Closed').hide();
+
+    // Show rows where the status is "Open"
+    $('#orange_tag_table tr.Open').show();
+}
+
+$(document).ready(function() {
+    viewOpenTickets();
+});
+
+
+
 </script>
 </body>
 </html>

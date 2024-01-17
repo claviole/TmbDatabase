@@ -12,7 +12,8 @@
 
     //import database connection
     include "configurations/connection.php";
-    $pepper = "Krdh%RA-kPm1248)v2y52WqE&+b}r7T6p/Jn@.?wA(L8"; // Replace with your actual pepper
+    $pepper = $PEPPER; // Replace with your actual pepper
+
     if($_POST){
         $useremail=$_POST['useremail'];
         $userpassword=$_POST['userpassword'];
@@ -55,10 +56,53 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
         
     <title>Login</title>
+    <style>
+        .modal-content {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
 
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #e9ecef;
+}
+
+.modal-body {
+    padding: 2em;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    justify-content: flex-end;
+}
+
+#forgotPasswordForm .form-group {
+    margin-bottom: 1em;
+}
+
+#forgotPasswordForm .form-control {
+    border-radius: 0.25em;
+    border: 1px solid #ced4da;
+}
+
+#resetPassword {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+#resetPassword:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+</style>
     
     
 </head>
@@ -112,8 +156,7 @@
                             <input type="submit" value="Login" class="inline-flex w-full items-center justify-center rounded-md border border-transparent bg-[#1B145D] px-6 py-4 text-sm font-bold text-white transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
                         </div>
                         </br>
-                        <label for="" class="sub-text" style="font-weight: 280;">Don't have an account&#63; </label>
-                        <a href="signup.php" class="hover-link1 non-style-link">Sign Up</a>
+                        <a href="#" data-toggle="modal" data-target="#forgotPasswordModal" class="hover-link1 non-style-link">Forgot Password?</a>
                         <br><br><br>
                 </td>
             </tr>    
@@ -138,6 +181,30 @@
 
 
     </div>
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="forgotPasswordForm">
+          <div class="form-group">
+            <label for="email" class="col-form-label">Enter your email:</label>
+            <input type="email" class="form-control" id="email" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="resetPassword">Reset Password</button>
+      </div>
+    </div>
+  </div>
+</div>
 </center>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -156,6 +223,44 @@
     if (isMobileDevice() && !isLandscape()) {
         alert("For the best experience, please use this application in landscape mode.");
     }
+
+
+
+    $(document).ready(function() {
+  $('#resetPassword').click(function() {
+    var email = $('#email').val();
+
+    $.ajax({
+      url: 'configurations/reset_password.php',
+      method: 'POST',
+      data: { email: email },
+      success: function(response) {
+        // Close the modal
+        $('#forgotPasswordModal').modal('hide');
+
+        // Show a success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Password Reset',
+          text: 'A new password has been sent to your email. It may take 5-10 minutes to arrive in your inbox.',
+          confirmButtonText: 'OK'
+        });
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        // Handle any errors
+        console.error(textStatus, errorThrown);
+
+        // Show an error message
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred while resetting your password. Please try again.',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+  });
+});
 </script>
 </body>
 </html>
