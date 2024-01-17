@@ -102,6 +102,40 @@
     background-color: #0056b3;
     border-color: #0056b3;
 }
+#forgotPasswordModal .modal-content {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    #forgotPasswordModal .modal-header {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    #forgotPasswordModal .modal-footer .btn {
+        border-radius: 5px;
+    }
+
+    #forgotPasswordModal .modal-footer .btn-primary {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    #forgotPasswordModal .modal-footer .btn-primary:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    #forgotPasswordModal .modal-footer .btn-secondary {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    #forgotPasswordModal .modal-footer .btn-secondary:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
 </style>
     
     
