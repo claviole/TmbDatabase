@@ -29,7 +29,7 @@ if (!isset($data['invoice_author'])) {
 }
 $customer = $database->real_escape_string($data['customer']);
 
-$invoiceDate = $database->real_escape_string($data['invoiceDate']);
+$invoiceDate = date("m-d-Y");
 $customerId = $database->real_escape_string($data['customer_id']);
 $author_fullname = $database->real_escape_string($data['invoice_author']);
 $author_parts = explode(' ', $author_fullname);

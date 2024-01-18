@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 ob_start();
 require '../../configurations/vendor/autoload.php';
 include '../../configurations/connection.php';
@@ -9,6 +12,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 $itemNames = $_POST['itemNames'];
 $invoice_id = $_POST['invoice_id'];
+error_log("Received itemNames: " . print_r($itemNames, true));
+error_log("Received invoice_id: " . $invoice_id);
 
 $spreadsheet = new Spreadsheet();
 
@@ -89,7 +94,7 @@ $stmt->close();
 
 
 // Format the invoice date
-$invoice_date = new DateTime($invoice['invoice_date']);
+$invoice_date = DateTime::createFromFormat('m-d-Y', $invoice['invoice_date']);
 $formatted_date = $invoice_date->format('m/d/Y');
 
 // Add invoice data to the spreadsheet
@@ -211,6 +216,8 @@ $stmt->bind_param("sss", $invoice_id, $filename, $filePath);
 // Execute the statement
 $stmt->execute();
 
+// Log the end of the script
+error_log("Finished generate_excel.php script");
 // Check for errors
 if ($stmt->error) {
     // If there was an error, return a JSON response with the error message
