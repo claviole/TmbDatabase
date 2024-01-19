@@ -34,7 +34,7 @@ $invoiceCount = $result->fetch_assoc()['invoiceCount'];
 $newInvoiceId = $invoiceCount + 1;
 
 // Set the invoice_id
-$invoice_id = "TWB_" . $author_initials . "_" . $newInvoiceId;
+$invoice_id = "TMB_" . $author_initials . "_" . $newInvoiceId;
 
 
 
