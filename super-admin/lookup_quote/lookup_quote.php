@@ -242,6 +242,23 @@ $quotes = $result->fetch_all(MYSQLI_ASSOC);
     transition: border-color 0.3s ease;
 
 }
+.download-link {
+    color: #007BFF; /* Change to a more noticeable color */
+    font-weight: bold; /* Make the text bold */
+    text-decoration: none; /* Remove the underline */
+    padding: 10px; /* Add some padding */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for all changes */
+}
+
+.download-link:hover {
+    background-color: #007BFF; /* Add a background color on hover */
+    color: white; /* Change the text color on hover */
+}
+
+.download-link:before {
+    content: "\1F4E5 "; /* Add a download icon before the link text */
+}
     </style>
 </head>
 <body>

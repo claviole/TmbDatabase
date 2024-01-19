@@ -162,7 +162,7 @@ form select {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-button {
+button, {
     background-color: #4da6ff; /* light blue */
  
     padding: 10px 20px;
@@ -173,7 +173,19 @@ button {
     width: 200px;
     transition: background-color 0.3s ease;
 }
-
+#add-customer-btn {
+    background-color: #4da6ff; /* light blue */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    transition: background-color 0.3s ease;
+}
+#add-customer-btn:hover {
+    background-color: #007bff; /* darker blue on hover */
+}
 button:hover {
     background-color: #007bff; /* darker blue on hover */
 }
@@ -424,6 +436,9 @@ button.next-tab:hover {
 .delete-stop:hover {
     color: #ff0000 !important ; /* Red text on hover */
 }
+.swal2-container {
+    max-width: 100% !important;
+}
     </style>
     <title>Quick Quote</title>
 </head>
@@ -461,6 +476,7 @@ button.next-tab:hover {
                     <option value="<?= $customer['Customer Name'] ?>"><?= $customer['Customer Name'] ?></option>
                     <?php endforeach; ?>
                     </select>
+                    <button id="add-customer-btn" style="margin-left: 10px;">New Customer</button>
                 </div>
                 <br>
                 <div style="display: flex; align-items: center;">
@@ -670,7 +686,7 @@ document.getElementById('add-contingencies').addEventListener('click', function(
         // Add more contingencies here
     ];
 
-    var html = '<form id="contingencies-form" style="display: grid; gap: 10px; max-width: 500px;">';
+    var html = '<form id="contingencies-form" style="display: grid; gap: 10px; max-width: 100%;">';
     contingencies.forEach(function(contingency, index) {
         var backgroundColor = index % 2 === 0 ? '#ffffff' : '#f0f0f0';
         var isChecked = selectedContingencies.includes(contingency) ? ' checked' : '';
@@ -684,6 +700,7 @@ document.getElementById('add-contingencies').addEventListener('click', function(
     Swal.fire({
         title: 'Select Contingencies',
         html: html,
+        width: '100%',
         preConfirm: function() {
             selectedContingencies = [];
             document.querySelectorAll('#contingencies-form input:checked').forEach(function(checkbox) {
@@ -852,5 +869,77 @@ $(document).ready(function() {
 
 
 });
+
+document.querySelector('#add-customer-btn').onclick = function() {
+    event.preventDefault();
+    Swal.fire({
+    title: 'Add New Customer',
+    width:'700px',
+    html: `
+        <style>
+            .swal2-input {
+                width: 85% !important;
+            }
+        </style>
+        <input id="swal-input1" class="swal2-input" placeholder="Customer Name">
+        <input id="swal-input2" class="swal2-input" placeholder="Customer Address">
+        <input id="swal-input3" class="swal2-input" placeholder="Customer City">
+        <input id="swal-input4" class="swal2-input" placeholder="Customer State">
+        <input id="swal-input5" class="swal2-input" placeholder="Customer Zip">
+        <input id="swal-input6" class="swal2-input" placeholder="Customer Phone">
+        <input id="swal-input7" class="swal2-input" placeholder="Customer Email">
+        <input id="swal-input8" class="swal2-input" placeholder="Customer Contact">
+    `,
+        preConfirm: () => {
+    const values = [
+        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input2').value,
+        document.getElementById('swal-input3').value,
+        document.getElementById('swal-input4').value,
+        document.getElementById('swal-input5').value,
+        document.getElementById('swal-input6').value,
+        document.getElementById('swal-input7').value,
+        document.getElementById('swal-input8').value
+    ];
+    // Check if any of the fields are empty
+    if (values.some(value => value === '')) {
+        Swal.showValidationMessage('Please fill out all fields');
+        return;
+    }
+    return values;
+}
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var formData = new FormData();
+            formData.append('customerName', result.value[0]);
+            formData.append('customerAddress', result.value[1]);
+            formData.append('customerCity', result.value[2]);
+            formData.append('customerState', result.value[3]);
+            formData.append('customerZip', result.value[4]);
+            formData.append('customerPhone', result.value[5]);
+            formData.append('customerEmail', result.value[6]);
+            formData.append('customerContact', result.value[7]);
+
+            fetch('../add_new_customer/submit_new_customer.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.status === 'error') {
+                    throw new Error(response.message);
+                }
+                Swal.fire('Success', 'New customer added successfully', 'success')
+                    .then(() => {
+                        location.reload(); // Refresh the page
+                    });
+                })
+                .catch(error => {
+                    Swal.fire('Error', `Request failed: ${error}`, 'error');
+               
+            });
+        }
+    });
+}
 </script>
 </html>
