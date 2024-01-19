@@ -9,6 +9,7 @@ $originator = mysqli_real_escape_string($database, $_POST['originator']);
 $location = mysqli_real_escape_string($database, $_POST['location']);
 $priority = mysqli_real_escape_string($database, $_POST['priority']);
 $line_name = mysqli_real_escape_string($database, $_POST['line_name']);
+$die_number = mysqli_real_escape_string($database, $_POST['die_number']);
 $section = mysqli_real_escape_string($database, $_POST['section']);
 $supervisor = mysqli_real_escape_string($database, $_POST['supervisor']);
 $orange_tag_creation_date = mysqli_real_escape_string($database, $_POST['orange_tag_creation_date']);
@@ -37,7 +38,7 @@ $ticket_status = mysqli_real_escape_string($database, $_POST['ticket_status']);
 $work_order_number = mysqli_real_escape_string($database, $_POST['work_order_number']);
 
 // Update data in the database
-$query = "UPDATE `orange_tag` SET `ticket_type`='$ticket_type', `originator`='$originator', `location`='$location', `priority`='$priority',`line_name`=$line_name, `section`='$section', `supervisor`='$supervisor', `orange_tag_creation_date`='$orange_tag_creation_date', `orange_tag_creation_time`='$orange_tag_creation_time', `orange_tag_due_date`='$orange_tag_due_date', `repairs_made`='$repairs_made', `root_cause`='$root_cause', `equipment_down_time`='$equipment_down_time', `total_repair_time`='$total_repair_time', `area_cleaned`='$area_cleaned', `follow_up_necessary`='$follow_up_necessary', `parts_needed`='$parts_needed', `reviewed_by_supervisor`='$reviewed_by_supervisor', `reviewed_by_safety_coordinator`='$reviewed_by_safety_coordinator', `supervisor_review_date`='$supervisor_review_date', `safety_coordinator_review_date`='$safety_coordinator_review_date', `verified`='$verified', `date_verified`='$date_verified', `orange_tag_description`='$orange_tag_description', `repair_technician`='$repair_technician', `total_cost`='$total_cost', `ticket_status`='$ticket_status', `work_order_number`='$work_order_number' WHERE `orange_tag_id`='$orange_tag_id'";
+$query = "UPDATE `orange_tag` SET `ticket_type`='$ticket_type', `originator`='$originator', `location`='$location', `priority`='$priority',`line_name`=$line_name,`die_number`=$die_number, `section`='$section', `supervisor`='$supervisor', `orange_tag_creation_date`='$orange_tag_creation_date', `orange_tag_creation_time`='$orange_tag_creation_time', `orange_tag_due_date`='$orange_tag_due_date', `repairs_made`='$repairs_made', `root_cause`='$root_cause', `equipment_down_time`='$equipment_down_time', `total_repair_time`='$total_repair_time', `area_cleaned`='$area_cleaned', `follow_up_necessary`='$follow_up_necessary', `parts_needed`='$parts_needed', `reviewed_by_supervisor`='$reviewed_by_supervisor', `reviewed_by_safety_coordinator`='$reviewed_by_safety_coordinator', `supervisor_review_date`='$supervisor_review_date', `safety_coordinator_review_date`='$safety_coordinator_review_date', `verified`='$verified', `date_verified`='$date_verified', `orange_tag_description`='$orange_tag_description', `repair_technician`='$repair_technician', `total_cost`='$total_cost', `ticket_status`='$ticket_status', `work_order_number`='$work_order_number' WHERE `orange_tag_id`='$orange_tag_id'";
 
 $result = mysqli_query($database, $query);
 

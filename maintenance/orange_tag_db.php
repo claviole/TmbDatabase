@@ -399,6 +399,12 @@ $lines_result = mysqli_query($database, $lines_query);
         <?php endwhile; ?>
     </select>
 </div>
+<div class="form-group" id="die_number_group" style="display: none;">
+    <label for="die_number">Die Number</label>
+    <input type="text" class="form-control" id="die_number" name="die_number">
+</div>
+
+
                                 <div class="form-group">
                                     <label for="supervisor">Supervisor</label>
                                     <select class="form-control" id="supervisor" name="supervisor" required>
@@ -479,11 +485,11 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
                             </div>
                                     <div class="form-group col-md-3">
-                                        <label for="total_repair_time">Total Repair Time</label>
+                                        <label for="total_repair_time">Total Repair Time Hours</label>
                                         <input type="number" step="0.01" class="form-control" id="total_repair_time" name="total_repair_time">
                                     </div>
                                     <div class="form-group col-md-3">
-                                        <label for="equipment_down_time">Equipment Down Time</label>
+                                        <label for="equipment_down_time">Equipment Down Time Hours</label>
                                         <input type="number" step="0.01" class="form-control" id="equipment_down_time" name="equipment_down_time">
                                     </div>
                                     <div class="form-group col-md-3">
@@ -694,6 +700,7 @@ $(document).ready(function() {
         location: $('#location').val(),
         priority: $('#priority').val(),
         line_name: $('#line_name').val(),
+        die_number: $('#die_number').val(),
         section: $('#section').val(),
         supervisor: $('#supervisor').val(),
         orange_tag_creation_date: $('#orange_tag_creation_date').val(),
@@ -880,6 +887,7 @@ $('#update-ticket').show();
     $('#location').val(ticketData.location);
     $('#priority').val(ticketData.priority);
     $('#line_name').val(ticketData.line_name);
+    $('#die_number').val(ticketData.die_number);
     $('#section').val(ticketData.section);
     $('#supervisor').val(ticketData.supervisor);
     $('#orange_tag_creation_date').val(ticketData.orange_tag_creation_date);
@@ -984,6 +992,7 @@ $('#repair_technician input:checked').each(function() {
         location: $('#location').val(),
         priority: $('#priority').val(),
         line_name: $('#line_name').val(),
+        die_number: $('#die_number').val(),
         section: $('#section').val(),
         supervisor: $('#supervisor').val(),
         orange_tag_creation_date: $('#orange_tag_creation_date').val(),
@@ -1107,6 +1116,16 @@ $(document).ready(function() {
         dueDate = yyyy + '-' + mm + '-' + dd;
 
         $('#orange_tag_due_date').val(dueDate);
+    });
+});
+
+$(document).ready(function() {
+    $('#ticket_type').change(function() {
+        if ($(this).val() == 'Die Maintenance') {
+            $('#die_number_group').show();
+        } else {
+            $('#die_number_group').hide();
+        }
     });
 });
 </script>
