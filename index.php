@@ -32,17 +32,17 @@
             if(password_verify($pepper . $userpassword, $row['password'])) {
                 $_SESSION["user"]=$row["username"];
                 $_SESSION["user_type"]=$row["user_type"];
-                if($_SESSION["user_type"]=="Sales"){
+                if($_SESSION["user_type"]=="sales"){
                     header("Location: super-admin/index.php");
                 }
                 elseif($_SESSION["user_type"]=="super-admin"){
-                    header("Location: admin-dashboard/index.php");
+                    header("Location: super-admin/index.php");
                 }
-                elseif($_SESSION["user_type"]=="Human Resources"){
-                    header("Location: human_resources/index.php");
+                elseif($_SESSION["user_type"]=="human-resources"){
+                    header("Location: super-admin/index.php");
                 }
-                elseif($_SESSION["user_type"]=="maintenance"){
-                    header("Location: production/index.php");
+                elseif($_SESSION["user_type"]=="maintenance-tech"){
+                    header("Location: super-admin/index.php");
                 }
             } else {
                 echo "<script>alert('Login Failed')</script>";

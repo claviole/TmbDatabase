@@ -8,7 +8,7 @@ $awaiting_approval_count = $result->fetch_assoc()['count'];
 
 
 // Check if the user is logged in and is an admin
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin'|| 'sales')){
+if(!isset($_SESSION['user']) ){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../index.php");
     exit();
@@ -82,15 +82,19 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin'|| 'sale
     
     <div class ="flex justify-center">
     <div class ="flex flex-col justify-content: center  py-10 px-0 "  >
-    <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="startNewQuote()">Start New Quote</button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="window.location.href='add_new_customer/add_new_customer.php'">Add New Customer</button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='lookup_quote/lookup_quote.php'">Look Up Quote</button>
-        <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='award_quotes/award_quotes.php'">Award Quotes</button>
-        <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick="window.location.href='../admin-dashboard/index.php'">Return to Manager Menu</button>
-        <?php } ?>
+    <button data-role="super-admin sales"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="startNewQuote()">Start New Quote</button>
+    <button data-role="super-admin sales" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='add_new_customer/add_new_customer.php'">Add New Customer</button>
+    <button data-role="super-admin sales" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='lookup_quote/lookup_quote.php'">Look Up Quote</button>
+    <button data-role="super-admin" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " data-url='award_quotes/award_quotes.php'">Award Quotes</button>
+    </div>
+    <div class ="flex flex-col justify-content: center  py-10 px-5 "  >
+    <button data-role="super-admin human-resources maintenance-tech" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../maintenance/orange_tag_db.php'">Orange Tag Database</button>
+    <button data-role="super-admin human-resources"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../human_resources/HR/index.php'">Employee Database</button>
+    <button data-role="super-admin human-resources"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../human_resources/safety/index.php'">Safety Database</button>
+    <button data-role="super-admin"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-bottom: 10px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../admin-dashboard/management/management.php'">User Management</button>
     </div>
     </div>
+    
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
     echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";
@@ -205,7 +209,28 @@ document.getElementById('settings-icon').addEventListener('click', function() {
         }
     });
 });
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', function(event) {
+        var allowedRoles = this.getAttribute('data-role').split(' ');
+        var userRole = '<?php echo strtolower($_SESSION['user_type']); ?>'; // Convert user role to lower case
 
+        if (!allowedRoles.includes(userRole)) {
+            event.preventDefault();
+            // Show Bootstrap alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: 'You do not have permission to access this feature.',
+            });
+        } else {
+            // If user role is allowed, navigate to the page
+            var pageUrl = this.getAttribute('data-url');
+            if (pageUrl) {
+                window.location.href = pageUrl;
+            }
+        }
+    });
+});
 document.querySelector('button[onclick="window.location.href=\'add_new_customer/add_new_customer.php\'"]').onclick = function() {
     Swal.fire({
     title: 'Add New Customer',
@@ -272,5 +297,7 @@ document.querySelector('button[onclick="window.location.href=\'add_new_customer/
         }
     });
 };
+
+
 </script>
 </html>

@@ -202,7 +202,7 @@ $priority3TicketCount = $data['total'];
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
 <div class="return-button-container">
-    <a href="index.php" class="return-button">Return to Maintenance Home</a>
+    <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
@@ -323,10 +323,14 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                         <a class="nav-link active" id="ticket-details-tab" data-toggle="tab" href="#ticket-details" role="tab" aria-controls="ticket-details" aria-selected="true">Ticket Details</a>
                     </li>
                     <li class="nav-item">
+                        <?php if($_SESSION['user_type'] == 'super-admin'): ?>
                         <a class="nav-link" id="repairs-maintenance-tab" data-toggle="tab" href="#repairs-maintenance" role="tab" aria-controls="repairs-maintenance" aria-selected="false">Repairs/Maintenance</a>
+                        <?php endif; ?>
                     </li>
                     <li class="nav-item">
+                        <?php if($_SESSION['user_type'] == 'super-admin'): ?>
                         <a class="nav-link" id="follow-up-tab" data-toggle="tab" href="#follow-up" role="tab" aria-controls="follow-up" aria-selected="false">Follow Up</a>
+                        <?php endif; ?>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
@@ -339,17 +343,17 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                     <input type="text" class="form-control" id="orange_tag_id" name="orange_tag_id"readonly>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ticket_type">Ticket Type</label>
-                                    <select class="form-control" id="ticket_type" name="ticket_type" required>
-                                        <option value="" selected disabled hidden></option>
-                                        <option value="Safety">Safety</option>
-                                        <option value="Maintenance">Maintenance</option>
-                                        <option value="Safety Maintenance">Safety Maintenance</option>
-                                        <option value="Live Maintenance">Live Maintenance</option>
-                                        <option value="Strategic Comp">Strategic Comp</option>
-                                        <option value="Die Maintenance">Die Maintenance</option>
-                                        <option value="Projects/Improvements">Projects/Improvements</option>
-                                    </select>
+                                <label for="ticket_type">Ticket Type</label>
+    <select class="form-control" id="ticket_type" name="ticket_type" required>
+        <option value="" selected disabled hidden></option>
+        <option value="Safety">Safety</option>
+        <option value="Maintenance">Maintenance</option>
+        <option value="Safety Maintenance">Safety Maintenance</option>
+        <option value="Line Maintenance">Line Maintenance</option>
+        <option value="Strategic Comp">Strategic Comp</option>
+        <option value="Die Maintenance">Die Maintenance</option>
+        <option value="Projects/Improvements">Projects/Improvements</option>
+    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="originator">Originator</label>
@@ -361,11 +365,11 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                 </div>
                                 <div class="form-group">
                                     <label for="orange_tag_creation_date">Creation Date</label>
-                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="orange_tag_creation_date" value="<?php echo date('Y-m-d'); ?>" required>
+                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="orange_tag_creation_date" value="<?php echo date('Y-m-d'); ?>" required readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="orange_tag_creation_time">Creation Time</label>
-                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="orange_tag_creation_time" value="<?php echo date('H:i'); ?>" required>
+                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="orange_tag_creation_time" value="<?php echo date('H:i'); ?>" required readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -378,6 +382,23 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                         <option value="3" title="Minor condition, housekeeping issue, unsafe work practice, or maintenance condition that could require no more than first aid or minor damage to structure, equipment, or material. Schedule to repair, replace, or retrain employee.">3</option>
                                     </select>
                                 </div>
+                                <?php
+// Fetch the data from the Lines table
+$lines_query = "SELECT * FROM `Lines`";
+$lines_result = mysqli_query($database, $lines_query);
+?>
+
+<div class="form-group" id="line_name_group" style="display: none;">
+    <label for="line_name">Line Name</label>
+    <select class="form-control" id="line_name" name="line_name">
+    <option value="" selected disabled hidden></option>
+        <?php while ($line = mysqli_fetch_assoc($lines_result)): ?>
+            <option value="<?php echo $line['line_id']; ?>">
+                <?php echo $line['Line_Name'] . ' - ' . $line['Line_Location']; ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
+</div>
                                 <div class="form-group">
                                     <label for="supervisor">Supervisor</label>
                                     <select class="form-control" id="supervisor" name="supervisor" required>
@@ -389,28 +410,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                         <?php endwhile; ?>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="maintenance_supervisor">Maintenance Supervisor</label>
-                                    <select class="form-control" id="maintenance_supervisor" name="maintenance_supervisor" required>
-                                        <option value="" selected disabled hidden></option>
-                                        <?php while ($row = mysqli_fetch_assoc($maintenance_managers)): ?>
-                                        <option value="<?php echo $row['employee_id']; ?>">
-                                        <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
-                                        </option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="safety_coordinator">Safety Coordinator</label>
-                                    <select class="form-control" id="safety_coordinator" name="safety_coordinator" required>
-                                        <option value="" selected disabled hidden></option>
-                                        <?php while ($row = mysqli_fetch_assoc($safety_coordinators)): ?>
-                                        <option value="<?php echo $row['employee_id']; ?>">
-                                        <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
-                                        </option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
+                                <!-- move die information here -->
                                 <div class="form-group">
                                     <label for="section">Section</label>
                                     <select class="form-control" id="section" name="section" required>
@@ -420,10 +420,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                         <option value="Packaging">Packaging</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label for="orange_tag_due_date">Due Date</label>
-                                    <input type="date" class="form-control" id="orange_tag_due_date" name="orange_tag_due_date" required>
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="row">
@@ -461,6 +458,10 @@ while ($row = mysqli_fetch_assoc($result)): ?>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
+                            <div class="form-group">
+                                    <label for="orange_tag_due_date">Due Date</label>
+                                    <input type="date" class="form-control" id="orange_tag_due_date" name="orange_tag_due_date" required>
+                                </div>
                             <div class="form-check">
     <input class="form-check-input" type="checkbox" value="No" id="area_cleaned" name="area_cleaned" onchange="this.value = this.checked ? 'on' : 'off'">
     <label class="form-check-label" for="area_cleaned">Area Cleaned</label>
@@ -470,6 +471,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
     <input class="form-check-input" type="checkbox" id="follow_up_necessary" name="follow_up_necessary" onchange="this.value = this.checked ? 'on' : 'off'">
     <label class="form-check-label" for="follow_up_necessary">Follow Up Necessary</label>
 </div>
+                                
 
 <div class="form-check mt-2">
     <input class="form-check-input" type="checkbox" value="No" id="parts_needed" name="parts_needed" onchange="togglePartsForm(this.checked); this.value = this.checked ? 'on' : 'off'">
@@ -691,10 +693,9 @@ $(document).ready(function() {
         originator: $('#originator').val(),
         location: $('#location').val(),
         priority: $('#priority').val(),
+        line_name: $('#line_name').val(),
         section: $('#section').val(),
         supervisor: $('#supervisor').val(),
-        maintenance_supervisor: $('#maintenance_supervisor').val(),
-        safety_coordinator: $('#safety_coordinator').val(),
         orange_tag_creation_date: $('#orange_tag_creation_date').val(),
         orange_tag_creation_time: $('#orange_tag_creation_time').val(),
         orange_tag_due_date: $('#orange_tag_due_date').val(),
@@ -878,10 +879,9 @@ $('#update-ticket').show();
     $('#originator').val(ticketData.originator);
     $('#location').val(ticketData.location);
     $('#priority').val(ticketData.priority);
+    $('#line_name').val(ticketData.line_name);
     $('#section').val(ticketData.section);
     $('#supervisor').val(ticketData.supervisor);
-    $('#maintenance_supervisor').val(ticketData.maintenance_supervisor);
-    $('#safety_coordinator').val(ticketData.safety_coordinator);
     $('#orange_tag_creation_date').val(ticketData.orange_tag_creation_date);
     $('#orange_tag_creation_time').val(ticketData.orange_tag_creation_time);
     $('#orange_tag_due_date').val(ticketData.orange_tag_due_date);
@@ -983,10 +983,9 @@ $('#repair_technician input:checked').each(function() {
         originator: $('#originator').val(),
         location: $('#location').val(),
         priority: $('#priority').val(),
+        line_name: $('#line_name').val(),
         section: $('#section').val(),
         supervisor: $('#supervisor').val(),
-        maintenance_supervisor: $('#maintenance_supervisor').val(),
-        safety_coordinator: $('#safety_coordinator').val(),
         orange_tag_creation_date: $('#orange_tag_creation_date').val(),
         orange_tag_creation_time: $('#orange_tag_creation_time').val(),
         orange_tag_due_date: $('#orange_tag_due_date').val(),
@@ -1073,7 +1072,43 @@ $(document).ready(function() {
 });
 
 
+$(document).ready(function() {
+    $('#ticket_type').change(function() {
+        if ($(this).val() == 'Line Maintenance') {
+            $('#line_name_group').show();
+        } else {
+            $('#line_name_group').hide();
+        }
+    });
+});
 
+$(document).ready(function() {
+    $('#priority').change(function() {
+        var today = new Date();
+        var dueDate;
+
+        switch ($(this).val()) {
+            case '1':
+                dueDate = today;
+                break;
+            case '2':
+                dueDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+                break;
+            case '3':
+                dueDate = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+                break;
+            default:
+                dueDate = today;
+        }
+
+        var dd = String(dueDate.getDate()).padStart(2, '0');
+        var mm = String(dueDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = dueDate.getFullYear();
+        dueDate = yyyy + '-' + mm + '-' + dd;
+
+        $('#orange_tag_due_date').val(dueDate);
+    });
+});
 </script>
 </body>
 </html>

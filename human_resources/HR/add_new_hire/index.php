@@ -71,7 +71,12 @@ $job_titles = $result->fetch_all(MYSQLI_ASSOC);
             </label>
             <input name="last-name" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="last-name" type="text" placeholder="Doe">
         </div>
-        
+        <div class="w-1/2 px-3 mb-6 md:mb-0">
+            <label class="block uppercase tracking-wide text-white text-xs font-bold mb-2" for="email">
+                Email
+            </label>
+            <input name="email" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="email" type="text" placeholder="optional">
+        </div>
         <div class="w-1/2 px-3">
             <label class="block uppercase tracking-wide text-white text-xs font-bold mb-2" for="date-of-hire">
                 Date of Hire
