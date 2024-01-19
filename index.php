@@ -6,7 +6,7 @@
 
     // Set the new timezone
     date_default_timezone_set('America/Chicago');
-    $date = date('Y-m-d');
+    $date = date('m-d-Y');
 
     $_SESSION["date"]=$date;
 
