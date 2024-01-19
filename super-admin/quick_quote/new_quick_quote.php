@@ -500,7 +500,7 @@ button.next-tab:hover {
                     <select id="ctl" name="ctl" style="width: 10%;">
                     <option value="">Select a format</option>
                     <option value="CTL">CTL</option>
-                    <option value="NON CTL">NON CTL</option>
+                    <option value="NON CTL">Configured</option>
                     </select>
                 </div>
                 <br>
@@ -616,10 +616,10 @@ $(document).ready(function() {
 
     $('#ctl').change(function() {
         if ($(this).val() == 'CTL') {
-            $('#scrap_weight_div').show();
+            $('#scrap_weight_div').hide();
         } else {
             $('#scrap_weight').val(0);
-            $('#scrap_weight_div').hide();
+            $('#scrap_weight_div').show();
         }
     });
 });
@@ -782,7 +782,7 @@ $(document).ready(function() {
         var freightPerPiece = (freightCost / pcsPerTruck).toFixed(3);
         console.log(freightPerPiece);
         var material_cost = (((costPerPound*markup)+costPerPound) * netWeight).toFixed(3);
-
+        var total_cost_per_piece = (parseFloat(blankingCostPerPiece) + parseFloat(packagingCostPerPiece) + parseFloat(freightPerPiece) + parseFloat(material_cost)).toFixed(3);
 
 
         var contingencies = $('#contingencies').val();
@@ -791,7 +791,7 @@ $(document).ready(function() {
         var ship_to_location = $('#shipping_location').val();
 
 
-        var result = [customerName,partNumber,grossWeight,netWeight,shippingLocation,blankingCostPerPiece,packagingCostPerPiece,freightPerPiece,invoice_id,contingencies,date,invoice_author,lineProduced,partsPerHour,ship_to_location,material_cost];
+        var result = [customerName,partNumber,grossWeight,netWeight,shippingLocation,blankingCostPerPiece,packagingCostPerPiece,freightPerPiece,invoice_id,contingencies,date,invoice_author,lineProduced,partsPerHour,ship_to_location,material_cost,total_cost_per_piece];
 
    results.push(result);
     console.log(results);

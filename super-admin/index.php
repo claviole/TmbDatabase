@@ -25,6 +25,7 @@ if(!isset($_SESSION['user']) ){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <title>Admin Dashboard</title>
     <style>
           .flashing {
@@ -63,6 +64,35 @@ if(!isset($_SESSION['user']) ){
             text-align: right;
             margin-right: 10px;
         }
+
+        button {
+    margin-bottom: 20px;
+    background-color: #007BFF; /* Change to a more professional color */
+    color: white;
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition: all 0.3s ease; /* Smooth transition for all changes */
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 25px; /* More rounded corners */
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.25); /* More pronounced shadow */
+    outline: none; /* Remove outline */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darken the color on hover */
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.5); /* Darken the shadow on hover */
+    transform: translateY(-2px); /* Slightly lift the button on hover */
+}
+
+button:active {
+    transform: translateY(1px); /* Slightly press the button on click */
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.15); /* Lessen the shadow on click */
+}
     </style>
     
 </head>

@@ -46,9 +46,10 @@ foreach ($results as $result) {
         'PPH' => $result[13], 
         'ship_to_location' => $result[14], 
         'material_cost' => $result[15],
+        'Total Cost per Piece' => $result[5] + $result[6] + $result[7] + $result[15] 
     ];
 
-    $lineItemStmt->bind_param("ssdddddsisd", $lineItemData['invoice_id'], $lineItemData['part_number'],$lineItemData['Blank Weight(lb)'], $lineItemData['Pcs Weight(lb)'], $lineItemData['Blanking per piece cost'], $lineItemData['Packaging Per Piece Cost'], $lineItemData['freight per piece cost'], $lineItemData['Line Produced on'], $lineItemData['PPH'],$lineItemData['ship_to_location'],$lineItemData['material_cost']);
+    $lineItemStmt->bind_param("ssdddddsisdd", $lineItemData['invoice_id'], $lineItemData['part_number'],$lineItemData['Blank Weight(lb)'], $lineItemData['Pcs Weight(lb)'], $lineItemData['Blanking per piece cost'], $lineItemData['Packaging Per Piece Cost'], $lineItemData['freight per piece cost'], $lineItemData['Line Produced on'], $lineItemData['PPH'],$lineItemData['ship_to_location'],$lineItemData['material_cost'],$lineItemData['Total Cost per Piece']);
     $lineItemStmt->execute();
 }
 
