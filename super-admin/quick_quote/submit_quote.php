@@ -27,7 +27,7 @@ $invoiceStmt->bind_param("sssss", $invoiceData['invoice_id'], $invoiceData['cont
 $invoiceStmt->execute();
 
 
-$lineItemSql = "INSERT INTO Line_Item (`invoice_id`, `Part#`, `Blank Weight(lb)`, `Pcs Weight(lb)`, `Blanking per piece cost`, `Packaging Per Piece Cost`,`freight per piece cost`, `Line Produced on`, `PPH`,`ship_to_location`,`material_cost`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+$lineItemSql = "INSERT INTO Line_Item (`invoice_id`, `Part#`, `Blank Weight(lb)`, `Pcs Weight(lb)`, `Blanking per piece cost`, `Packaging Per Piece Cost`,`freight per piece cost`, `Line Produced on`, `PPH`,`ship_to_location`,`material_cost`,`Total Cost per Piece` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
 $lineItemStmt = $database->prepare($lineItemSql);
 
 
@@ -36,7 +36,6 @@ foreach ($results as $result) {
     $lineItemData = [
         'invoice_id' => $result[8], 
         'part_number' => $result[1], 
-        'part_name' => $result[0], 
         'Blank Weight(lb)' => $result[2], 
         'Pcs Weight(lb)' => $result[3],
         'Blanking per piece cost' => $result[5], 
@@ -46,7 +45,7 @@ foreach ($results as $result) {
         'PPH' => $result[13], 
         'ship_to_location' => $result[14], 
         'material_cost' => $result[15],
-        'Total Cost per Piece' => $result[5] + $result[6] + $result[7] + $result[15] 
+        'Total Cost per Piece' => $result[16] 
     ];
 
     $lineItemStmt->bind_param("ssdddddsisdd", $lineItemData['invoice_id'], $lineItemData['part_number'],$lineItemData['Blank Weight(lb)'], $lineItemData['Pcs Weight(lb)'], $lineItemData['Blanking per piece cost'], $lineItemData['Packaging Per Piece Cost'], $lineItemData['freight per piece cost'], $lineItemData['Line Produced on'], $lineItemData['PPH'],$lineItemData['ship_to_location'],$lineItemData['material_cost'],$lineItemData['Total Cost per Piece']);

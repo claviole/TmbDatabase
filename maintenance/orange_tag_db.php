@@ -19,23 +19,28 @@ $maintenance_managers = mysqli_query($database, $query);
 
 $query = "SELECT * FROM employees WHERE job_title = 38 ";
 $safety_coordinators = mysqli_query($database, $query);
+$current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `ticket_status` = 'Open'";
+// Query for open tickets
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `ticket_status` = 'Open'";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $openTicketCount = $data['total'];
 
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `priority` = 1";
+// Query for priority 1 tickets
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority1TicketCount = $data['total'];
 
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `priority` = 2";
+// Query for priority 2 tickets
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority2TicketCount = $data['total'];
 
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `priority` = 3";
+// Query for priority 3 tickets
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority3TicketCount = $data['total'];
@@ -206,9 +211,10 @@ $priority3TicketCount = $data['total'];
 </div>
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+    </h1>
 </div>
      
-    </h1>
+  
     
     <div class="container mt-5">
     <div class="row">
@@ -216,6 +222,12 @@ $priority3TicketCount = $data['total'];
         <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
         <button class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
         <button class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
+        <button id="myOpenTicketsButton" class="btn btn-secondary" style="display:none;" onclick="viewMyOpenTickets()">My Open Tickets</button>
+        <?php if ($_SESSION['user_type'] == 'maintenance-tech'): ?>
+        <script>
+        document.getElementById('myOpenTicketsButton').style.display = 'block';
+        </script>
+        <?php endif; ?>
         </div>
     </div>
     <div class="card-deck mt-3">
@@ -267,7 +279,12 @@ $priority3TicketCount = $data['total'];
                     </thead>
                     <tbody>
                     <?php 
-$query = "SELECT * FROM orange_tag";
+
+
+$current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
+
+$query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code'";
+
 $result = mysqli_query($database, $query);
 while ($row = mysqli_fetch_assoc($result)): ?>
     <tr class="<?php echo $row['ticket_status']; ?>">
@@ -279,19 +296,24 @@ while ($row = mysqli_fetch_assoc($result)): ?>
         <td><?php echo $row['priority']; ?></td>
         <td><?php echo $row['section']; ?></td>
         <td><?php echo $row['work_order_number']; ?></td>
-        <td>
-            <?php 
-            $technicians = explode(',', $row['repair_technician']);
-            foreach ($technicians as $technician) {
-                if (!empty($technician)) {
-                    $tech_query = "SELECT employee_fname, employee_lname FROM employees WHERE employee_id = $technician";
-                    $tech_result = mysqli_query($database, $tech_query);
+        <td class="repair-technician">
+        <?php 
+        $technicians = explode(',', $row['repair_technician']);
+        foreach ($technicians as $technician) {
+            if (!empty($technician)) {
+                $tech_query = "SELECT `username` FROM `Users` WHERE `id` = $technician"; // Replace 'id' with the correct column name
+                $tech_result = mysqli_query($database, $tech_query);
+                if ($tech_result) {
                     $tech_data = mysqli_fetch_assoc($tech_result);
-                    echo $tech_data['employee_fname'] . ' ' . $tech_data['employee_lname'] . '<br>';
+                    echo htmlspecialchars($tech_data['username']) . '<br>';
+                } else {
+                    // Handle error, e.g., log it or echo a message
+                    echo "Error fetching technician data: " . mysqli_error($database);
                 }
             }
-            ?>
-        </td>
+        }
+        ?>
+    </td>
         <td><?php echo $row['location']; ?></td>
         <td><?php echo $row['ticket_status']; ?></td>
         <td><?php echo $row['orange_tag_description']; ?></td>
@@ -332,6 +354,11 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                         <a class="nav-link" id="follow-up-tab" data-toggle="tab" href="#follow-up" role="tab" aria-controls="follow-up" aria-selected="false">Follow Up</a>
                         <?php endif; ?>
                     </li>
+                    <li class="nav-item">
+                        <?php if($_SESSION['user_type'] == 'super-admin'): ?>
+                        <a class="nav-link" id="assign_technicians-tab" data-toggle="tab" href="#assign_technicians" role="tab" aria-controls="assign_technicians" aria-selected="false">Assign Technicians</a>
+                        <?php endif; ?>
+                    </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="ticket-details" role="tabpanel" aria-labelledby="ticket-details-tab">
@@ -348,16 +375,20 @@ while ($row = mysqli_fetch_assoc($result)): ?>
         <option value="" selected disabled hidden></option>
         <option value="Safety">Safety</option>
         <option value="Maintenance">Maintenance</option>
-        <option value="Safety Maintenance">Safety Maintenance</option>
         <option value="Line Maintenance">Line Maintenance</option>
-        <option value="Strategic Comp">Strategic Comp</option>
         <option value="Die Maintenance">Die Maintenance</option>
+        <option value="Forklift">Forklift</option>
+        <option value="Cranes">Cranes</option>
+        <option value="Semi Truck">Semi Truck</option>
+        <option value="Building/Property">Building/Property</option>
+        <option value="Packaging">Packaging</option>
         <option value="Projects/Improvements">Projects/Improvements</option>
     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="originator">Originator</label>
-                                    <input type="text" class="form-control" id="originator" name="originator" value="<?php echo $tag_author; ?>" required readonly>
+                                    <input type="text" class="form-control" id="originator" name="originator" value="<?php echo $tag_author; ?>" required style="display: none">
+                                    <input type="text" class="form-control" id="originator_name" name="originator_name"  required>
                                 </div>
                                 <div class="form-group">
                                     <label for="location">Location</label>
@@ -401,7 +432,7 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 <div class="form-group" id="die_number_group" style="display: none;">
     <label for="die_number">Die Number</label>
-    <input type="text" class="form-control" id="die_number" name="die_number">
+    <input type="text" class="form-control" id="die_number" name="die_number" value="">
 </div>
 
 
@@ -414,16 +445,6 @@ $lines_result = mysqli_query($database, $lines_query);
                                         <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
                                         </option>
                                         <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                <!-- move die information here -->
-                                <div class="form-group">
-                                    <label for="section">Section</label>
-                                    <select class="form-control" id="section" name="section" required>
-                                        <option value="" selected disabled hidden></option>
-                                        <option value="Blanking">Blanking</option>
-                                        <option value="Maintenance">Maintenance</option>
-                                        <option value="Packaging">Packaging</option>
                                     </select>
                                 </div>
                                 
@@ -442,13 +463,6 @@ $lines_result = mysqli_query($database, $lines_query);
                 
                 <div class="tab-pane fade" id="repairs-maintenance" role="tabpanel" aria-labelledby="repairs-maintenance-tab">
                     <form id="new-ticket-form-repairs-maintenance">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="repair_technician">Repair Technician</label>
-                                <div id="repair_technician" class="checkbox-container"></div>
-                              
-                            </div>
-                        </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -576,6 +590,18 @@ $lines_result = mysqli_query($database, $lines_query);
                         
                     </form>
                 </div>
+                <div class="tab-pane fade" id="assign_technicians" role="tabpanel" aria-labelledby="assign_technicians-tab">
+                    <form id ="new-ticket-form-assign_technicians">
+                    <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="repair_technician">Repair Technician</label>
+                                <div id="repair_technician" class="checkbox-container"></div>
+                              
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
 
                 <div class="tab-pane fade" id="follow-up" role="tabpanel" aria-labelledby="follow-up-tab">
                     <form id="new-ticket-form-follow-up">
@@ -591,6 +617,7 @@ $lines_result = mysqli_query($database, $lines_query);
     <div class="form-check">
         <input class="form-check-input" type="checkbox" id="reviewed_by_safety_coordinator" onchange="toggleDateField('safety_coordinator_review_date', this.checked)">
         <label class="form-check-label" for="reviewed_by_safety_coordinator">Reviewed By Safety Coordinator</label>
+        <input type="text" class="form-control" id="location_code" name="location_code" value="<?php echo $_SESSION['location_code']; ?>" style="display: none;">
     </div>
     <input type="date" class="form-control" id="safety_coordinator_review_date" name="safety_coordinator_review_date" style="display: none;">
 </div>
@@ -627,10 +654,10 @@ $lines_result = mysqli_query($database, $lines_query);
 <script>
 $(document).ready(function(){
     $('#generate_wo_number').click(function() {
-    var orangeTagId = $('#orange_tag_id').val();
-    var workOrderNumber = orangeTagId.replace('CH-', 'MA-');
-    $('#work_order_number').val(workOrderNumber);
-});
+        var orangeTagId = $('#orange_tag_id').val();
+        var workOrderNumber = 'MA' + orangeTagId.substring(2);
+        $('#work_order_number').val(workOrderNumber);
+    });
     
     
 });
@@ -697,11 +724,11 @@ $(document).ready(function() {
         orange_tag_id: $('#orange_tag_id').val(),
         ticket_type: $('#ticket_type').val(),
         originator: $('#originator').val(),
+        originator_name: $('#originator_name').val(),
         location: $('#location').val(),
         priority: $('#priority').val(),
         line_name: $('#line_name').val(),
         die_number: $('#die_number').val(),
-        section: $('#section').val(),
         supervisor: $('#supervisor').val(),
         orange_tag_creation_date: $('#orange_tag_creation_date').val(),
         orange_tag_creation_time: $('#orange_tag_creation_time').val(),
@@ -719,6 +746,7 @@ $(document).ready(function() {
         safety_coordinator_review_date: $('#safety_coordinator_review_date').val(),
         verified: $('#verified').prop('checked') ? 'on' : 'off',
         date_verified: $('#date_verified').val(),
+        location_code: $('#location_code').val(),
         orange_tag_description: $('#orange_tag_description').val(),
         repair_technician: repair_technicians,
         total_cost: $('#total_cost').val(),
@@ -793,11 +821,12 @@ $(document).ready(function(){
             var technicians = response; // response is already a JavaScript object
 
             // Populate the div with checkboxes for each technician
-            $.each(technicians, function(key, technician) {
-                $('#repair_technician').append(
-                    '<input type="checkbox" id="technician_' + technician.employee_id + '" name="repair_technician[]" value="' + technician.employee_id + '">' +
-                    '<label for="technician_' + technician.employee_id + '">' + technician.employee_fname + ' ' + technician.employee_lname + '</label><br>'
-                );
+            // Populate the div with checkboxes for each technician
+        $.each(technicians, function(key, technician) {
+            $('#repair_technician').append(
+                '<input type="checkbox" id="technician_' + technician.id + '" name="repair_technician[]" value="' + technician.id + '">' +
+                '<label for="technician_' + technician.id + '">' + technician.username + '</label><br>'
+            );
             });
         }
     });
@@ -814,8 +843,11 @@ $('#newTicketModal').find('input[type=checkbox]').prop('checked', false);
         url: 'get_tag_count.php', // Replace with the URL of your PHP script
         method: 'GET',
         success: function(response) {
-            // Generate a new orange tag ID based on the count of existing tags
-            var newOrangeTagId = 'CH-' + (parseInt(response));
+            var currentUserLocationCode = '<?php echo $_SESSION['location_code']; ?>'; // Assuming the location code of the current user is stored in the session
+            currentUserLocationCode = currentUserLocationCode.toUpperCase();
+
+            var newOrangeTagId = currentUserLocationCode + '-' + (parseInt(response));
+
 
             // Set the new ID as the value of the orange_tag_id field
             $('#orange_tag_id').val(newOrangeTagId);
@@ -884,11 +916,27 @@ $('#update-ticket').show();
     $('#orange_tag_id').val(ticketData.orange_tag_id);
     $('#ticket_type').val(ticketData.ticket_type);
     $('#originator').val(ticketData.originator);
+    $('#originator_name').val(ticketData.originator_name);
     $('#location').val(ticketData.location);
     $('#priority').val(ticketData.priority);
     $('#line_name').val(ticketData.line_name);
     $('#die_number').val(ticketData.die_number);
-    $('#section').val(ticketData.section);
+    var ticketType = $('#ticket_type').val();
+    if (ticketType == 'Die Maintenance') {
+        // If the ticket type is "Die Maintenance", show the relevant field
+        $('#die_number_group').show();
+    } else {
+        // Otherwise, hide it
+        $('#die_number_group').hide();
+    }
+
+    if (ticketType == 'Line Maintenance') {
+        // If the ticket type is "Line Maintenance", show the relevant field
+        $('#line_name_group').show();
+    } else {
+        // Otherwise, hide it
+        $('#line_name_group').hide();
+    }
     $('#supervisor').val(ticketData.supervisor);
     $('#orange_tag_creation_date').val(ticketData.orange_tag_creation_date);
     $('#orange_tag_creation_time').val(ticketData.orange_tag_creation_time);
@@ -914,6 +962,7 @@ if ($('#reviewed_by_safety_coordinator').is(':checked')) {
 }
     $('#supervisor_review_date').val(ticketData.supervisor_review_date);
     $('#safety_coordinator_review_date').val(ticketData.safety_coordinator_review_date);
+    $('#location_code').val(ticketData.location_code);
     $('#verified').prop('checked', ticketData.verified === 'on');
 if ($('#verified').is(':checked')) {
     $('#date_verified').show();
@@ -989,11 +1038,11 @@ $('#repair_technician input:checked').each(function() {
         orange_tag_id: $('#orange_tag_id').val(),
         ticket_type: $('#ticket_type').val(),
         originator: $('#originator').val(),
+        originator_name: $('#originator_name').val(),
         location: $('#location').val(),
         priority: $('#priority').val(),
         line_name: $('#line_name').val(),
         die_number: $('#die_number').val(),
-        section: $('#section').val(),
         supervisor: $('#supervisor').val(),
         orange_tag_creation_date: $('#orange_tag_creation_date').val(),
         orange_tag_creation_time: $('#orange_tag_creation_time').val(),
@@ -1009,6 +1058,7 @@ $('#repair_technician input:checked').each(function() {
     reviewed_by_safety_coordinator: $('#reviewed_by_safety_coordinator').prop('checked') ? 'on' : 'off',
         supervisor_review_date: $('#supervisor_review_date').val(),
         safety_coordinator_review_date: $('#safety_coordinator_review_date').val(),
+        location_code: $('#location_code').val(),
         verified: $('#verified').prop('checked') ? 'on' : 'off',
         date_verified: $('#date_verified').val(),
         orange_tag_description: $('#orange_tag_description').val(),
@@ -1027,7 +1077,30 @@ $('#repair_technician input:checked').each(function() {
         success: function(response) {
             // Handle the response from the server
             console.log(response);
-            location.reload();
+            
+
+            // Send email to assigned technicians
+        // Send email to assigned technicians
+$.ajax({
+    url: 'send_email.php', // Replace with the URL of your PHP script for sending emails
+    method: 'POST',
+    
+    data: {
+        technicians: repair_technicians, // This is the array of technician IDs
+        orange_tag_id: $('#orange_tag_id').val() // Include the orange tag ID
+    },
+    success: function(response) {
+        // Handle the response from the server
+        console.log(response);
+        location.reload();
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error('AJAX Error:', textStatus, errorThrown);
+        console.error('Response Text:', jqXHR.responseText);
+    }
+});
+        
+
         },
         error: function(jqXHR, textStatus, errorThrown) {
             // Handle any errors
@@ -1128,6 +1201,22 @@ $(document).ready(function() {
         }
     });
 });
+function viewMyOpenTickets() {
+    var currentUsername = <?php echo json_encode($_SESSION['user']); ?>.trim(); // Trim the username
+    $('#orange_tag_table tbody tr').each(function() {
+        var repairTechniciansHTML = $(this).find('.repair-technician').html(); // Use html() instead of text()
+        var technicianUsernames = repairTechniciansHTML.split('<br>'); // Split by '<br>'
+        // Trim each username in the array
+        technicianUsernames = technicianUsernames.map(function(username) {
+            return username.trim();
+        });
+        if (technicianUsernames.includes(currentUsername)) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+}
 </script>
 </body>
 </html>

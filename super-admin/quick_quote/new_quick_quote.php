@@ -724,28 +724,28 @@ $(document).ready(function() {
         var customerName = $('#customer_name').val();
         var partNumber = $('#part_number').val();
         var materialType = $('#material_type').val();
-        var density = $('#density_input').val();
-        var gauge = $('#gauge').val();
-        var width = $('#width').val();
-        var pitch = $('#pitch').val();
+        var density = parseFloat($('#density_input').val());
+        var gauge = parseFloat($('#gauge').val());
+        var width = parseFloat($('#width').val());
+        var pitch = parseFloat($('#pitch').val());
         var ctl = $('#ctl').val();
-        var scrapWeight = $('#scrap_weight').val();
-        var skidWeight = $('#skid_weight').val();
+        var scrapWeight = parseFloat($('#scrap_weight').val());
+        var skidWeight = parseFloat($('#skid_weight').val());
         var lineProduced = $('#line_produced').val();
-        var partsPerHour = $('#parts_per_hour').val();
+        var partsPerHour = parseFloat($('#parts_per_hour').val());
         var woodPackagingSelection = $('#wood_packaging_selection').val();
         var ownOrToll = $('#own_or_toll').val();
-        var costPerPound = $('#cost_per_pound').val();
+        var costPerPound = parseFloat($('#cost_per_pound').val());
         var shippingLocation = $('#shipping_location').val();
-        var freightCost = $('#freight_cost').val();
+        var freightCost = parseFloat($('#freight_cost').val());
         var contingencies = $('#contingencies').val();
         var user = $('#user').val();
         var date = $('#date').val();
         var quote_name = $('#quote_name').val();
         var invoice_id = $('#invoice_id').val() + '_QuickQuote';
         var hourlyRate;
-        var markup = $('#markup').val();
-        markup = markup/100;
+        var markup = parseFloat($('#markup').val());
+        markup = (markup/100).toFixed(5);
 
         if(lineProduced==1|| lineProduced==2 || lineProduced==3 || lineProduced==4 || lineProduced==5 || lineProduced==6 || lineProduced==7 || lineProduced==8 || lineProduced==9 || lineProduced==10)
         {
@@ -798,7 +798,7 @@ $(document).ready(function() {
         console.log(pcsPerTruck);
         var freightPerPiece = (freightCost / pcsPerTruck).toFixed(3);
         console.log(freightPerPiece);
-        var material_cost = (((costPerPound*markup)+costPerPound) * netWeight).toFixed(3);
+        var material_cost = (((costPerPound*markup)+costPerPound) * netWeight).toFixed(5);
         var total_cost_per_piece = (parseFloat(blankingCostPerPiece) + parseFloat(packagingCostPerPiece) + parseFloat(freightPerPiece) + parseFloat(material_cost)).toFixed(3);
 
 

@@ -3,6 +3,7 @@
     session_start();
     $_SESSION["user"]="";
     $_SESSION["usertype"]="";
+    $_SESSION["location_code"]="";
 
     // Set the new timezone
     date_default_timezone_set('America/Chicago');
@@ -32,6 +33,8 @@
             if(password_verify($pepper . $userpassword, $row['password'])) {
                 $_SESSION["user"]=$row["username"];
                 $_SESSION["user_type"]=$row["user_type"];
+                $_SESSION["location_code"]=$row["location_code"];
+                $_SESSION["user_id"]=$row["id"];
                 if($_SESSION["user_type"]=="sales"){
                     header("Location: super-admin/index.php");
                 }
