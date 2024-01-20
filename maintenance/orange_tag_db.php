@@ -213,10 +213,13 @@ $priority3TicketCount = $data['total'];
         <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
     </h1>
 </div>
+<!-- Add this in your HTML where you want the loading symbol to appear -->
+
      
   
     
     <div class="container mt-5">
+    
     <div class="row">
         <div class="col-12">
         <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
@@ -327,10 +330,16 @@ while ($row = mysqli_fetch_assoc($result)): ?>
     </div>
 </div>
 
-
+<!-- Full-screen loading overlay -->
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
+        <img src="../images/Spin-0.7s-703px.gif" alt="Loading..." />
+    </div>
+</div>
    
     <!-- New Ticket Modal -->
 <div class="modal fade" id="newTicketModal" tabindex="-1" role="dialog" aria-labelledby="newTicketModalLabel" aria-hidden="true">
+
     <div class="modal-dialog custom-modal" role="document"> <!-- Add the custom-modal class here -->
         <div class="modal-content">
             <div class="modal-header">
@@ -340,6 +349,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                 </button>
             </div>
             <div class="modal-body">
+            
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="ticket-details-tab" data-toggle="tab" href="#ticket-details" role="tab" aria-controls="ticket-details" aria-selected="true">Ticket Details</a>
@@ -361,8 +371,9 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
+               
                 <div class="tab-pane fade show active" id="ticket-details" role="tabpanel" aria-labelledby="ticket-details-tab">
-                    <form id="new-ticket-form-ticket-details">
+                    <form class= "trackable-form" id="new-ticket-form-ticket-details">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -394,14 +405,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                     <label for="location">Location</label>
                                     <input type="text" class="form-control" id="location" name="location" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="orange_tag_creation_date">Creation Date</label>
-                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="orange_tag_creation_date" value="<?php echo date('Y-m-d'); ?>" required readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="orange_tag_creation_time">Creation Time</label>
-                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="orange_tag_creation_time" value="<?php echo date('H:i'); ?>" required readonly>
-                                </div>
+                                
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -447,6 +451,14 @@ $lines_result = mysqli_query($database, $lines_query);
                                         <?php endwhile; ?>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label for="orange_tag_creation_date">Creation Date</label>
+                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="orange_tag_creation_date" value="<?php echo date('Y-m-d'); ?>" required readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="orange_tag_creation_time">Creation Time</label>
+                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="orange_tag_creation_time" value="<?php echo date('H:i'); ?>" required readonly>
+                                </div>
                                 
                             </div>
                         </div>
@@ -462,7 +474,7 @@ $lines_result = mysqli_query($database, $lines_query);
                 </div>
                 
                 <div class="tab-pane fade" id="repairs-maintenance" role="tabpanel" aria-labelledby="repairs-maintenance-tab">
-                    <form id="new-ticket-form-repairs-maintenance">
+                    <form class= "trackable-form" id="new-ticket-form-repairs-maintenance">
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -506,10 +518,7 @@ $lines_result = mysqli_query($database, $lines_query);
                                         <label for="equipment_down_time">Equipment Down Time Hours</label>
                                         <input type="number" step="0.01" class="form-control" id="equipment_down_time" name="equipment_down_time">
                                     </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="total_cost">Total Cost</label>
-                                        <input type="number" step="0.01" class="form-control" id="total_cost" name="total_cost">
-                                    </div>
+                                    
                             <div id="parts_needed_form" style="display: none;">
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPartModal">
                                     Add Part
@@ -591,7 +600,7 @@ $lines_result = mysqli_query($database, $lines_query);
                     </form>
                 </div>
                 <div class="tab-pane fade" id="assign_technicians" role="tabpanel" aria-labelledby="assign_technicians-tab">
-                    <form id ="new-ticket-form-assign_technicians">
+                    <form class= "trackable-form" id ="new-ticket-form-assign_technicians">
                     <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="repair_technician">Repair Technician</label>
@@ -604,7 +613,7 @@ $lines_result = mysqli_query($database, $lines_query);
                 </div>
 
                 <div class="tab-pane fade" id="follow-up" role="tabpanel" aria-labelledby="follow-up-tab">
-                    <form id="new-ticket-form-follow-up">
+                    <form class= "trackable-form" id="new-ticket-form-follow-up">
                     <div class="form-group">
     <div class="form-check">
         <input class="form-check-input" type="checkbox" id="reviewed_by_supervisor" onchange="toggleDateField('supervisor_review_date', this.checked)">
@@ -637,9 +646,18 @@ $lines_result = mysqli_query($database, $lines_query);
                             </select>
                         </div>
                         <div class="form-group">
+    <label for="date_closed">Date Closed</label>
+    <input type="date" class="form-control" id="date_closed" name="date_closed" readonly>
+</div>
+                        
+                        <div class="form-group">
                             <button type="button" id="generate_wo_number" class="btn btn-primary">Generate WO #</button>
                             <input type="text" class="form-control" id="work_order_number" name="work_order_number" readonly>
-                            </div>
+                        </div>
+                        <div class="form-group col-md-3">
+                                        <label for="total_cost">Total Cost</label>
+                                        <input type="number" step="0.01" class="form-control" id="total_cost" name="total_cost">
+                        </div>
                     </form>
                 </div>
             <div class="modal-footer">
@@ -751,6 +769,7 @@ $(document).ready(function() {
         repair_technician: repair_technicians,
         total_cost: $('#total_cost').val(),
         ticket_status: $('#ticket_status').val(),
+        date_closed: $('#date_closed').val(),
         work_order_number: $('#work_order_number').val()
        
     };
@@ -978,6 +997,7 @@ if ($('#verified').is(':checked')) {
     });
     $('#total_cost').val(ticketData.total_cost);
     $('#ticket_status').val(ticketData.ticket_status);
+    $('#date_closed').val(ticketData.date_closed);
     $('#work_order_number').val(ticketData.work_order_number);
 
   // Open the modal
@@ -1029,6 +1049,8 @@ console.error(textStatus, errorThrown);
 
 
 $('#update-ticket').click(function() {
+    // Show the loading overlay
+    $('#loading-overlay').show();
     var repair_technicians = [];
 $('#repair_technician input:checked').each(function() {
     repair_technicians.push($(this).val());
@@ -1065,6 +1087,7 @@ $('#repair_technician input:checked').each(function() {
         repair_technician: repair_technicians,
         total_cost: $('#total_cost').val(),
         ticket_status: $('#ticket_status').val(),
+        date_closed: $('#date_closed').val(),
         work_order_number: $('#work_order_number').val()
        
     };
@@ -1214,6 +1237,64 @@ function viewMyOpenTickets() {
             $(this).show();
         } else {
             $(this).hide();
+        }
+    });
+}
+$(document).ready(function() {
+    $('#ticket_status').change(function() {
+        if ($(this).val() == 'Closed') {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+            $('#date_closed').val(today);
+        } else {
+            $('#date_closed').val(''); // Clear the date if the ticket is not closed
+        }
+    });
+});
+
+$(document).ready(function() {
+    $('.trackable-form').find('input, textarea, select').on('change', function() {
+        var formId = $(this).closest('form').attr('id');
+        var fieldId = this.id;
+        var value = $(this).val();
+        var orangeTagId = $('#orange_tag_id').val(); // Get the orange tag ID
+
+        // Pass the orangeTagId to the logChange function
+        logChange(formId, fieldId, value, orangeTagId);
+    });
+});
+
+function logChange(formId, fieldId, value, orangeTagId) {
+    var now = new Date();
+    var formattedDate = (now.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                        now.getDate().toString().padStart(2, '0') + '/' +
+                        now.getFullYear().toString() + ' ' +
+                        now.getHours().toString().padStart(2, '0') + ':' +
+                        now.getMinutes().toString().padStart(2, '0') + ':' +
+                        now.getSeconds().toString().padStart(2, '0');
+
+    var data = {
+        form_id: formId,
+        field_id: fieldId,
+        new_value: value,
+        orange_tag_id: orangeTagId,
+        user: '<?php echo $_SESSION['user']; ?>',
+        timestamp: formattedDate // mm/dd/yyyy hh:mm:ss format
+    };
+
+    // Send the data to the server using AJAX
+    $.ajax({
+        url: 'log_change.php',
+        type: 'POST',
+        data: data,
+        success: function(response) {
+            console.log('Change logged successfully');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error logging change:', error);
         }
     });
 }
