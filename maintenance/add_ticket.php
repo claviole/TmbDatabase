@@ -1,6 +1,9 @@
 <?php
 // Include your database connection file here
 include '../configurations/connection.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Sanitize input
 $orange_tag_id = mysqli_real_escape_string($database, $_POST['orange_tag_id']);

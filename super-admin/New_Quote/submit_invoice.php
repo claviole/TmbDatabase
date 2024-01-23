@@ -1,7 +1,11 @@
 <?php
 session_start();
 include '../../configurations/connection.php';
-
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['wash_and_lube'])) {
         // The "Wash and Lube" checkbox was checked

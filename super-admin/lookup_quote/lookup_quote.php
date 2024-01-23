@@ -1,5 +1,10 @@
 <?php
 session_start();
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 include '../../configurations/connection.php';
 
 // Fetch quotes for dropdown

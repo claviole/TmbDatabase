@@ -1,6 +1,11 @@
 <?php
 session_start();
 include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 
 // Fetch customers for dropdown
 $result = $database->query("SELECT `Customer Name` FROM Customer");

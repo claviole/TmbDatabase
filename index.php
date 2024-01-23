@@ -47,6 +47,9 @@
                 elseif($_SESSION["user_type"]=="maintenance-tech"){
                     header("Location: super-admin/index.php");
                 }
+                elseif($_SESSION["user_type"]=="floor-user"){
+                    header("Location: super-admin/index.php");
+                }
             } else {
                 echo "<script>alert('Login Failed')</script>";
             }

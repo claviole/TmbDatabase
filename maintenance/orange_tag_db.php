@@ -1,6 +1,11 @@
 <?php
 session_start();
 include '../configurations/connection.php'; 
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin' || 'maintenance-tech')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 date_default_timezone_set('America/Chicago');
   // Query to get the total count of tickets
   $count_query = "SELECT COUNT(*) as total FROM `orange_tag`";
@@ -28,19 +33,19 @@ $data = mysqli_fetch_assoc($result);
 $openTicketCount = $data['total'];
 
 // Query for priority 1 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1 AND `ticket_status` = 'Open'";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority1TicketCount = $data['total'];
 
 // Query for priority 2 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2 AND `ticket_status` = 'Open'";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority2TicketCount = $data['total'];
 
 // Query for priority 3 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3 AND `ticket_status` = 'Open'";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority3TicketCount = $data['total'];
@@ -272,7 +277,6 @@ $priority3TicketCount = $data['total'];
                             <th>Originator</th>
                             <th>Type</th>
                             <th>Priority</th>
-                            <th>Section</th>
                             <th>Work Order Number</th>
                             <th>Repair Technicians</th>
                             <th>Location</th>
@@ -297,7 +301,6 @@ while ($row = mysqli_fetch_assoc($result)): ?>
         <td><?php echo $row['originator']; ?></td>
         <td><?php echo $row['ticket_type']; ?></td>
         <td><?php echo $row['priority']; ?></td>
-        <td><?php echo $row['section']; ?></td>
         <td><?php echo $row['work_order_number']; ?></td>
         <td class="repair-technician">
         <?php 
@@ -355,7 +358,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                         <a class="nav-link active" id="ticket-details-tab" data-toggle="tab" href="#ticket-details" role="tab" aria-controls="ticket-details" aria-selected="true">Ticket Details</a>
                     </li>
                     <li class="nav-item">
-                        <?php if($_SESSION['user_type'] == 'super-admin'): ?>
+                        <?php if($_SESSION['user_type'] == ('super-admin' || 'maintenance-tech')): ?>
                         <a class="nav-link" id="repairs-maintenance-tab" data-toggle="tab" href="#repairs-maintenance" role="tab" aria-controls="repairs-maintenance" aria-selected="false">Repairs/Maintenance</a>
                         <?php endif; ?>
                     </li>
