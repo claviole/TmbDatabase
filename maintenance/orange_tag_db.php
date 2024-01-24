@@ -1107,13 +1107,21 @@ $('#repair_technician input:checked').each(function() {
 
             // Send email to assigned technicians
         // Send email to assigned technicians
-$.ajax({
+        $.ajax({
     url: 'send_email.php', // Replace with the URL of your PHP script for sending emails
     method: 'POST',
     
     data: {
-        technicians: repair_technicians, // This is the array of technician IDs
-        orange_tag_id: $('#orange_tag_id').val() // Include the orange tag ID
+        // Include only the ticket details information from the 'ticket-details' tab
+        orange_tag_id: $('#orange_tag_id').val(),
+        ticket_type: $('#ticket_type').val(),
+        originator_name: $('#originator_name').val(),
+        location: $('#location').val(),
+        priority: $('#priority').val(),
+        supervisor: $('#supervisor').val(),
+        orange_tag_creation_date: $('#orange_tag_creation_date').val(),
+        orange_tag_creation_time: $('#orange_tag_creation_time').val(),
+        orange_tag_description: $('#orange_tag_description').val()
     },
     success: function(response) {
         // Handle the response from the server
