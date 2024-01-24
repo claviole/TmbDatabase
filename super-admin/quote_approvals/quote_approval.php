@@ -7,9 +7,20 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin')){
     exit();
 }
 
-// Fetch quotes for dropdown
-$result = $database->query("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = 'Awaiting Approval'");
+$stmt = $database->prepare("SELECT `invoice_id`, `Customer Name`,`version`,`award_total` FROM `invoice` WHERE `approval_status` = ?");
+// Bind the 'Awaiting Approval' parameter
+$stmt->bind_param("s", $approval_status);
+
+// Set the parameter and execute
+$approval_status = 'Awaiting Approval';
+$stmt->execute();
+
+// Fetch the result
+$result = $stmt->get_result();
 $quotes = $result->fetch_all(MYSQLI_ASSOC);
+
+// Close the statement
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">

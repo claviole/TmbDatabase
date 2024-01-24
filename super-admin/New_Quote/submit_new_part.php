@@ -18,7 +18,6 @@ $customer_id = $database->real_escape_string($_POST['customer_id']);
 
 $stmt = $database->prepare("INSERT INTO Part (`Part#`,`supplier_name`,`customer_id`, `Part Name`, `Mill`, `Platform`, `Type`, `Surface`, `Material Type`, `pallet_type`, `pallet_size`,`pallet_uses`, `Stacks per Skid`, `Scrap Consumption`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $stmt->bind_param("ssissssssssidd", $partNumber,$supplier_name,$customer_id, $partName, $mill, $platform, $type, $surface, $materialType, $palletType, $palletSize, $pallet_uses, $stacksPerSkid,  $scrapConsumption);
-
 $stmt->execute();
 
 header('Location: start_new_invoice.php');

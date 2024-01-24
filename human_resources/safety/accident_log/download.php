@@ -4,9 +4,15 @@ include '../../../configurations/connection.php';
 $accidentId = $_GET['accidentId'];
 $fileName = urldecode($_GET['fileName']);
 
-$query = "SELECT file_path FROM accident_files WHERE accident_id = $accidentId AND file_name = '$fileName'";
-$result = mysqli_query($database, $query);
-$file = mysqli_fetch_assoc($result);
+// Prepare the SQL statement with placeholders
+$stmt = $database->prepare("SELECT file_path FROM accident_files WHERE accident_id = ? AND file_name = ?");
+// Bind the parameters to the statement
+$stmt->bind_param("is", $accidentId, $fileName);
+// Execute the prepared statement
+$stmt->execute();
+// Get the result of the query
+$result = $stmt->get_result();
+$file = $result->fetch_assoc();
 
 if ($file) {
     $filePath = $file['file_path'];

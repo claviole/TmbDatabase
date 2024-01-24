@@ -2,10 +2,21 @@
 session_start();
 include '../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
-$result = $database->query("SELECT COUNT(*) as count FROM invoice WHERE approval_status = 'Awaiting Approval'");
+// Prepare a parameterized statement
+$stmt = $database->prepare("SELECT COUNT(*) as count FROM invoice WHERE approval_status = ?");
+// Bind the 'Awaiting Approval' parameter
+$stmt->bind_param("s", $approval_status);
+
+// Set the parameter and execute
+$approval_status = 'Awaiting Approval';
+$stmt->execute();
+
+// Fetch the result
+$result = $stmt->get_result();
 $awaiting_approval_count = $result->fetch_assoc()['count'];
 
-
+// Close the statement
+$stmt->close();
 
 // Check if the user is logged in and is an admin
 if(!isset($_SESSION['user']) ){
