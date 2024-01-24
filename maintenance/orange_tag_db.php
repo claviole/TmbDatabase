@@ -790,7 +790,33 @@ $(document).ready(function() {
         success: function(response) {
             // Handle the response from the server
             console.log(response);
-            location.reload();
+            $.ajax({
+    url: '../configurations/send_email.php', // Replace with the URL of your PHP script for sending emails
+    method: 'POST',
+    
+    data: {
+        // Include only the ticket details information from the 'ticket-details' tab
+        'technicians[]': repair_technicians,
+        orange_tag_id: $('#orange_tag_id').val(),
+        ticket_type: $('#ticket_type').val(),
+        originator_name: $('#originator_name').val(),
+        location: $('#location').val(),
+        priority: $('#priority').val(),
+        supervisor: $('#supervisor').val(),
+        orange_tag_creation_date: $('#orange_tag_creation_date').val(),
+        orange_tag_creation_time: $('#orange_tag_creation_time').val(),
+        orange_tag_description: $('#orange_tag_description').val()
+    },
+    success: function(response) {
+        // Handle the response from the server
+        console.log(response);
+        location.reload();
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error('AJAX Error:', textStatus, errorThrown);
+        console.error('Response Text:', jqXHR.responseText);
+    }
+});
         },
         error: function(jqXHR, textStatus, errorThrown) {
             // Handle any errors
@@ -1108,11 +1134,12 @@ $('#repair_technician input:checked').each(function() {
             // Send email to assigned technicians
         // Send email to assigned technicians
         $.ajax({
-    url: 'send_email.php', // Replace with the URL of your PHP script for sending emails
+    url: '../configurations/send_email.php', // Replace with the URL of your PHP script for sending emails
     method: 'POST',
     
     data: {
         // Include only the ticket details information from the 'ticket-details' tab
+        'technicians[]': repair_technicians,
         orange_tag_id: $('#orange_tag_id').val(),
         ticket_type: $('#ticket_type').val(),
         originator_name: $('#originator_name').val(),
