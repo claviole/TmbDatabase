@@ -673,14 +673,58 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
+    // Initially disable the button
+    $('#generate_wo_number').prop('disabled', true);
+
+    // Function to check if any technicians are selected
+    function checkTechniciansSelected() {
+        var anyChecked = $('#repair_technician input[type=checkbox]:checked').length > 0;
+        $('#generate_wo_number').prop('disabled', !anyChecked);
+    }
+
+    // Run the check function whenever any checkbox within the repair_technician container is changed
+    $('#repair_technician').on('change', 'input[type=checkbox]', checkTechniciansSelected);
+
+    // Run the check function on page load in case of pre-checked checkboxes
+    checkTechniciansSelected();
+
     $('#generate_wo_number').click(function() {
+        var repair_technicians = [];
+        $('#repair_technician input:checked').each(function() {
+            repair_technicians.push($(this).val());
+        });
         var orangeTagId = $('#orange_tag_id').val();
         var workOrderNumber = 'MA' + orangeTagId.substring(2);
         $('#work_order_number').val(workOrderNumber);
+
+        // AJAX call to send email
+        $.ajax({
+            url: '../configurations/send_email.php', // Replace with the URL of your PHP script for sending emails
+            method: 'POST',
+            data: {
+                // Include only the ticket details information from the 'ticket-details' tab
+                'technicians[]': repair_technicians,
+                orange_tag_id: $('#orange_tag_id').val(),
+                ticket_type: $('#ticket_type').val(),
+                originator_name: $('#originator_name').val(),
+                location: $('#location').val(),
+                priority: $('#priority').val(),
+                supervisor: $('#supervisor').val(),
+                orange_tag_creation_date: $('#orange_tag_creation_date').val(),
+                orange_tag_creation_time: $('#orange_tag_creation_time').val(),
+                orange_tag_description: $('#orange_tag_description').val()
+            },
+            success: function(response) {
+                // Handle the response from the server
+                console.log(response);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX Error:', textStatus, errorThrown);
+                console.error('Response Text:', jqXHR.responseText);
+            }
+        });
     });
-    
-    
 });
 function togglePartsForm(isChecked, parts) {
     var form = document.getElementById('parts_needed_form');
@@ -810,7 +854,7 @@ $(document).ready(function() {
     success: function(response) {
         // Handle the response from the server
         console.log(response);
-        location.reload();
+       
     },
     error: function(jqXHR, textStatus, errorThrown) {
         console.error('AJAX Error:', textStatus, errorThrown);
@@ -841,7 +885,7 @@ $(document).ready(function() {
             }
         });
     });
-
+    location.reload();
     // Clear the parts array
     parts = [];
 });
@@ -1079,7 +1123,6 @@ console.error(textStatus, errorThrown);
 
 $('#update-ticket').click(function() {
     // Show the loading overlay
-    $('#loading-overlay').show();
     var repair_technicians = [];
 $('#repair_technician input:checked').each(function() {
     repair_technicians.push($(this).val());
@@ -1129,39 +1172,6 @@ $('#repair_technician input:checked').each(function() {
         success: function(response) {
             // Handle the response from the server
             console.log(response);
-            
-
-            // Send email to assigned technicians
-        // Send email to assigned technicians
-        $.ajax({
-    url: '../configurations/send_email.php', // Replace with the URL of your PHP script for sending emails
-    method: 'POST',
-    
-    data: {
-        // Include only the ticket details information from the 'ticket-details' tab
-        'technicians[]': repair_technicians,
-        orange_tag_id: $('#orange_tag_id').val(),
-        ticket_type: $('#ticket_type').val(),
-        originator_name: $('#originator_name').val(),
-        location: $('#location').val(),
-        priority: $('#priority').val(),
-        supervisor: $('#supervisor').val(),
-        orange_tag_creation_date: $('#orange_tag_creation_date').val(),
-        orange_tag_creation_time: $('#orange_tag_creation_time').val(),
-        orange_tag_description: $('#orange_tag_description').val()
-    },
-    success: function(response) {
-        // Handle the response from the server
-        console.log(response);
-        location.reload();
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-        console.error('AJAX Error:', textStatus, errorThrown);
-        console.error('Response Text:', jqXHR.responseText);
-    }
-});
-        
-
         },
         error: function(jqXHR, textStatus, errorThrown) {
             // Handle any errors
@@ -1185,7 +1195,7 @@ $('#repair_technician input:checked').each(function() {
             }
         });
     });
-
+    location.reload();
     // Clear the parts array
     parts = [];
 });
