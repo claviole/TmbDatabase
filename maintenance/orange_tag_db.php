@@ -321,7 +321,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
         ?>
     </td>
         <td><?php echo $row['location']; ?></td>
-        <td><?php echo $row['ticket_status']; ?></td>
+        <td class="ticket-status"><?php echo $row['ticket_status']; ?></td>
         <td><?php echo $row['orange_tag_description']; ?></td>
     </tr>
 <?php endwhile; ?>
@@ -635,6 +635,26 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 
 <div class="form-group">
+    <!-- Confirmation Modal -->
+<div class="modal fade" id="confirmCloseModal" tabindex="-1" role="dialog" aria-labelledby="confirmCloseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmCloseModalLabel">Confirm Ticket Closure</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Closing the ticket cannot be undone. Once closed, the ticket will no longer be modifiable. Are you sure you would like to proceed?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmCloseButton">Yes, Close Ticket</button>
+            </div>
+        </div>
+    </div>
+</div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" id="verified" onchange="toggleDateField('date_verified', this.checked)">
         <label class="form-check-label" for="verified">Verified</label>
@@ -674,6 +694,23 @@ $lines_result = mysqli_query($database, $lines_query);
 
 <script>
 $(document).ready(function() {
+    $('#update-ticket').click(function() {
+        // Check if the ticket status is set to 'Closed'
+        if ($('#ticket_status').val() === 'Closed') {
+            // Show the confirmation modal
+            $('#confirmCloseModal').modal('show');
+        } else {
+            // If the ticket status is not 'Closed', proceed with the update
+            updateTicket();
+        }
+    });
+
+    $('#confirmCloseButton').click(function() {
+        // Proceed with the update since the user confirmed the action
+        updateTicket();
+        // Hide the confirmation modal
+        $('#confirmCloseModal').modal('hide');
+    });
     // Initially disable the button
     $('#generate_wo_number').prop('disabled', true);
 
@@ -1072,7 +1109,17 @@ if ($('#verified').is(':checked')) {
     $('#ticket_status').val(ticketData.ticket_status);
     $('#date_closed').val(ticketData.date_closed);
     $('#work_order_number').val(ticketData.work_order_number);
-
+    if (ticketData.ticket_status === 'Closed') {
+                // Disable all input fields and selection elements in the form
+                $('#newTicketModal').find('input, select, textarea').prop('disabled', true);
+                // Hide the "Update Ticket" button
+                $('#update-ticket').hide();
+            } else {
+                // Enable all input fields and selection elements in the form
+                $('#newTicketModal').find('input, select, textarea').prop('disabled', false);
+                // Show the "Update Ticket" button
+                $('#update-ticket').show();
+            }
   // Open the modal
   $('#newTicketModal').modal('show');
 
@@ -1121,9 +1168,9 @@ console.error(textStatus, errorThrown);
 });
 
 
-$('#update-ticket').click(function() {
-    // Show the loading overlay
-    var repair_technicians = [];
+function updateTicket() {
+      // Show the loading overlay
+      var repair_technicians = [];
 $('#repair_technician input:checked').each(function() {
     repair_technicians.push($(this).val());
 });
@@ -1198,7 +1245,7 @@ $('#repair_technician input:checked').each(function() {
     location.reload();
     // Clear the parts array
     parts = [];
-});
+};
 
 function toggleDateField(dateFieldId, isChecked) {
     var dateField = document.getElementById(dateFieldId);
@@ -1271,6 +1318,7 @@ $(document).ready(function() {
             $('#die_number_group').hide();
         }
     });
+    
 });
 function viewMyOpenTickets() {
     var currentUsername = <?php echo json_encode($_SESSION['user']); ?>.trim(); // Trim the username
@@ -1281,7 +1329,10 @@ function viewMyOpenTickets() {
         technicianUsernames = technicianUsernames.map(function(username) {
             return username.trim();
         });
-        if (technicianUsernames.includes(currentUsername)) {
+        var ticketStatus = $(this).find('.ticket-status').text().trim(); // Get the ticket status and trim it
+
+        // Check if the username is included and the ticket status is 'Open'
+        if (technicianUsernames.includes(currentUsername) && ticketStatus === 'Open') {
             $(this).show();
         } else {
             $(this).hide();
