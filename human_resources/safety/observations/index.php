@@ -32,7 +32,7 @@ $employees = mysqli_query($database, $query);
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <title>Accident Log</title>
+    <title>S.A.F.E.</title>
     <style>
         .return-button {
             display: inline-block;

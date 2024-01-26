@@ -8,6 +8,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
     exit();
 }
 
+$location_code = $_SESSION['location_code'];
 ?>
 
 <!DOCTYPE html>
@@ -188,43 +189,83 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
      
     </h1>
     
-    <div class ="flex justify-center">
+    <div class="flex justify-center">
     <?php
-$query = "SELECT employees.*, job_titles.job_title AS job_title FROM employees JOIN job_titles ON employees.job_title = job_titles.job_title_id";
-$result = mysqli_query($database, $query);
-?>
-<div class="scrollable-table">
-<table class="table employee-table">
-    <thead>
-        <tr>
-            <th>Employee ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Date Hired</th>
-            <th>First Day of Work</th>
-            <th>Job Title</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-            <tr>
-                <td><?php echo $row['employee_id']; ?></td>
-                <td><?php echo $row['employee_fname']; ?></td>
-                <td><?php echo $row['employee_lname']; ?></td>
-                <td><?php echo $row['date_hired']; ?></td>
-                <td><?php echo $row['first_day_of_work']; ?></td>
-                <td><?php echo $row['job_title']; ?></td>
-                <td>
-                    <button class="btn btn-primary edit-btn" data-id="<?php echo $row['employee_id']; ?>"><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-danger delete-btn" data-id="<?php echo $row['employee_id']; ?>"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        <?php endwhile; ?>
-    </tbody>
-</table>
-</div>
+    // Start the session if not already started
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // Check if the location code is set in the session
+    if (isset($_SESSION['location_code'])) {
+        $location_code = $_SESSION['location_code'];
+
+        // Prepare the SQL query with a placeholder for the location code
+        $query = "SELECT employees.*, job_titles.job_title AS job_title FROM employees JOIN job_titles ON employees.job_title = job_titles.job_title_id WHERE employees.status = 'active' AND employees.location_code = ?";
+
+        // Prepare the statement
+        $stmt = mysqli_prepare($database, $query);
+
+        // Check for errors in preparation
+        if (!$stmt) {
+            // Handle errors here
+            die('Prepare failed: ' . htmlspecialchars(mysqli_error($database)));
+        }
+
+        // Bind the location code parameter to the statement
+        mysqli_stmt_bind_param($stmt, "s", $location_code);
+
+        // Execute the statement
+        mysqli_stmt_execute($stmt);
+
+        // Get the result
+        $result = mysqli_stmt_get_result($stmt);
+
+        // Check for errors after executing the statement
+        if (!$result) {
+            die('Execute failed: ' . htmlspecialchars(mysqli_error($database)));
+        }
+    ?>
+    <div class="scrollable-table">
+        <table class="table employee-table">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Date Hired</th>
+                    <th>First Day of Work</th>
+                    <th>Job Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['employee_id']); ?></td>
+                    <td><?php echo htmlspecialchars($row['employee_fname']); ?></td>
+                    <td><?php echo htmlspecialchars($row['employee_lname']); ?></td>
+                    <td><?php echo htmlspecialchars($row['date_hired']); ?></td>
+                    <td><?php echo htmlspecialchars($row['first_day_of_work']); ?></td>
+                    <td><?php echo htmlspecialchars($row['job_title']); ?></td>
+                    <td>
+                        <button class="btn btn-primary edit-btn" data-id="<?php echo htmlspecialchars($row['employee_id']); ?>"><i class="fas fa-pen"></i></button>
+                        <button class="btn btn-danger delete-btn" data-id="<?php echo htmlspecialchars($row['employee_id']); ?>"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
+    <?php
+        // Close the statement
+        mysqli_stmt_close($stmt);
+    } else {
+        // Handle the case where the session variable isn't set
+        echo "Location code is not set in the session.";
+    }
+    ?>
+</div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
     echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";

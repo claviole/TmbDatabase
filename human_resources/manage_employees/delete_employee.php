@@ -4,8 +4,8 @@ include '../../configurations/connection.php'; // Assuming you have a db_connect
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Prepare a DELETE statement
-    $stmt = $database->prepare("DELETE FROM `employees` WHERE `employee_id` = ?");
+    // Prepare an UPDATE statement
+    $stmt = $database->prepare("UPDATE `employees` SET `status` = 'inactive' WHERE `employee_id` = ?");
 
     // Bind the id to the statement
     $stmt->bind_param("i", $id);
@@ -13,10 +13,10 @@ if (isset($_GET['id'])) {
     // Execute the statement
     if ($stmt->execute()) {
         // If the query was successful, send a JSON response with a success status
-        echo json_encode(['status' => 'success', 'message' => 'Employee deleted successfully.']);
+        echo json_encode(['status' => 'success', 'message' => 'Employee status set to inactive successfully.']);
     } else {
         // If the query failed, send a JSON response with an error status
-        echo json_encode(['status' => 'error', 'message' => 'Failed to delete employee.']);
+        echo json_encode(['status' => 'error', 'message' => 'Failed to update employee status.']);
     }
 
     $stmt->close();

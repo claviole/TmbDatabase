@@ -9,10 +9,11 @@ if(isset($_POST['submit'])){
     $dateOfHire = $_POST['date-of-hire'];
     $jobTitle = $_POST['job-title'];
     $firstDayOfWork = $_POST['first-day-of-work'];
+    $location_code = $_POST['location_code'];
 
-    $sql = "INSERT INTO `employees` (`employee_fname`, `employee_lname`,`email`,`date_hired`, `job_title`, `first_day_of_work`) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO `employees` (`employee_fname`, `employee_lname`,`email`,`date_hired`, `job_title`, `first_day_of_work`,`location_code`) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $database->prepare($sql);
-    $stmt->bind_param("sssss", $firstName, $lastName, $dateOfHire, $jobTitle, $firstDayOfWork);
+    $stmt->bind_param("sssss", $firstName, $lastName, $dateOfHire, $jobTitle, $firstDayOfWork, $location_code);
 
     if($stmt->execute()){
         $_SESSION['success'] = "New employee added successfully";

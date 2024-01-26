@@ -100,6 +100,19 @@ $job_titles = $result->fetch_all(MYSQLI_ASSOC);
             </label>
             <input name="first-day-of-work" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="first-day-of-work" type="date">
         </div>
+        <div class="w-1/2 px-3">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="location_code">
+                    Location
+                </label>
+                <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location_code" name="location_code" required>
+                    <option value="sv">Sauk Village</option>
+                    <option value="nv">North Vernon</option>
+                    <option value="nb">New Boston</option>
+                    <option value="fr">Flatrock</option>
+                    <option value="tc">Torch</option>
+                    <option value="gb">Gibraltar</option>
+                </select>
+            </div>
        
 
     

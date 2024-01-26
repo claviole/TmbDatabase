@@ -16,13 +16,13 @@ date_default_timezone_set('America/Chicago');
     $tag_author= $_SESSION['user'];
 
 // Fetch the data from the database
-$query = "SELECT * FROM employees WHERE job_title IN (14,18,19,22,23,24,25,26,27,31,33,38) ";
+$query = "SELECT * FROM employees WHERE job_title IN (14,18,19,22,23,24,25,26,27,31,33,38) AND `status` = 'active'"; 
 $supervisors = mysqli_query($database, $query);
 
-$query = "SELECT * FROM employees WHERE job_title = 25 ";
+$query = "SELECT * FROM employees WHERE job_title = 25 AND `status` = 'active'";
 $maintenance_managers = mysqli_query($database, $query);
 
-$query = "SELECT * FROM employees WHERE job_title = 38 ";
+$query = "SELECT * FROM employees WHERE job_title = 38 AND `status` = 'active'";
 $safety_coordinators = mysqli_query($database, $query);
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
@@ -205,9 +205,26 @@ $priority3TicketCount = $data['total'];
     {
         min-width: 150px; /* Adjust as needed */
     }
+    @media print {
+    /* All your print styles go here */
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+    h1 { font-size: 28px; text-align: center; margin-bottom: 0.5em; }
+    h2 { font-size: 22px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background-color: #eee; font-weight: bold; }
+    td { background-color: #fff; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
+    .print-container { margin: 20px; }
+    .parts-needed { background-color: #dff0d8; }
+    /* Hide elements not needed for printing */
+    .print-hide { display: none; }
+}
     </style>
 
-    <title>Maintenance Dashboard</title>
+    <title>S.M.A.R.T.</title>
     <!-- Add your CSS styles here -->
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
@@ -230,6 +247,114 @@ $priority3TicketCount = $data['total'];
         <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
         <button class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
         <button class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
+        <button id="generateReportButton" class="btn btn-info" data-toggle="modal" data-target="#reportModal">Generate Report</button>
+
+<!-- Report Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reportModalLabel">Report Options</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+    <div class="row">
+        <div class="col-md-6 mb-2">
+            <button class="btn btn-primary btn-block" onclick="generateReport('openTags')">All Open Tags</button>
+        </div>
+        <div class="col-md-6 mb-2">
+            <button id="TagsByTech" class="btn btn-primary btn-block">Tags by Tech</button>
+        </div>
+        <div class="col-md-6 mb-2">
+            <button id="TagsByPriority" class="btn btn-primary btn-block" data-toggle="modal" data-target="#prioritySelectionModal">Tags by Priority</button>
+        </div>
+        <div class="col-md-6 mb-2">
+            <button id="TagsByType" class="btn btn-primary btn-block" data-toggle="modal" data-target="#ticketTypeSelectionModal">Tags by Type</button>
+        </div>
+    </div>
+</div>
+    </div>
+  </div>
+</div>
+<!-- Ticket Type Selection Modal -->
+<div class="modal fade" id="ticketTypeSelectionModal" tabindex="-1" role="dialog" aria-labelledby="ticketTypeSelectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ticketTypeSelectionModalLabel">Select Ticket Type</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <select id="ticketTypeSelect" class="form-control">
+            <!-- Populate with ticket types -->
+            <option value="" selected disabled hidden></option>
+        <option value="Safety">Safety</option>
+        <option value="Maintenance">Maintenance</option>
+        <option value="Line Maintenance">Line Maintenance</option>
+        <option value="Die Maintenance">Die Maintenance</option>
+        <option value="Forklift">Forklift</option>
+        <option value="Cranes">Cranes</option>
+        <option value="Semi Truck">Semi Truck</option>
+        <option value="Building/Property">Building/Property</option>
+        <option value="Packaging">Packaging</option>
+        <option value="Projects/Improvements">Projects/Improvements</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="generateTicketTypeReport()">Generate Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Priority Selection Modal -->
+<div class="modal fade" id="prioritySelectionModal" tabindex="-1" role="dialog" aria-labelledby="prioritySelectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="prioritySelectionModalLabel">Select Priority</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <select id="prioritySelect" class="form-control">
+            <option value="1">Priority 1</option>
+            <option value="2">Priority 2</option>
+            <option value="3">Priority 3</option>
+            <option value="4">Priority 4</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="generatePriorityReport()">Generate Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Tech Selection Modal -->
+<div class="modal fade" id="techSelectionModal" tabindex="-1" role="dialog" aria-labelledby="techSelectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="techSelectionModalLabel">Select a Technician</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <select id="techSelect" class="form-control">
+          <!-- Technician options will be populated here -->
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="generateTechReport()">Generate Report</button>
+      </div>
+    </div>
+  </div>
+</div>
         <button id="myOpenTicketsButton" class="btn btn-secondary" style="display:none;" onclick="viewMyOpenTickets()">My Open Tickets</button>
         <?php if ($_SESSION['user_type'] == 'maintenance-tech'): ?>
         <script>
@@ -405,7 +530,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                     <input type="text" class="form-control" id="originator_name" name="originator_name"  required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="location">Location</label>
+                                    <label for="location">Location in building/ On Line </label>
                                     <input type="text" class="form-control" id="location" name="location" required>
                                 </div>
                                 
@@ -415,9 +540,10 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                     <label for="priority">Priority</label>
                                     <select class="form-control" id="priority" name="priority" required>
                                         <option value="" selected disabled hidden></option>
-                                        <option value="1" title="The most serious type of unsafe condition, work practice, or maintenance issue that could cause loss of life, permanent disability, loss of limb, or extensive loss of structure, equipment, or material repair. Replace or use alternative means  of control to protect  employees, or remove from service immediately">1</option>
-                                        <option value="2" title="An unsafe condition, work practice, or maintenance issue that could cause serious injury or damage to structure, equipment, or material repair. Replace or use alternative means of control to protect employees">2</option>
-                                        <option value="3" title="Minor condition, housekeeping issue, unsafe work practice, or maintenance condition that could require no more than first aid or minor damage to structure, equipment, or material. Schedule to repair, replace, or retrain employee.">3</option>
+                                        <option value="1" title="Safety:Any issue that you see fit to prevent injury, accidents, or hazards">1</option>
+                                        <option value="2" title="Quality: Any issue that delays/obstructs products, processes, or deliverables of our customers expectations">2</option>
+                                        <option value="3" title="Production:Any issue that causes a delay in meeting production goals or the delivery of product and services">3</option>
+                                        <option value="4" title="Cost: Continuous improvement ideas that could decrease expenses,optimize utilization and maintain profitibility ">4</option>
                                     </select>
                                 </div>
                                 <?php
@@ -439,7 +565,7 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 <div class="form-group" id="die_number_group" style="display: none;">
     <label for="die_number">Die Number</label>
-    <input type="text" class="form-control" id="die_number" name="die_number" value="">
+    <input type="text" class="form-control" id="die_number" name="die_number">
 </div>
 
 
@@ -510,7 +636,7 @@ $lines_result = mysqli_query($database, $lines_query);
 
 <div class="form-check mt-2">
     <input class="form-check-input" type="checkbox" value="No" id="parts_needed" name="parts_needed" onchange="togglePartsForm(this.checked); this.value = this.checked ? 'on' : 'off'">
-    <label class="form-check-label" for="parts_needed">Parts Needed</label>
+    <label class="form-check-label" for="parts_needed">Parts Used</label>
 </div>
                             </div>
                                     <div class="form-group col-md-3">
@@ -761,6 +887,73 @@ $(document).ready(function() {
                 console.error('Response Text:', jqXHR.responseText);
             }
         });
+         // Collect data from the form fields
+         var ticketDetails = $('#new-ticket-form-ticket-details').serializeArray();
+        var repairsMaintenanceDetails = $('#new-ticket-form-repairs-maintenance').serializeArray().filter(function(field) {
+            // Exclude the parts needed form and other specified fields
+            return field.name !== 'parts_needed_form' &&
+                field.name !== 'date_used' &&
+                field.name !== 'part_description' &&
+                field.name !== 'quantity' &&
+                field.name !== 'brand_name' &&
+                field.name !== 'model_number' &&
+                field.name !== 'serial_number' &&
+                field.name !== 'dimensions';
+        });
+        var partsNeeded = $('#parts_needed').is(':checked') ? 'Yes' : 'No';
+        var workOrderNumber = $('#work_order_number').val();
+
+        // Generate the print form
+        var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
+
+        printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
+        printWindow.document.write('<style>');
+        // Professional print styles
+        printWindow.document.write(`
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+            h1 { font-size: 28px; text-align: center; margin-bottom: 0.5em; }
+            h2 { font-size: 22px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
+            table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+            th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+            th { background-color: #eee; font-weight: bold; }
+            td { background-color: #fff; }
+            .text-right { text-align: right; }
+            .text-center { text-align: center; }
+            .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
+            .print-container { margin: 20px; }
+            .parts-needed { background-color: #dff0d8; }
+        `);
+        printWindow.document.write('</style>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<div class="print-container">'); // Container for print content
+        printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
+
+        // Ticket Details Section
+        printWindow.document.write('<h2>Ticket Details</h2>');
+        printWindow.document.write('<table>');
+        ticketDetails.forEach(function(field) {
+            printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td>' + field.value + '</td></tr>');
+        });
+        printWindow.document.write('</table>');
+
+            // Repairs/Maintenance Section
+            printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
+        printWindow.document.write('<table>');
+        repairsMaintenanceDetails.forEach(function(field) {
+            printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td>' + field.value + '</td></tr>');
+        });
+        
+       
+
+        printWindow.document.close(); // necessary for IE >= 10
+        printWindow.focus(); // necessary for IE >= 10*/
+
+        // Wait for the content to be loaded before printing
+        printWindow.onload = function() {
+            printWindow.print();
+            printWindow.close();
+        };
+        
     });
 });
 function togglePartsForm(isChecked, parts) {
@@ -964,6 +1157,8 @@ $('#newTicketButton').click(function() {
     // Make an AJAX request to get the count of orange tags
     $('#newTicketModal').find('form').each(function() {
     this.reset();
+    // Enable all input fields and selection elements in the form
+    $('#newTicketModal').find('input, select, textarea').prop('disabled', false);
 });
 
 // Uncheck all checkboxes in the modal
@@ -1396,6 +1591,49 @@ function logChange(formId, fieldId, value, orangeTagId) {
             console.error('Error logging change:', error);
         }
     });
+}
+function generateReport(reportType) {
+    if (reportType === 'openTags') {
+        window.open('generate_open_tags_report.php', '_blank');
+    }
+}
+function openTechSelectionModal() {
+    // Fetch and populate techs matching the user's location_code
+    var locationCode = '<?php echo $_SESSION['location_code']; ?>';
+    $.ajax({
+        url: 'fetch_technicians.php',
+        type: 'GET',
+        data: {location_code: locationCode},
+        success: function(techs) {
+            $('#techSelect').empty();
+            techs.forEach(function(tech) {
+                $('#techSelect').append(new Option(tech.username, tech.id));
+            });
+            $('#techSelectionModal').modal('show');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching technicians:', textStatus, errorThrown);
+        }
+    });
+}
+
+function generateTechReport() {
+    var selectedTechId = $('#techSelect').val();
+    window.open('generate_tech_tags_report.php?techId=' + selectedTechId, '_blank');
+}
+
+// Modify the existing button's onclick event
+document.getElementById('TagsByTech').onclick = openTechSelectionModal;
+
+function generatePriorityReport() {
+    var selectedPriority = $('#prioritySelect').val();
+    $('#prioritySelectionModal').modal('hide'); // Hide the modal
+    window.open('generate_priority_tags_report.php?priority=' + selectedPriority, '_blank');
+}
+function generateTicketTypeReport() {
+    var selectedTicketType = $('#ticketTypeSelect').val();
+    $('#ticketTypeSelectionModal').modal('hide'); // Hide the modal
+    window.open('generate_by_ticket_type.php?ticketType=' + encodeURIComponent(selectedTicketType), '_blank');
 }
 </script>
 </body>
