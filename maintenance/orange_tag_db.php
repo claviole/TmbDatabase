@@ -234,6 +234,7 @@ $priority3TicketCount = $data['total'];
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
     </h1>
+    <h2 style="text-align: center; color: #ff2925; font-size: 3em; font-weight: bold; margin-top: 0.5em; width: 100%; font-family: 'Times New Roman', Times, serif; text-shadow: -1px -1px 0 #808080, 1px -1px 0 #808080, -1px 1px 0 #808080, 1px 1px 0 #808080;">SAFETY MAINTENANCE AND REPAIR TRACKING</h2>
 </div>
 <!-- Add this in your HTML where you want the loading symbol to appear -->
 
@@ -250,7 +251,38 @@ $priority3TicketCount = $data['total'];
         <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'super-admin'): ?>
         <button id="generateReportButton" class="btn btn-info" data-toggle="modal" data-target="#reportModal">Generate Report</button>
         <?php endif; ?>
+        <button class="btn btn-info" data-toggle="modal" data-target="#howToModal" style="font-size: 24px; line-height: 1; padding: 0 10px;">?</button>
+<!-- How to Use System Modal -->
+<!-- How to Use System Modal -->
+<!-- How to Use System Modal -->
+<div class="modal fade" id="howToModal" tabindex="-1" role="dialog" aria-labelledby="howToModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="howToModalLabel">System Usage Guidelines</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6 style="color: #007bff; margin-top: 20px; margin-bottom: 10px;">Creating a New Ticket:</h6>
+                <p>Click <strong>New Maintenance Ticket</strong> to begin. Select the priority level (1-4), choose the ticket type, and provide line or die number if needed. Enter supervisor's name, your full name (Originator), precise location, and a comprehensive description of the issue.</p>
 
+                <h6 style="color: #007bff; margin-top: 20px; margin-bottom: 10px;">Maintenance & Repair Technicians:</h6>
+                <p>Log repair details under 'Ticket Details' and 'Repairs/Maintenance' tabs. Include actions taken, causes, repair times, and note any parts used. Ensure all tasks are checked off and documented.</p>
+
+                <h6 style="color: #007bff; margin-top: 20px; margin-bottom: 10px;">Follow-Up:</h6>
+                <p>Management is responsible for documenting, generating work order numbers, and ensuring records are up to date. Remember, closed tickets are locked from editing and require an administrator to reopen.</p>
+
+                <h6 style="color: #007bff; margin-top: 20px; margin-bottom: 10px;">Assigning Technicians:</h6>
+                <p>Assign technicians to work orders by selecting from the list provided. Only management has the ability to assign and manage technician tasks.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Report Modal -->
 <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -813,6 +845,7 @@ $lines_result = mysqli_query($database, $lines_query);
                 </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="print-workorder" disabled>Print Workorder</button>
                 <button type="button" class="btn btn-primary" id="save-ticket">Save Ticket</button>
                 <button type="button" class="btn btn-primary" id="update-ticket">Update Ticket</button>
             </div>
@@ -821,6 +854,7 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 
 <script>
+      
 $(document).ready(function() {
     $('#update-ticket').click(function() {
         // Check if the ticket status is set to 'Closed'
@@ -1654,6 +1688,113 @@ function generateTicketTypeReport() {
     $('#ticketTypeSelectionModal').modal('hide'); // Hide the modal
     window.open('generate_by_ticket_type.php?ticketType=' + encodeURIComponent(selectedTicketType), '_blank');
 }
+$(document).ready(function() {
+    function togglePrintButton() {
+        var workOrderNumber = $('#work_order_number').val();
+        $('#print-workorder').prop('disabled', !workOrderNumber);
+    }
+    function populateTicketData() {
+        // Assuming you have a way to get ticket details and repairs/maintenance details
+        // For example, you might be fetching this data from the server or from form inputs
+        // Here's a placeholder for where that code would go
+        ticketDetails = $('#new-ticket-form-ticket-details').serializeArray();
+        repairsMaintenanceDetails = $('#new-ticket-form-repairs-maintenance').serializeArray().filter(function(field) {
+            return field.name !== 'parts_needed_form' &&
+                field.name !== 'date_used' &&
+                field.name !== 'part_description' &&
+                field.name !== 'quantity' &&
+                field.name !== 'brand_name' &&
+                field.name !== 'model_number' &&
+                field.name !== 'serial_number' &&
+                field.name !== 'dimensions';
+        });
+    }
+    
+     // Function to handle printing
+     function printWorkOrder() {
+        var workOrderNumber = $('#work_order_number').val();
+        if (workOrderNumber) {
+            populateTicketData(); // Make sure data is populated
+            var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
+            printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
+printWindow.document.write('<style>');
+// Professional print styles
+printWindow.document.write(`
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+    h1 { font-size: 24px; text-align: center; margin-bottom: 0.5em; }
+    h2 { font-size: 18px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; font-weight: bold; }
+    td { background-color: #fff; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
+    .print-container { margin: 20px; }
+    .parts-needed { background-color: #dff0d8; }
+    .ticket-details { font-size: 12px; } /* Smaller font size for ticket details */
+    .repairs-maintenance { font-size: 18px; } /* Larger font size for repairs/maintenance */
+    .repairs-maintenance input { height: 60px; font-size: 18px; width: 98%; } /* Even larger input boxes for handwriting */
+`);
+printWindow.document.write('</style>');
+printWindow.document.write('</head><body>');
+printWindow.document.write('<div class="print-container">'); // Container for print content
+printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
+
+// Ticket Details Section
+printWindow.document.write('<h2>Ticket Details</h2>');
+printWindow.document.write('<table class="ticket-details"><tr>');
+var halfLength = Math.ceil(ticketDetails.length / 2);
+ticketDetails.forEach(function(field, index) {
+    // Write the field in a table cell
+    printWindow.document.write('<td><strong>' + field.name.replace(/_/g, ' ') + ':</strong> ' + field.value + '</td>');
+    // After every two cells, end the current row and start a new one
+    if ((index + 1) % 2 === 0) {
+        printWindow.document.write('</tr><tr>');
+    }
+});
+// If the number of details is odd, close the last table row
+if (ticketDetails.length % 2 !== 0) {
+    printWindow.document.write('<td></td></tr>'); // Add an empty cell to even out the last row
+}
+printWindow.document.write('</table>');
+
+// Repairs/Maintenance Section
+printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
+printWindow.document.write('<table class="repairs-maintenance">');
+repairsMaintenanceDetails.forEach(function(field) {
+    if (field.name !== 'orange_tag_id') { // Exclude the 'orange_tag_id' field
+        // Increase the height of the input boxes and adjust the font size if needed
+        printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td><input type="text" style="height: 80px; font-size: 22px; width: 98%;" value="' + field.value + '" /></td></tr>');
+    }
+});
+printWindow.document.write('</table>');
+
+printWindow.document.write('</table>');
+
+printWindow.document.close(); // necessary for IE >= 10
+printWindow.focus(); // necessary for IE >= 10*/
+
+// Wait for the content to be loaded before printing
+printWindow.onload = function() {
+    printWindow.print();
+    printWindow.close();
+};
+            // ... rest of your print logic using ticketDetails and repairsMaintenanceDetails
+        }
+    }
+     // Event handler for when the modal is shown
+     $('#newTicketModal').on('shown.bs.modal', function() {
+        populateTicketData(); // Populate data when the modal is shown
+        togglePrintButton(); // Update the print button state
+    });
+
+    
+    // Event handler for the "Print Workorder" button
+    $('#print-workorder').on('click', printWorkOrder);
+
+
+});
 </script>
 </body>
 </html>

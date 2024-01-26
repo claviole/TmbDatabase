@@ -129,9 +129,18 @@ button:active {
 
     </div>
     <div class ="flex flex-col justify-content: center  py-10 px-5 "  >
-    <button data-role="super-admin human-resources maintenance-tech floor-user" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../maintenance/orange_tag_db.php'">S.M.A.R.T Database</button>
-    <button data-role="super-admin human-resources"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../human_resources/HR/index.php'">S.T.A.R.T Database</button>
-    <button data-role="super-admin human-resources"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../human_resources/safety/index.php'">S.A.F.E Database</button>
+    <button data-role="super-admin human-resources maintenance-tech floor-user" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../maintenance/orange_tag_db.php'>
+    S.M.A.R.T Database<br>
+    <span style="font-size: 0.75em;">Safety, Maintenance And Repair Tracking</span>
+</button>
+<button data-role="super-admin human-resources" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../human_resources/HR/index.php'>
+    S.T.A.R.T Database<br>
+    <span style="font-size: 0.75em;">Skills Training And Resource Tracking</span>
+</button>
+<button data-role="super-admin human-resources" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../human_resources/safety/index.php'>
+    S.A.F.E Database<br>
+    <span style="font-size: 0.75em;">Safety Awareness & Follow-up Environment</span>
+</button>
     <button data-role="super-admin"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-bottom: 10px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../admin-dashboard/management/management.php'">User Management</button>
     </div>
     </div>
