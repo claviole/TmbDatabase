@@ -26,6 +26,14 @@ $stmt = $database->prepare($query);
 $stmt->bind_param('ss', $locationCode, $selectedTechId);
 $stmt->execute();
 $result = $stmt->get_result();
+// Query to get the technician's name using the selected technician's ID
+$techNameQuery = "SELECT username FROM Users WHERE id = ?";
+$techNameStmt = $database->prepare($techNameQuery);
+$techNameStmt->bind_param('s', $selectedTechId);
+$techNameStmt->execute();
+$techNameResult = $techNameStmt->get_result();
+$techNameRow = $techNameResult->fetch_assoc();
+$techName = $techNameRow ? $techNameRow['username'] : 'Unknown Technician';
 
 // Start the output buffer
 ob_start();
@@ -34,8 +42,8 @@ ob_start();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tech Tags Report</title>
+<meta charset="UTF-8">
+    <title><?php echo htmlspecialchars($techName); ?> - Tech Tags Report</title>
     <!-- Include the same style as in the previous report -->
     <style>
         /* ... [Same styles as in the previous report] ... */
@@ -96,7 +104,7 @@ ob_start();
 <body>
 <button id="printButton" onclick="printReport()">Print Report</button>
     <div class="report-container">
-        <h1>Tech Tags Report</h1>
+        <h1><?php echo htmlspecialchars($techName); ?>'s Tags </h1>
         <table>
             <thead>
                 <tr>
