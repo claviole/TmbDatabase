@@ -247,7 +247,9 @@ $priority3TicketCount = $data['total'];
         <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
         <button class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
         <button class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
+        <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'super-admin'): ?>
         <button id="generateReportButton" class="btn btn-info" data-toggle="modal" data-target="#reportModal">Generate Report</button>
+        <?php endif; ?>
 
 <!-- Report Modal -->
 <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
@@ -903,56 +905,73 @@ $(document).ready(function() {
         var partsNeeded = $('#parts_needed').is(':checked') ? 'Yes' : 'No';
         var workOrderNumber = $('#work_order_number').val();
 
-        // Generate the print form
-        var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
+       // Generate the print form
+       var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
 
-        printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
-        printWindow.document.write('<style>');
-        // Professional print styles
-        printWindow.document.write(`
-            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
-            h1 { font-size: 28px; text-align: center; margin-bottom: 0.5em; }
-            h2 { font-size: 22px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
-            table { width: 100%; border-collapse: collapse; margin-top: 1em; }
-            th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-            th { background-color: #eee; font-weight: bold; }
-            td { background-color: #fff; }
-            .text-right { text-align: right; }
-            .text-center { text-align: center; }
-            .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
-            .print-container { margin: 20px; }
-            .parts-needed { background-color: #dff0d8; }
-        `);
-        printWindow.document.write('</style>');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write('<div class="print-container">'); // Container for print content
-        printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
+printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
+printWindow.document.write('<style>');
+// Professional print styles
+printWindow.document.write(`
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+    h1 { font-size: 24px; text-align: center; margin-bottom: 0.5em; }
+    h2 { font-size: 18px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #eee; font-weight: bold; }
+    td { background-color: #fff; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
+    .print-container { margin: 20px; }
+    .parts-needed { background-color: #dff0d8; }
+    .ticket-details { font-size: 12px; } /* Smaller font size for ticket details */
+    .repairs-maintenance { font-size: 18px; } /* Larger font size for repairs/maintenance */
+    .repairs-maintenance input { height: 60px; font-size: 18px; width: 98%; } /* Even larger input boxes for handwriting */
+`);
+printWindow.document.write('</style>');
+printWindow.document.write('</head><body>');
+printWindow.document.write('<div class="print-container">'); // Container for print content
+printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
 
-        // Ticket Details Section
-        printWindow.document.write('<h2>Ticket Details</h2>');
-        printWindow.document.write('<table>');
-        ticketDetails.forEach(function(field) {
-            printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td>' + field.value + '</td></tr>');
-        });
-        printWindow.document.write('</table>');
+// Ticket Details Section
+printWindow.document.write('<h2>Ticket Details</h2>');
+printWindow.document.write('<table class="ticket-details"><tr>');
+var halfLength = Math.ceil(ticketDetails.length / 2);
+ticketDetails.forEach(function(field, index) {
+    // Write the field in a table cell
+    printWindow.document.write('<td><strong>' + field.name.replace(/_/g, ' ') + ':</strong> ' + field.value + '</td>');
+    // After every two cells, end the current row and start a new one
+    if ((index + 1) % 2 === 0) {
+        printWindow.document.write('</tr><tr>');
+    }
+});
+// If the number of details is odd, close the last table row
+if (ticketDetails.length % 2 !== 0) {
+    printWindow.document.write('<td></td></tr>'); // Add an empty cell to even out the last row
+}
+printWindow.document.write('</table>');
 
-            // Repairs/Maintenance Section
-            printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
-        printWindow.document.write('<table>');
-        repairsMaintenanceDetails.forEach(function(field) {
-            printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td>' + field.value + '</td></tr>');
-        });
-        
-       
+// Repairs/Maintenance Section
+printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
+printWindow.document.write('<table class="repairs-maintenance">');
+repairsMaintenanceDetails.forEach(function(field) {
+    if (field.name !== 'orange_tag_id') { // Exclude the 'orange_tag_id' field
+        // Increase the height of the input boxes and adjust the font size if needed
+        printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td><input type="text" style="height: 80px; font-size: 22px; width: 98%;" value="' + field.value + '" /></td></tr>');
+    }
+});
+printWindow.document.write('</table>');
 
-        printWindow.document.close(); // necessary for IE >= 10
-        printWindow.focus(); // necessary for IE >= 10*/
+printWindow.document.write('</table>');
 
-        // Wait for the content to be loaded before printing
-        printWindow.onload = function() {
-            printWindow.print();
-            printWindow.close();
-        };
+printWindow.document.close(); // necessary for IE >= 10
+printWindow.focus(); // necessary for IE >= 10*/
+
+// Wait for the content to be loaded before printing
+printWindow.onload = function() {
+    printWindow.print();
+    printWindow.close();
+};
         
     });
 });
