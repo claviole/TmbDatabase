@@ -14,6 +14,9 @@ $locationCode = $_SESSION['location_code'];
 
 $selectedTicketType = isset($_GET['ticketType']) ? $_GET['ticketType'] : '';
 
+// ... [The rest of your code] ...
+
+
 // ... [Same database query setup as in the previous report scripts] ...
 
 // Query to get all tags with the selected ticket type
@@ -108,20 +111,39 @@ ob_start();
                     <th>Creation Date</th>
                     <th>Closed Date</th>
                     <th>Ticket Type</th>
+                    <?php if ($selectedTicketType === 'Line Maintenance'): ?>
+                        <th>Line</th>
+                    <?php endif; ?>
+
                     <th>Assigned Technicians</th>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['orange_tag_id']); ?></td>
-                    <td><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_creation_date']))); ?></td>
-                    <td><?php echo htmlspecialchars($row['date_closed'] ? date('m-d-Y', strtotime($row['date_closed'])) : ''); ?></td>
-                    <td><?php echo htmlspecialchars($row['ticket_type']); ?></td>
-                    <td><?php echo htmlspecialchars($row['tech_names']); ?></td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
+    <?php while ($row = $result->fetch_assoc()): ?>
+    <tr>
+        <td><?php echo htmlspecialchars($row['orange_tag_id']); ?></td>
+        <td><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_creation_date']))); ?></td>
+        <td><?php echo htmlspecialchars($row['date_closed'] ? date('m-d-Y', strtotime($row['date_closed'])) : ''); ?></td>
+        <td><?php echo htmlspecialchars($row['ticket_type']); ?></td>
+        <?php if ($row['ticket_type'] === 'Line Maintenance'): ?>
+            <?php
+            // Query to get the line information for the current orange tag
+            $lineQuery = "SELECT Line_Location, Line_Name FROM `Lines` WHERE line_id = ?";
+            $lineStmt = $database->prepare($lineQuery);
+            $lineStmt->bind_param('s', $row['line_name']); // Use line_name from the orange tag
+            $lineStmt->execute();
+            $lineResult = $lineStmt->get_result();
+            $lineInfo = '';
+            if ($lineRow = $lineResult->fetch_assoc()) {
+                $lineInfo = $lineRow['Line_Location'] . ' - ' . $lineRow['Line_Name'];
+            }
+            ?>
+            <td><?php echo htmlspecialchars($lineInfo); ?></td>
+        <?php endif; ?>
+        <td><?php echo htmlspecialchars($row['tech_names']); ?></td>
+    </tr>
+    <?php endwhile; ?>
+</tbody>
         </table>
         <div class="footer">
             Report generated on <?php echo date('m/d/Y h:i:s a'); ?>
