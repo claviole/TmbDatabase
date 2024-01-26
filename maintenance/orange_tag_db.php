@@ -228,13 +228,15 @@ $priority3TicketCount = $data['total'];
     <!-- Add your CSS styles here -->
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
+<?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
 <div class="return-button-container">
     <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
-    </h1>
-    <h2 style="text-align: center; color: #ff2925; font-size: 3em; font-weight: bold; margin-top: 0.5em; width: 100%; font-family: 'Times New Roman', Times, serif; text-shadow: -1px -1px 0 #808080, 1px -1px 0 #808080, -1px 1px 0 #808080, 1px 1px 0 #808080;">SAFETY MAINTENANCE AND REPAIR TRACKING</h2>
+<?php endif; ?>
+    <h2 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="../images/home_page_SMART_header.png" alt="company header" width="50%" height="40%" > 
+    </h2>
+  
 </div>
 <!-- Add this in your HTML where you want the loading symbol to appear -->
 
@@ -539,12 +541,12 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="orange_tag_id">Orange Tag ID</label>
-                                    <input type="text" class="form-control" id="orange_tag_id" name="orange_tag_id"readonly>
+                                    <label for="orange_tag_id">SMART Tag I.D.</label>
+                                    <input type="text" class="form-control" id="orange_tag_id" name="SMART Tag ID"readonly>
                                 </div>
                                 <div class="form-group">
                                 <label for="ticket_type">Ticket Type</label>
-    <select class="form-control" id="ticket_type" name="ticket_type" required>
+    <select class="form-control" id="ticket_type" name="Ticket Type" required>
         <option value="" selected disabled hidden></option>
         <option value="Safety">Safety</option>
         <option value="Maintenance">Maintenance</option>
@@ -560,19 +562,19 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                 </div>
                                 <div class="form-group">
                                     <label for="originator">Originator</label>
-                                    <input type="text" class="form-control" id="originator" name="originator" value="<?php echo $tag_author; ?>" required style="display: none">
-                                    <input type="text" class="form-control" id="originator_name" name="originator_name"  required>
+                                    <input type="text" class="form-control" id="originator" name="Account of Origin" value="<?php echo $tag_author; ?>" required style="display: none">
+                                    <input type="text" class="form-control" id="originator_name" name="Originator Name"  required>
                                 </div>
                                 <div class="form-group">
                                     <label for="location">Location in building/ On Line </label>
-                                    <input type="text" class="form-control" id="location" name="location" required>
+                                    <input type="text" class="form-control" id="location" name="Location" required>
                                 </div>
                                 
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="priority">Priority</label>
-                                    <select class="form-control" id="priority" name="priority" required>
+                                    <select class="form-control" id="priority" name="Priority" required>
                                         <option value="" selected disabled hidden></option>
                                         <option value="1" title="Safety:Any issue that you see fit to prevent injury, accidents, or hazards">1</option>
                                         <option value="2" title="Quality: Any issue that delays/obstructs products, processes, or deliverables of our customers expectations">2</option>
@@ -588,7 +590,7 @@ $lines_result = mysqli_query($database, $lines_query);
 
 <div class="form-group" id="line_name_group" style="display: none;">
     <label for="line_name">Line Name</label>
-    <select class="form-control" id="line_name" name="line_name">
+    <select class="form-control" id="line_name" name="Line Name">
     <option value="" selected disabled hidden></option>
         <?php while ($line = mysqli_fetch_assoc($lines_result)): ?>
             <option value="<?php echo $line['line_id']; ?>">
@@ -599,13 +601,13 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 <div class="form-group" id="die_number_group" style="display: none;">
     <label for="die_number">Die Number</label>
-    <input type="text" class="form-control" id="die_number" name="die_number">
+    <input type="text" class="form-control" id="die_number" name="Die Number">
 </div>
 
 
                                 <div class="form-group">
                                     <label for="supervisor">Supervisor</label>
-                                    <select class="form-control" id="supervisor" name="supervisor" required>
+                                    <select class="form-control" id="supervisor" name="Supervisor" required>
                                         <option value="" selected disabled hidden></option>
                                         <?php while ($row = mysqli_fetch_assoc($supervisors)): ?>
                                         <option value="<?php echo $row['employee_id']; ?>">
@@ -616,11 +618,11 @@ $lines_result = mysqli_query($database, $lines_query);
                                 </div>
                                 <div class="form-group">
                                     <label for="orange_tag_creation_date">Creation Date</label>
-                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="orange_tag_creation_date" value="<?php echo date('Y-m-d'); ?>" required readonly>
+                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="Creation Date" value="<?php echo date('Y-m-d'); ?>" required readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="orange_tag_creation_time">Creation Time</label>
-                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="orange_tag_creation_time" value="<?php echo date('H:i'); ?>" required readonly>
+                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="Creation Time" value="<?php echo date('H:i'); ?>" required readonly>
                                 </div>
                                 
                             </div>
@@ -629,7 +631,7 @@ $lines_result = mysqli_query($database, $lines_query);
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="orange_tag_description">Description</label>
-                                    <textarea class="form-control" id="orange_tag_description" name="orange_tag_description" rows="3" required></textarea>
+                                    <textarea class="form-control" id="orange_tag_description" name="Description" rows="3" required></textarea>
                                 </div>
                             </div>
                         </div>
@@ -642,12 +644,12 @@ $lines_result = mysqli_query($database, $lines_query);
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="repairs_made">Repairs Made</label>
-                                <textarea class="form-control" id="repairs_made" name="repairs_made" rows="3"></textarea>
+                                <textarea class="form-control" id="repairs_made" name="Repairs Made" rows="3"></textarea>
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="root_cause">Root Cause</label>
-                                <textarea class="form-control" id="root_cause" name="root_cause" rows="3"></textarea>
+                                <textarea class="form-control" id="root_cause" name="Root Cause" rows="3"></textarea>
                             </div>
                         </div>
 
@@ -655,7 +657,7 @@ $lines_result = mysqli_query($database, $lines_query);
                             <div class="form-group col-md-6">
                             <div class="form-group">
                                     <label for="orange_tag_due_date">Due Date</label>
-                                    <input type="date" class="form-control" id="orange_tag_due_date" name="orange_tag_due_date" required>
+                                    <input type="date" class="form-control" id="orange_tag_due_date" name="Due Date" required>
                                 </div>
                             <div class="form-check">
     <input class="form-check-input" type="checkbox" value="No" id="area_cleaned" name="area_cleaned" onchange="this.value = this.checked ? 'on' : 'off'">
@@ -675,11 +677,11 @@ $lines_result = mysqli_query($database, $lines_query);
                             </div>
                                     <div class="form-group col-md-3">
                                         <label for="total_repair_time">Total Repair Time Hours</label>
-                                        <input type="number" step="0.01" class="form-control" id="total_repair_time" name="total_repair_time">
+                                        <input type="number" step="0.01" class="form-control" id="total_repair_time" name="Total Repair Time">
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="equipment_down_time">Equipment Down Time Hours</label>
-                                        <input type="number" step="0.01" class="form-control" id="equipment_down_time" name="equipment_down_time">
+                                        <input type="number" step="0.01" class="form-control" id="equipment_down_time" name="Equipment Downtime">
                                     </div>
                                     
                             <div id="parts_needed_form" style="display: none;">
@@ -876,7 +878,6 @@ $(document).ready(function() {
     // Initially disable the button
     $('#generate_wo_number').prop('disabled', true);
 
-    // Function to check if any technicians are selected
     function checkTechniciansSelected() {
         var anyChecked = $('#repair_technician input[type=checkbox]:checked').length > 0;
         $('#generate_wo_number').prop('disabled', !anyChecked);
@@ -885,10 +886,17 @@ $(document).ready(function() {
     // Run the check function whenever any checkbox within the repair_technician container is changed
     $('#repair_technician').on('change', 'input[type=checkbox]', checkTechniciansSelected);
 
-    // Run the check function on page load in case of pre-checked checkboxes
-    checkTechniciansSelected();
+    // Call the check function when the modal is opened or when the form is loaded
+    $('#newTicketModal').on('shown.bs.modal', function() {
+        checkTechniciansSelected();
+    });
+
 
     $('#generate_wo_number').click(function() {
+        function togglePrintButton() {
+        var workOrderNumber = $('#work_order_number').val();
+        $('#print-workorder').prop('disabled', !workOrderNumber);
+    }
         var repair_technicians = [];
         $('#repair_technician input:checked').each(function() {
             repair_technicians.push($(this).val());
@@ -923,91 +931,9 @@ $(document).ready(function() {
                 console.error('Response Text:', jqXHR.responseText);
             }
         });
-         // Collect data from the form fields
-         var ticketDetails = $('#new-ticket-form-ticket-details').serializeArray();
-        var repairsMaintenanceDetails = $('#new-ticket-form-repairs-maintenance').serializeArray().filter(function(field) {
-            // Exclude the parts needed form and other specified fields
-            return field.name !== 'parts_needed_form' &&
-                field.name !== 'date_used' &&
-                field.name !== 'part_description' &&
-                field.name !== 'quantity' &&
-                field.name !== 'brand_name' &&
-                field.name !== 'model_number' &&
-                field.name !== 'serial_number' &&
-                field.name !== 'dimensions';
-        });
-        var partsNeeded = $('#parts_needed').is(':checked') ? 'Yes' : 'No';
-        var workOrderNumber = $('#work_order_number').val();
-
-       // Generate the print form
-       var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
-
-printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
-printWindow.document.write('<style>');
-// Professional print styles
-printWindow.document.write(`
-    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
-    h1 { font-size: 24px; text-align: center; margin-bottom: 0.5em; }
-    h2 { font-size: 18px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #eee; font-weight: bold; }
-    td { background-color: #fff; }
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-    .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
-    .print-container { margin: 20px; }
-    .parts-needed { background-color: #dff0d8; }
-    .ticket-details { font-size: 12px; } /* Smaller font size for ticket details */
-    .repairs-maintenance { font-size: 18px; } /* Larger font size for repairs/maintenance */
-    .repairs-maintenance input { height: 60px; font-size: 18px; width: 98%; } /* Even larger input boxes for handwriting */
-`);
-printWindow.document.write('</style>');
-printWindow.document.write('</head><body>');
-printWindow.document.write('<div class="print-container">'); // Container for print content
-printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
-
-// Ticket Details Section
-printWindow.document.write('<h2>Ticket Details</h2>');
-printWindow.document.write('<table class="ticket-details"><tr>');
-var halfLength = Math.ceil(ticketDetails.length / 2);
-ticketDetails.forEach(function(field, index) {
-    // Write the field in a table cell
-    printWindow.document.write('<td><strong>' + field.name.replace(/_/g, ' ') + ':</strong> ' + field.value + '</td>');
-    // After every two cells, end the current row and start a new one
-    if ((index + 1) % 2 === 0) {
-        printWindow.document.write('</tr><tr>');
-    }
-});
-// If the number of details is odd, close the last table row
-if (ticketDetails.length % 2 !== 0) {
-    printWindow.document.write('<td></td></tr>'); // Add an empty cell to even out the last row
-}
-printWindow.document.write('</table>');
-
-// Repairs/Maintenance Section
-printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
-printWindow.document.write('<table class="repairs-maintenance">');
-repairsMaintenanceDetails.forEach(function(field) {
-    if (field.name !== 'orange_tag_id') { // Exclude the 'orange_tag_id' field
-        // Increase the height of the input boxes and adjust the font size if needed
-        printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td><input type="text" style="height: 80px; font-size: 22px; width: 98%;" value="' + field.value + '" /></td></tr>');
-    }
-});
-printWindow.document.write('</table>');
-
-printWindow.document.write('</table>');
-
-printWindow.document.close(); // necessary for IE >= 10
-printWindow.focus(); // necessary for IE >= 10*/
-
-// Wait for the content to be loaded before printing
-printWindow.onload = function() {
-    printWindow.print();
-    printWindow.close();
-};
+        togglePrintButton();
         
-    });
+});
 });
 function togglePartsForm(isChecked, parts) {
     var form = document.getElementById('parts_needed_form');
@@ -1693,6 +1619,7 @@ $(document).ready(function() {
         var workOrderNumber = $('#work_order_number').val();
         $('#print-workorder').prop('disabled', !workOrderNumber);
     }
+    
     function populateTicketData() {
         // Assuming you have a way to get ticket details and repairs/maintenance details
         // For example, you might be fetching this data from the server or from form inputs
@@ -1710,79 +1637,108 @@ $(document).ready(function() {
         });
     }
     
-     // Function to handle printing
-     function printWorkOrder() {
-        var workOrderNumber = $('#work_order_number').val();
-        if (workOrderNumber) {
-            populateTicketData(); // Make sure data is populated
-            var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
-            printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
-printWindow.document.write('<style>');
-// Professional print styles
-printWindow.document.write(`
-    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
-    h1 { font-size: 24px; text-align: center; margin-bottom: 0.5em; }
-    h2 { font-size: 18px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #eee; font-weight: bold; }
-    td { background-color: #fff; }
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-    .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
-    .print-container { margin: 20px; }
-    .parts-needed { background-color: #dff0d8; }
-    .ticket-details { font-size: 12px; } /* Smaller font size for ticket details */
-    .repairs-maintenance { font-size: 18px; } /* Larger font size for repairs/maintenance */
-    .repairs-maintenance input { height: 60px; font-size: 18px; width: 98%; } /* Even larger input boxes for handwriting */
-`);
-printWindow.document.write('</style>');
-printWindow.document.write('</head><body>');
-printWindow.document.write('<div class="print-container">'); // Container for print content
-printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
+    function printWorkOrder() {
+    var workOrderNumber = $('#work_order_number').val();
+    if (workOrderNumber) {
+        populateTicketData(); // Make sure data is populated
 
-// Ticket Details Section
-printWindow.document.write('<h2>Ticket Details</h2>');
-printWindow.document.write('<table class="ticket-details"><tr>');
-var halfLength = Math.ceil(ticketDetails.length / 2);
-ticketDetails.forEach(function(field, index) {
-    // Write the field in a table cell
-    printWindow.document.write('<td><strong>' + field.name.replace(/_/g, ' ') + ':</strong> ' + field.value + '</td>');
-    // After every two cells, end the current row and start a new one
-    if ((index + 1) % 2 === 0) {
-        printWindow.document.write('</tr><tr>');
-    }
-});
-// If the number of details is odd, close the last table row
-if (ticketDetails.length % 2 !== 0) {
-    printWindow.document.write('<td></td></tr>'); // Add an empty cell to even out the last row
-}
-printWindow.document.write('</table>');
+        // Find the line_id field in the ticketDetails array
+        var lineIdField = ticketDetails.find(function(field) {
+            return field.name === 'Line Name';
+        });
 
-// Repairs/Maintenance Section
-printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
-printWindow.document.write('<table class="repairs-maintenance">');
-repairsMaintenanceDetails.forEach(function(field) {
-    if (field.name !== 'orange_tag_id') { // Exclude the 'orange_tag_id' field
-        // Increase the height of the input boxes and adjust the font size if needed
-        printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td><input type="text" style="height: 80px; font-size: 22px; width: 98%;" value="' + field.value + '" /></td></tr>');
-    }
-});
-printWindow.document.write('</table>');
-
-printWindow.document.write('</table>');
-
-printWindow.document.close(); // necessary for IE >= 10
-printWindow.focus(); // necessary for IE >= 10*/
-
-// Wait for the content to be loaded before printing
-printWindow.onload = function() {
-    printWindow.print();
-    printWindow.close();
-};
-            // ... rest of your print logic using ticketDetails and repairsMaintenanceDetails
+        // If the line_id field exists, fetch the line details
+        if (lineIdField && lineIdField.value) {
+            $.ajax({
+                url: 'get_line_details.php', // Replace with the correct path to your PHP script
+                type: 'GET',
+                data: { line_id: lineIdField.value },
+                dataType: 'json',
+                success: function(lineDetails) {
+                    // Now that we have line details, we can proceed to open the print window
+                    openPrintWindow(workOrderNumber, ticketDetails, repairsMaintenanceDetails, lineDetails);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching line details:', textStatus, errorThrown);
+                    // Proceed without line details
+                    openPrintWindow(workOrderNumber, ticketDetails, repairsMaintenanceDetails, null);
+                }
+            });
+        } else {
+            // If there is no line_id, proceed without line details
+            openPrintWindow(workOrderNumber, ticketDetails, repairsMaintenanceDetails, null);
         }
     }
+}
+
+function openPrintWindow(workOrderNumber, ticketDetails, repairsMaintenanceDetails, lineDetails) {
+    var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
+    printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
+    printWindow.document.write('<style>');
+    // Professional print styles
+    printWindow.document.write(`
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+        h1 { font-size: 24px; text-align: center; margin-bottom: 0.5em; }
+        h2 { font-size: 18px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #eee; font-weight: bold; }
+        td { background-color: #fff; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
+        .print-container { margin: 20px; }
+        .parts-needed { background-color: #dff0d8; }
+        .ticket-details { font-size: 12px; } /* Smaller font size for ticket details */
+        .repairs-maintenance { font-size: 18px; } /* Larger font size for repairs/maintenance */
+        .repairs-maintenance input { height: 60px; font-size: 18px; width: 98%; } /* Even larger input boxes for handwriting */
+    `);
+    printWindow.document.write('</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<div class="print-container">'); // Container for print content
+    printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
+
+    // Ticket Details Section
+    printWindow.document.write('<h2>Ticket Details</h2>');
+    printWindow.document.write('<table class="ticket-details"><tr>');
+    ticketDetails.forEach(function(field, index) {
+        if (field.name === 'Line Name' && lineDetails) {
+            // Use the line details fetched from the server
+            field.value = lineDetails.Line_Location + ' - ' + lineDetails.Line_Name;
+        }
+        printWindow.document.write('<td><strong>' + field.name.replace(/_/g, ' ') + ':</strong> ' + field.value + '</td>');
+        if ((index + 1) % 2 === 0) {
+            printWindow.document.write('</tr><tr>');
+        }
+    });
+    if (ticketDetails.length % 2 !== 0) {  
+        printWindow.document.write('<td></td></tr>'); // Add an empty cell to even out the last row
+    }
+    printWindow.document.write('</table>');
+
+    // Repairs/Maintenance Section
+    printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
+    printWindow.document.write('<table class="repairs-maintenance">');
+    repairsMaintenanceDetails.forEach(function(field) {
+        if (field.name !== 'orange_tag_id') { // Exclude the 'orange_tag_id' field
+            printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td><input type="text" style="height: 80px; font-size: 22px; width: 98%;" value="' + field.value + '" /></td></tr>');
+        }
+    });
+    printWindow.document.write('</table>');
+       // Footer Section
+       printWindow.document.write('<div class="footer">This Document is for Reference Only</div>');
+
+    printWindow.document.write('</div>'); // Close the print-container div
+    printWindow.document.write('</body></html>');
+    printWindow.document.close(); // necessary for IE >= 10
+    printWindow.focus(); // necessary for IE >= 10
+
+    // Wait for the content to be loaded before printing
+    printWindow.onload = function() {
+        printWindow.print();
+        printWindow.close();
+    };
+}
      // Event handler for when the modal is shown
      $('#newTicketModal').on('shown.bs.modal', function() {
         populateTicketData(); // Populate data when the modal is shown
