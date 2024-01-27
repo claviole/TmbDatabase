@@ -45,7 +45,7 @@
                     header("Location: super-admin/index.php");
                 }
                 elseif($_SESSION["user_type"]=="maintenance-tech"){
-                    header("Location: super-admin/index.php");
+                    header("Location: maintenance/orange_tag_db.php");
                 }
                 elseif($_SESSION["user_type"]=="floor-user"){
                     header("Location: maintenance/orange_tag_db.php");

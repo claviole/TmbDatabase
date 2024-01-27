@@ -9,29 +9,46 @@ if (!isset($_SESSION['user']) || !in_array($_SESSION['user_type'], ['super-admin
     exit('Access Denied');
 }
 
-// Get the selected priority from the query parameter
-$selectedPriority = isset($_GET['priority']) ? $_GET['priority'] : '';
-
-// Assuming $locationCode is the first two letters of the tag id you want to match
 $locationCode = $_SESSION['location_code'];
 
-// Query to get all tags with the selected priority and matching location code in the tag id
-// Query to get all tags with the selected priority and matching location code in the tag id
-// Query to get all tags with the selected priority and matching location code in the tag id
-// Query to get all tags with the selected priority and matching location code in the tag id
+// Use $_POST if you're sending data via POST method, otherwise use $_GET or $_REQUEST for more flexibility
+$tagId = isset($_POST['orange_tag_id']) ? $_POST['orange_tag_id'] : '';
+
+// Query to get a single tag with the provided tag id
 $query = "SELECT ot.*, l.Line_Location, l.Line_Name, e.employee_fname, e.employee_lname,
           (SELECT GROUP_CONCAT(u.username SEPARATOR ', ') FROM `Users` u WHERE FIND_IN_SET(u.id, ot.repair_technician)) AS repair_technicians
           FROM `orange_tag` ot
           LEFT JOIN `Lines` l ON ot.line_name = l.line_id
           LEFT JOIN `employees` e ON ot.supervisor = e.employee_id
-          WHERE SUBSTRING(ot.orange_tag_id, 1, 2) = ? AND ot.priority = ? AND ot.ticket_status = 'Open'
-          GROUP BY ot.orange_tag_id
-          ORDER BY ot.date_closed IS NULL DESC, ot.date_closed ASC, ot.orange_tag_creation_date DESC";
+          WHERE ot.orange_tag_id = ?
+          LIMIT 1";
 
+// Prepare the SQL statement
 $stmt = $database->prepare($query);
-$stmt->bind_param('ss', $locationCode, $selectedPriority);
-$stmt->execute();
+
+// Check if the statement was prepared correctly
+if ($stmt === false) {
+    // Handle error here, for example:
+    die('Prepare failed: ' . htmlspecialchars($database->error));
+}
+
+// Bind the input parameter
+$stmt->bind_param('s', $tagId);
+
+// Execute the query
+if (!$stmt->execute()) {
+    // Handle execution error here
+    die('Execution failed: ' . htmlspecialchars($stmt->error));
+}
+
+// Retrieve the result
 $result = $stmt->get_result();
+
+// Check for results
+if ($result === false) {
+    // Handle result retrieval error here
+    die('Retrieval failed: ' . htmlspecialchars($stmt->error));
+}
 
 // Start the output buffer
 ob_start();

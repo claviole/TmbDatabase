@@ -49,6 +49,13 @@ $query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$c
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority3TicketCount = $data['total'];
+
+// Query for priority 4 tickets
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 4 AND `ticket_status` = 'Open'";
+$result = mysqli_query($database, $query);
+$data = mysqli_fetch_assoc($result);
+$priority4TicketCount = $data['total'];
+
 ?>
 
 <!DOCTYPE html>
@@ -63,6 +70,7 @@ $priority3TicketCount = $data['total'];
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="printWorkOrder.js"></script>
 
     <style>
         .return-button {
@@ -422,6 +430,12 @@ $priority3TicketCount = $data['total'];
         <div class="card-body">
             <h5 class="card-title">Priority 3</h5>
             <p class="card-text" style="font-size: 2em;"><?php echo $priority3TicketCount; ?></p>
+        </div>
+    </div>
+    <div class="card text-white" style="background-color: #4a148c;"> <!-- Choose a color that represents Priority 4 -->
+        <div class="card-body">
+            <h5 class="card-title">Priority 4</h5>
+            <p class="card-text" style="font-size: 2em;"><?php echo $priority4TicketCount; ?></p> <!-- Use the variable that holds the count for Priority 4 tickets -->
         </div>
     </div>
 </div>
@@ -906,32 +920,7 @@ $(document).ready(function() {
         $('#work_order_number').val(workOrderNumber);
 
         // AJAX call to send email
-        $.ajax({
-            url: '../configurations/send_email.php', // Replace with the URL of your PHP script for sending emails
-            method: 'POST',
-            data: {
-                // Include only the ticket details information from the 'ticket-details' tab
-                'technicians[]': repair_technicians,
-                orange_tag_id: $('#orange_tag_id').val(),
-                ticket_type: $('#ticket_type').val(),
-                originator_name: $('#originator_name').val(),
-                location: $('#location').val(),
-                priority: $('#priority').val(),
-                supervisor: $('#supervisor').val(),
-                orange_tag_creation_date: $('#orange_tag_creation_date').val(),
-                orange_tag_creation_time: $('#orange_tag_creation_time').val(),
-                orange_tag_description: $('#orange_tag_description').val()
-            },
-            success: function(response) {
-                // Handle the response from the server
-                console.log(response);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('AJAX Error:', textStatus, errorThrown);
-                console.error('Response Text:', jqXHR.responseText);
-            }
-        });
-        togglePrintButton();
+        
         
 });
 });
@@ -1671,74 +1660,7 @@ $(document).ready(function() {
     }
 }
 
-function openPrintWindow(workOrderNumber, ticketDetails, repairsMaintenanceDetails, lineDetails) {
-    var printWindow = window.open('', 'PRINT', 'height=800,width=1000');
-    printWindow.document.write('<html><head><title>' + workOrderNumber + '</title>');
-    printWindow.document.write('<style>');
-    // Professional print styles
-    printWindow.document.write(`
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
-        h1 { font-size: 24px; text-align: center; margin-bottom: 0.5em; }
-        h2 { font-size: 18px; color: #444; margin-top: 1em; margin-bottom: 0.25em; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1em; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #eee; font-weight: bold; }
-        td { background-color: #fff; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .footer { margin-top: 30px; text-align: center; font-size: 0.85em; }
-        .print-container { margin: 20px; }
-        .parts-needed { background-color: #dff0d8; }
-        .ticket-details { font-size: 12px; } /* Smaller font size for ticket details */
-        .repairs-maintenance { font-size: 18px; } /* Larger font size for repairs/maintenance */
-        .repairs-maintenance input { height: 60px; font-size: 18px; width: 98%; } /* Even larger input boxes for handwriting */
-    `);
-    printWindow.document.write('</style>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write('<div class="print-container">'); // Container for print content
-    printWindow.document.write('<h1>Work Order: ' + workOrderNumber + '</h1>');
 
-    // Ticket Details Section
-    printWindow.document.write('<h2>Ticket Details</h2>');
-    printWindow.document.write('<table class="ticket-details"><tr>');
-    ticketDetails.forEach(function(field, index) {
-        if (field.name === 'Line Name' && lineDetails) {
-            // Use the line details fetched from the server
-            field.value = lineDetails.Line_Location + ' - ' + lineDetails.Line_Name;
-        }
-        printWindow.document.write('<td><strong>' + field.name.replace(/_/g, ' ') + ':</strong> ' + field.value + '</td>');
-        if ((index + 1) % 2 === 0) {
-            printWindow.document.write('</tr><tr>');
-        }
-    });
-    if (ticketDetails.length % 2 !== 0) {  
-        printWindow.document.write('<td></td></tr>'); // Add an empty cell to even out the last row
-    }
-    printWindow.document.write('</table>');
-
-    // Repairs/Maintenance Section
-    printWindow.document.write('<h2>Repairs/Maintenance Details</h2>');
-    printWindow.document.write('<table class="repairs-maintenance">');
-    repairsMaintenanceDetails.forEach(function(field) {
-        if (field.name !== 'orange_tag_id') { // Exclude the 'orange_tag_id' field
-            printWindow.document.write('<tr><th>' + field.name.replace(/_/g, ' ') + '</th><td><input type="text" style="height: 80px; font-size: 22px; width: 98%;" value="' + field.value + '" /></td></tr>');
-        }
-    });
-    printWindow.document.write('</table>');
-       // Footer Section
-       printWindow.document.write('<div class="footer">This Document is for Reference Only</div>');
-
-    printWindow.document.write('</div>'); // Close the print-container div
-    printWindow.document.write('</body></html>');
-    printWindow.document.close(); // necessary for IE >= 10
-    printWindow.focus(); // necessary for IE >= 10
-
-    // Wait for the content to be loaded before printing
-    printWindow.onload = function() {
-        printWindow.print();
-        printWindow.close();
-    };
-}
      // Event handler for when the modal is shown
      $('#newTicketModal').on('shown.bs.modal', function() {
         populateTicketData(); // Populate data when the modal is shown
@@ -1747,7 +1669,27 @@ function openPrintWindow(workOrderNumber, ticketDetails, repairsMaintenanceDetai
 
     
     // Event handler for the "Print Workorder" button
-    $('#print-workorder').on('click', printWorkOrder);
+// Event handler for the "Print Workorder" button
+$('#print-workorder').on('click', function() {
+    var orangeTagId = $('#orange_tag_id').val(); // Get the orange tag ID from the form
+    if (orangeTagId) {
+        // Create a form element
+        var form = $('<form>', {
+            'method': 'POST',
+            'action': 'print_work_order.php'
+        }).append($('<input>', {
+            'type': 'hidden',
+            'name': 'orange_tag_id',
+            'value': orangeTagId
+        }));
+
+        // Append the form to the body and submit it
+        $(document.body).append(form);
+        form.submit();
+    } else {
+        console.error('No Orange Tag ID provided for printing the workorder.');
+    }
+});
 
 
 });

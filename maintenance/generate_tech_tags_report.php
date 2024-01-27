@@ -10,15 +10,18 @@ if (!isset($_SESSION['user']) || !in_array($_SESSION['user_type'], ['super-admin
 }
 
 // Get the selected technician's ID from the query parameter
+// Get the selected technician's ID from the query parameter
 $selectedTechId = isset($_GET['techId']) ? $_GET['techId'] : '';
 
 $locationCode = $_SESSION['location_code'];
 
-// Query to get all tags assigned to the selected technician, with open tags first
-$query = "SELECT ot.*, GROUP_CONCAT(u.username SEPARATOR ', ') AS tech_names
-          FROM orange_tag ot
-          LEFT JOIN Users u ON FIND_IN_SET(u.id, ot.repair_technician)
-          WHERE ot.location_code = ? AND FIND_IN_SET(?, ot.repair_technician)
+// Query to get all tags assigned to the selected technician and matching location code in the tag id
+$query = "SELECT ot.*, l.Line_Location, l.Line_Name, e.employee_fname, e.employee_lname,
+          (SELECT GROUP_CONCAT(u.username SEPARATOR ', ') FROM `Users` u WHERE FIND_IN_SET(u.id, ot.repair_technician)) AS repair_technicians
+          FROM `orange_tag` ot
+          LEFT JOIN `Lines` l ON ot.Line_Name = l.line_id
+          LEFT JOIN `employees` e ON ot.supervisor = e.employee_id
+          WHERE SUBSTRING(ot.orange_tag_id, 1, 2) = ? AND FIND_IN_SET(?, ot.repair_technician) AND ot.ticket_status = 'Open'
           GROUP BY ot.orange_tag_id
           ORDER BY ot.date_closed IS NULL DESC, ot.date_closed ASC, ot.orange_tag_creation_date DESC";
 
@@ -27,7 +30,7 @@ $stmt->bind_param('ss', $locationCode, $selectedTechId);
 $stmt->execute();
 $result = $stmt->get_result();
 // Query to get the technician's name using the selected technician's ID
-$techNameQuery = "SELECT username FROM Users WHERE id = ?";
+$techNameQuery = "SELECT `username` FROM `Users` WHERE `id` = ?";
 $techNameStmt = $database->prepare($techNameQuery);
 $techNameStmt->bind_param('s', $selectedTechId);
 $techNameStmt->execute();
@@ -42,57 +45,65 @@ ob_start();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-    <title><?php echo htmlspecialchars($techName); ?> - Tech Tags Report</title>
-    <!-- Include the same style as in the previous report -->
+    <meta charset="UTF-8">
+    <title>Priority Tags Report</title>
+    <link rel="stylesheet" href="path/to/style.css">
     <style>
-        /* ... [Same styles as in the previous report] ... */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: white;
-            color: black;
         }
-        .report-container {
-            margin: 20px;
+        .printable-page {
+            page-break-after: always;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
+        .ticket-details-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        th, td {
+        .ticket-details-table th,
+        .ticket-details-table td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
-        th {
+        .ticket-details-table th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .repairs-maintenance {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        .repairs-maintenance th {
+            width: 25%;
+            background-color: #f2f2f2;
+            font-weight: bold;
+            padding: 8px;
+            text-align: left;
+        }
+        .repairs-maintenance td {
+            width: 75%;
+            padding: 8px;
+        }
+        .input-box {
+            display: block;
+            width: 100%;
+            min-height: 70px; /* Increased height for writing space */
+            padding: 5px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin: 2px 0;
+            vertical-align: top; /* Aligns text to the top */
         }
         .footer {
             text-align: center;
-            margin-top: 30px;
-            font-size: 0.85em;
+            margin-top: 20px;
         }
-        #printButton {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            padding: 5px 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
+        @media print {
+            #printButton {
+                display: none;
+            }
         }
     </style>
     <script>
@@ -103,32 +114,75 @@ ob_start();
 </head>
 <body>
 <button id="printButton" onclick="printReport()">Print Report</button>
-    <div class="report-container">
-        <h1><?php echo htmlspecialchars($techName); ?>'s Tags </h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Orange Tag ID</th>
-                    <th>Creation Date</th>
-                    <th>Closed Date</th>
-                    <th>Ticket Type</th>
-                </tr>
-            </thead>
+<?php while ($row = $result->fetch_assoc()): ?>
+    <div class="report-container printable-page">
+        <h1 style="text-align: center;">
+            Ticket Details<?php echo isset($row['work_order_number']) ? ' - ' . htmlspecialchars($row['work_order_number']) : ''; ?>
+        </h1> <!-- Conditionally display work order number if available -->
+        <table class="ticket-details-table">
             <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
+                    <th>Tag ID</th>
                     <td><?php echo htmlspecialchars($row['orange_tag_id']); ?></td>
-                    <td><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_creation_date']))); ?></td>
-                    <td><?php echo htmlspecialchars($row['date_closed'] ? date('m-d-Y', strtotime($row['date_closed'])) : ''); ?></td>
+                    <th>Ticket Type</th>
                     <td><?php echo htmlspecialchars($row['ticket_type']); ?></td>
                 </tr>
-                <?php endwhile; ?>
+                <tr>
+                    <th>Line</th>
+                    <td><?php echo htmlspecialchars($row['Line_Location']) . ' - ' . htmlspecialchars($row['Line_Name']); ?></td>
+                    <th>Die Number</th>
+                    <td><?php echo htmlspecialchars($row['die_number']); ?></td>
+                </tr>
+                <tr>
+                    <th>Priority</th>
+                    <td><?php echo htmlspecialchars($row['priority']); ?></td>
+                    <th>Supervisor</th>
+                    <td><?php echo htmlspecialchars($row['employee_fname']) . ' ' . htmlspecialchars($row['employee_lname']); ?></td>
+                </tr>
+                <tr>
+        <th>Creation Date</th>
+        <td><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_creation_date']))); ?></td>
+        <th>Repair Technician(s)</th> <!-- Changed from Creation Time to Repair Technician(s) -->
+        <td><?php echo htmlspecialchars($row['repair_technicians']); ?></td> <!-- Display the usernames -->
+    </tr>
             </tbody>
         </table>
-        <div class="footer">
-            Report generated on <?php echo date('m/d/Y h:i:s a'); ?>
-        </div>
+
+        <h1 style="text-align: center;">Repairs/Maintenance</h1> <!-- Centered the Repairs/Maintenance header -->
+        <table class="repairs-maintenance">
+            <tr>
+                <th>Description</th>
+                <td><span class="input-box"><?php echo htmlspecialchars($row['orange_tag_description']); ?></span></td>
+            </tr>
+            <tr>
+                <th>Repairs Made</th>
+                <td><span class="input-box"><?php echo htmlspecialchars($row['repairs_made']); ?></span></td>
+            </tr>
+            <tr>
+                <th>Root Cause</th>
+                <td><span class="input-box"><?php echo htmlspecialchars($row['root_cause']); ?></span></td>
+            </tr>
+            <tr>
+                <th>Due Date</th>
+                <td><span class="input-box"><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_due_date']))); ?></span></td>
+            </tr>
+            <tr>
+                <th>Total Repair Time</th>
+                <td><span class="input-box"><?php echo htmlspecialchars($row['total_repair_time']); ?></span></td>
+            </tr>
+            <tr>
+                <th>Equipment Down Time</th>
+                <td><span class="input-box"><?php echo htmlspecialchars($row['equipment_down_time']); ?></span></td>
+            </tr>
+        </table>
+        <table class="footer-table" style="width: 100%;">
+    <tr>
+        <td colspan="4" style="text-align: center;">This Document is for Reference Only</td>
+    </tr>
+</table>
     </div>
+    <?php endwhile; ?>
+    
 </body>
 </html>
 
