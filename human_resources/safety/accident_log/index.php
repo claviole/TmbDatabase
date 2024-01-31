@@ -271,7 +271,7 @@ $employees = mysqli_query($database, $query);
             <!-- File Upload -->
             <div class="form-group">
                 <label for="fileUpload">Upload File</label>
-                <input type="file" class="form-control-file" id="fileUpload">
+                <input type="file" class="form-control-file" id="fileUpload" name="fileUpload[]" multiple>
             </div>
 
              <!-- Environmental Impact -->
@@ -441,6 +441,32 @@ document.querySelectorAll('.accident-id').forEach(function(element) {
             });
     });
 });
+ // Automatically open the accident details modal if an accident_id is present in the URL
+ const urlParams = new URLSearchParams(window.location.search);
+    const accidentId = urlParams.get('accident_id');
+    if (accidentId) {
+        fetchAccidentDetailsAndShowModal(accidentId);
+    }
+
+    // Function to fetch accident details and show the modal
+    function fetchAccidentDetailsAndShowModal(accidentId) {
+        fetch('get_accident_details.php?id=' + accidentId)
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('#accidentDetailsModal .modal-content').innerHTML = data;
+                $('#accidentDetailsModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching accident details:', error));
+    }
+
+    // Attach click event listeners to elements with class 'accident-id'
+    document.querySelectorAll('.accident-id').forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            e.preventDefault();
+            var accidentId = this.getAttribute('data-id');
+            fetchAccidentDetailsAndShowModal(accidentId);
+        });
+    });
 document.querySelector('#employeeName').addEventListener('change', function () {
     var selectedText = this.options[this.selectedIndex].text;
     document.querySelector('#nonEmployeeName').style.display = selectedText === 'non employee' ? 'block' : 'none';

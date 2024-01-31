@@ -101,7 +101,7 @@ $job_titles = $result->fetch_all(MYSQLI_ASSOC);
             <input name="first-day-of-work" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="first-day-of-work" type="date">
         </div>
         <div class="w-1/2 px-3">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="location_code">
+                <label class="block uppercase tracking-wide text-white text-xs font-bold mb-2" for="location_code">
                     Location
                 </label>
                 <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location_code" name="location_code" required>
@@ -123,6 +123,7 @@ $job_titles = $result->fetch_all(MYSQLI_ASSOC);
     </button>
 </div>
 </form>
+</div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
     echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";

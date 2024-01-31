@@ -861,7 +861,7 @@ $lines_result = mysqli_query($database, $lines_query);
                 </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-secondary" id="print-workorder" disabled>Print Workorder</button>
+                <button type="button" class="btn btn-secondary" id="print-workorder">Print Workorder</button>
                 <button type="button" class="btn btn-primary" id="save-ticket">Save Ticket</button>
                 <button type="button" class="btn btn-primary" id="update-ticket">Update Ticket</button>
             </div>
@@ -1661,11 +1661,6 @@ $(document).ready(function() {
 }
 
 
-     // Event handler for when the modal is shown
-     $('#newTicketModal').on('shown.bs.modal', function() {
-        populateTicketData(); // Populate data when the modal is shown
-        togglePrintButton(); // Update the print button state
-    });
 
     
     // Event handler for the "Print Workorder" button

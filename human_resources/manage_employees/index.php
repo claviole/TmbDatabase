@@ -201,7 +201,7 @@ $location_code = $_SESSION['location_code'];
         $location_code = $_SESSION['location_code'];
 
         // Prepare the SQL query with a placeholder for the location code
-        $query = "SELECT employees.*, job_titles.job_title AS job_title FROM employees JOIN job_titles ON employees.job_title = job_titles.job_title_id WHERE employees.status = 'active' AND employees.location_code = ?";
+        $query = "SELECT employees.*, job_titles.job_title AS job_title FROM `employees` JOIN job_titles ON employees.job_title = job_titles.job_title_id WHERE employees.status = 'active' AND employees.location_code = ?";
 
         // Prepare the statement
         $stmt = mysqli_prepare($database, $query);
@@ -226,8 +226,10 @@ $location_code = $_SESSION['location_code'];
             die('Execute failed: ' . htmlspecialchars(mysqli_error($database)));
         }
     ?>
+    <div class="container mt-3">
+    <input class="form-control mb-3" id="tableSearch" type="text" placeholder="Search employees...">
     <div class="scrollable-table">
-        <table class="table employee-table">
+    <table class="table employee-table" id="employeeTable">
             <thead>
                 <tr>
                     <th>Employee ID</th>
@@ -256,6 +258,7 @@ $location_code = $_SESSION['location_code'];
                 <?php endwhile; ?>
             </tbody>
         </table>
+    </div>
     </div>
     <?php
         // Close the statement
@@ -514,6 +517,28 @@ document.querySelector('#save-changes').addEventListener('click', function () {
             $('#edit-modal').modal('hide');
         }
     });
+});
+// Get the input field and the table
+let searchInput = document.getElementById('tableSearch');
+let table = document.getElementById('employeeTable');
+let tbody = table.getElementsByTagName('tbody')[0];
+let rows = tbody.getElementsByTagName('tr');
+
+// Filter rows by search query
+searchInput.addEventListener('keyup', function(event) {
+    let searchQuery = event.target.value.toLowerCase();
+    for (let row of rows) {
+        let cells = row.getElementsByTagName('td');
+        let rowText = '';
+        for (let cell of cells) {
+            rowText += cell.textContent.toLowerCase() + " ";
+        }
+        if (rowText.includes(searchQuery)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
 });
 </script>
 </html>

@@ -7,13 +7,13 @@ if(isset($_POST['submit'])){
     $lastName = $_POST['last-name'];
     $email = $_POST['email'];
     $dateOfHire = $_POST['date-of-hire'];
-    $jobTitle = $_POST['job-title'];
+    $jobTitle = (int) $_POST['job-title'];
     $firstDayOfWork = $_POST['first-day-of-work'];
     $location_code = $_POST['location_code'];
 
     $sql = "INSERT INTO `employees` (`employee_fname`, `employee_lname`,`email`,`date_hired`, `job_title`, `first_day_of_work`,`location_code`) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $database->prepare($sql);
-    $stmt->bind_param("sssss", $firstName, $lastName, $dateOfHire, $jobTitle, $firstDayOfWork, $location_code);
+    $stmt->bind_param("ssssiss", $firstName, $lastName,$email, $dateOfHire, $jobTitle, $firstDayOfWork, $location_code);
 
     if($stmt->execute()){
         $_SESSION['success'] = "New employee added successfully";

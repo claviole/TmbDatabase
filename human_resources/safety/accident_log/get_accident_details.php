@@ -18,6 +18,18 @@ $files = mysqli_fetch_all($result, MYSQLI_ASSOC);
     color: #fff;
     /* Add more styles as needed */
 }
+
+.download-button {
+    margin-bottom: 10px; /* Adds space between buttons */
+    border-radius: 20px; /* Makes the buttons have rounded corners */
+    transition: transform 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.download-button:hover {
+    transform: scale(1.05); /* Slightly enlarges the button on hover */
+    text-decoration: none; /* Removes underline text on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a shadow effect on hover */
+}
 </style>
 
 <div class="modal-header">
@@ -73,10 +85,11 @@ $files = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 </button>
             </div>
             <div class="modal-body">
-                <?php foreach ($files as $file): ?>
-                    <a href="download.php?accidentId=<?= $accidentId ?>&fileName=<?= urlencode($file['file_name']) ?>" class="btn btn-primary"><?= htmlspecialchars($file['file_name']) ?></a>
-                <?php endforeach; ?>
-            </div>
+    <?php foreach ($files as $file): ?>
+        <a href="download.php?accidentId=<?= $accidentId ?>&fileName=<?= urlencode($file['file_name']) ?>" class="btn btn-primary download-button"><?= htmlspecialchars($file['file_name']) ?></a>
+        <br>
+    <?php endforeach; ?>
+</div>
         </div>
     </div>
 </div>
