@@ -11,11 +11,11 @@ if (!isset($_SESSION['user'])) {
 // Fetch data from the accident_report table
 $query = "
 SELECT accident_report.*, employees.employee_fname, employees.employee_lname 
-FROM accident_report 
-JOIN employees ON accident_report.employee_id = employees.employee_id";
+FROM `accident_report` 
+JOIN `employees` ON accident_report.employee_id = employees.employee_id";
 $result = mysqli_query($database, $query);
 
-$query = "SELECT employee_id, employee_fname, employee_lname FROM employees WHERE location_code = '$_SESSION[location_code]' ";
+$query = "SELECT `employee_id`, `employee_fname`, `employee_lname` FROM `employees` WHERE `location_code` = '$_SESSION[location_code]' ";
 $employees = mysqli_query($database, $query);
 ?>
 
@@ -30,6 +30,13 @@ $employees = mysqli_query($database, $query);
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+<script>
+$(document).ready( function () {
+    $('.table-auto').DataTable();
+});
+</script>
     <title>Accident Log</title>
     <style>
         .return-button {
@@ -128,6 +135,51 @@ $employees = mysqli_query($database, $query);
 .table-auto tbody tr:hover {
     background-color: #e0e0e0;
 }
+h1, h2, h3, p {
+    margin: 0 0 15px 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+p {
+    font-size: 16px;
+}
+/* Change DataTables info text color to white */
+.dataTables_info {
+    color: white !important; /* Use !important to ensure override */
+}
+
+/* Change DataTables length control and search box text color to white */
+.dataTables_length label,
+.dataTables_filter label {
+    color: white !important;
+}
+
+/* Change DataTables pagination buttons text color to white */
+.dataTables_wrapper .dataTables_paginate .paginate_button.next, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous {
+    color: white !important;
+}
+
+/* Change DataTables search input text color to white */
+.dataTables_filter input {
+    color: black; /* Assuming you want the input text to be black for contrast */
+    background-color: white; /* White background to see the black text */
+}
+
+/* If you want to change the color of the select dropdown text */
+.dataTables_length select {
+    color: black; /* Text color inside the select box */
+    background-color: white; /* Background of the select box */
+}
+
     </style>
     
 </head>
