@@ -192,12 +192,14 @@ $(document).ready( function () {
     color: #212529;
     table-layout: auto; /* Allow cells to adjust their widths as needed */
     border: 1px solid #dee2e6;
-    border-radius: 10px;
+    border-radius: 15px;
+    
 }
 
 /* Styling for rows */
 .dataTables_wrapper .table-striped tbody tr:nth-of-type(odd) {
     background-color: #fff;
+    border-radius: 15px;
 }
 
 /* Styling for table headers */
@@ -205,6 +207,7 @@ $(document).ready( function () {
 #orange_tag_table thead th {
     background-color: #FFA500; /* Orange background */
     color: #000; /* Black text */
+
     /* Other styles */
 }
 .dataTables_wrapper .table thead th {
@@ -215,6 +218,7 @@ $(document).ready( function () {
     position: sticky;
     top: 0; /* This will make the header stick to the top */
     z-index: 10; /* This will make sure the header is above the table rows */
+   
 }
 /* Styling for table cells */
 .dataTables_wrapper .table td {
@@ -226,6 +230,7 @@ $(document).ready( function () {
 .dataTables_wrapper .table-striped tbody tr:hover {
     background-color: #e0e0e0;
     cursor: pointer;
+    border-radius: 15px;
 }
 
 /* Adjusting the DataTables pagination buttons to match your theme */
@@ -234,7 +239,7 @@ $(document).ready( function () {
     padding: 0.5em 1em;
     margin: 0 2px;
     border: 1px solid transparent; /* Remove border */
-    border-radius: 5px; /* Rounded corners for buttons */
+    border-radius: 15px; /* Rounded corners for buttons */
     background-color: #FFA500; /* Button background color */
     box-shadow: none; /* Remove default DataTables button shadow */
 }
@@ -247,7 +252,7 @@ $(document).ready( function () {
 /* Active pagination button */
 .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-    color: #fff !important;
+    color: black !important;
     background-color: #007bff !important; /* Bootstrap primary color for active button */
     border-color: transparent;
 }
@@ -282,6 +287,10 @@ $(document).ready( function () {
 .dataTables_wrapper .dataTables_paginate .paginate_button.previous {
     color: white !important;
 }
+.dataTables_wrapper .table {
+    border-radius: 15px; /* Increased from 10px for more roundness */
+}
+
 
     </style>
 
