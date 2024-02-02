@@ -1,6 +1,10 @@
 <?php
 include '../../../configurations/connection.php';
-
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../../../index.php");
+    exit();
+}
 $observation_score = $_POST['observation_score'];
 $employee_id = $_POST['employee_id'];
 $observation_date = $_POST['observation_date'];

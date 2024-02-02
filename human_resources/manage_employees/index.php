@@ -4,7 +4,7 @@ include '../../configurations/connection.php';
 date_default_timezone_set('America/Chicago');
 if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit();
 }
 
@@ -263,16 +263,16 @@ $location_code = $_SESSION['location_code'];
     <?php
         // Close the statement
         mysqli_stmt_close($stmt);
-    } else {
-        // Handle the case where the session variable isn't set
-        echo "Location code is not set in the session.";
     }
+        else{
+            echo "Location code not set in session";
+        }
     ?>
 </div>
-    <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
-    <?php
-    echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";
-    ?>
+<div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
+<?php
+echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . "             " . date("m/d/Y") . "<br>";
+?>
     <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
 </div>
 <div id="password-change-modal" style="display: none;">
@@ -327,8 +327,8 @@ $job_titles = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 <select name="job_title_id" id="job_title">
     <?php foreach ($job_titles as $job_title): ?>
-        <option value="<?php echo $job_title['job_title_id']; ?>">
-            <?php echo $job_title['job_title']; ?>
+        <option value="<?php echo htmlspecialchars($job_title['job_title_id'], ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo htmlspecialchars($job_title['job_title'], ENT_QUOTES, 'UTF-8'); ?>
         </option>
     <?php endforeach; ?>
 </select>

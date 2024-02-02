@@ -18,7 +18,7 @@ $awaiting_approval_count = $result->fetch_assoc()['count'];
 // Close the statement
 $stmt->close();
 
-// Check if the user is logged in and is an admin
+// Check if the user is logged in 
 if(!isset($_SESSION['user']) ){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../index.php");
@@ -149,8 +149,8 @@ button:active {
     
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
-    echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";
-    ?>
+echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . "             " . date("m/d/Y") . "<br>";
+?>
     <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
     
     <?php if ($_SESSION['user_type'] == 'super-admin') { ?>

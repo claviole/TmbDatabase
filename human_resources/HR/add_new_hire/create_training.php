@@ -1,6 +1,10 @@
 <?php
 include '../../../configurations/connection.php';
-
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../../../index.php");
+    exit();
+}
 // Fetch the most recently added employee
 $result = $database->query("SELECT * FROM `employees` ORDER BY `employee_id` DESC LIMIT 1");
 $employee = $result->fetch_assoc();

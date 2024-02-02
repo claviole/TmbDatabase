@@ -4,6 +4,11 @@ include '../configurations/connection.php';
 // log_change.php
 
 session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 
 // Check if the request is a POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

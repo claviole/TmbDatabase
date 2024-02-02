@@ -58,8 +58,8 @@ date_default_timezone_set('America/Chicago');
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
-    echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";
-    ?>
+echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . "             " . date("m/d/Y") . "<br>";
+?>
     <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
 </div>
 <div id="password-change-modal" style="display: none;">

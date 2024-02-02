@@ -1,5 +1,10 @@
 <?php
 session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 include '../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
 

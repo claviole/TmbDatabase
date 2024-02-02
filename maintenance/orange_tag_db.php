@@ -76,7 +76,8 @@ $priority4TicketCount = $data['total'];
 
 <script>
 $(document).ready( function () {
-    $('.table-auto').DataTable();
+    $('#orange_tag_table').DataTable();
+
 });
 </script>
 
@@ -190,114 +191,98 @@ $(document).ready( function () {
     width: 100%;
     margin-bottom: 1rem;
     color: #212529;
-    table-layout: auto; /* Allow cells to adjust their widths as needed */
+    table-layout: fixed; /* Allow cells to adjust their widths as needed */
     border: 1px solid #dee2e6;
-    border-radius: 15px;
-    
+    border-radius: 15px; /* Rounded corners for the table */
 }
 
-/* Styling for rows */
-.dataTables_wrapper .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #fff;
-    border-radius: 15px;
-}
-
-/* Styling for table headers */
 /* Styling for table headers */
 #orange_tag_table thead th {
     background-color: #FFA500; /* Orange background */
     color: #000; /* Black text */
-
-    /* Other styles */
-}
-.dataTables_wrapper .table thead th {
-    background-color: #FFA500 !important; /* Orange background */
-    color: #000 !important; /* Black text */
     padding: 10px;
     text-align: left;
     position: sticky;
-    top: 0; /* This will make the header stick to the top */
-    z-index: 10; /* This will make sure the header is above the table rows */
-   
-}
-/* Styling for table cells */
-.dataTables_wrapper .table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    top: 0; /* Sticky header */
+    z-index: 10;
 }
 
-/* Hover effect for rows */
-.dataTables_wrapper .table-striped tbody tr:hover {
-    background-color: #e0e0e0;
-    cursor: pointer;
-    border-radius: 15px;
+/* Styling for rows */
+/* Alternating row colors using DataTables' own classes */
+#orange_tag_table .odd {
+    background-color: #f2f2f2 !important; /* Lighter for odd rows */
 }
 
-/* Adjusting the DataTables pagination buttons to match your theme */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    color: #212529; /* Button text color */
-    padding: 0.5em 1em;
-    margin: 0 2px;
-    border: 1px solid transparent; /* Remove border */
-    border-radius: 15px; /* Rounded corners for buttons */
-    background-color: #FFA500; /* Button background color */
-    box-shadow: none; /* Remove default DataTables button shadow */
+#orange_tag_table .even {
+    background-color: #e6e6e6 !important; /* Darker for even rows */
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background-color: #e69500; /* Darker shade for hover */
-    border-color: transparent;
+/* Adding borders to rows for definition */
+#orange_tag_table td {
+    border-top: 1px solid #666; /* Darker top border for each cell */
 }
 
-/* Active pagination button */
-.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-    color: black !important;
-    background-color: #007bff !important; /* Bootstrap primary color for active button */
-    border-color: transparent;
+#orange_tag_table tr {
+    border-bottom: 2px solid #666; /* Darker bottom border for each row */
 }
-/* Change search input text color to white */
-.dataTables_wrapper .dataTables_filter input {
-    color: black; /* Text color */
+
+/* Hover effect for rows within tbody only */
+#orange_tag_table tbody tr:hover {
+    cursor: pointer; /* Shows a pointer to indicate clickable */
+    background-color: #ddd !important; /* Slightly darker on hover for feedback */
+}
+
+/* Styling for search input and length selection */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    color: #000; /* Black text for inputs and selects */
     padding: 0.25em 0.5em;
 }
 
-/* Change pagination buttons text color to white */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    color: #fff !important; /* Text color */
+/* Styling for search label, page counts, next page, previous page */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length {
+    color: #fff !important; /* White text */
 }
-
-/* Change the text color of DataTables length menu (show entries) to white */
-.dataTables_wrapper .dataTables_length select,
-.dataTables_wrapper .dataTables_length label {
-    color: black; /* Text color */
-}
-
-/* Change the text color of DataTables "Showing 1 to 10 of 50 entries" to white */
-.dataTables_wrapper .dataTables_info {
-    color: #fff; /* Text color */
-}
-.dataTables_length label,
-.dataTables_filter label {
-    color: white !important;
-}
-
-/* Change DataTables pagination buttons text color to white */
 .dataTables_wrapper .dataTables_paginate .paginate_button.next, 
-.dataTables_wrapper .dataTables_paginate .paginate_button.previous {
-    color: white !important;
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous{
+    color: black !important; /* Black text */
+    background-color: #FFA500 !important; /* Orange background */
 }
-.dataTables_wrapper .table {
-    border-radius: 15px; /* Increased from 10px for more roundness */
+/* Styling for all pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #000 !important; /* Black text */
+    background-color: #fff !important; /* White background */
+    border: 1px solid #ddd; /* Slight border for definition */
 }
 
+/* Styling for the active (current) pagination button */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important; /* White text */
+    background-color: #666 !important; /* Grey background */
+    border-color: #666; /* Matching border color */
+}
 
+/* Styling for hover over pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #eee !important; /* Lighter grey on hover */
+    border-color: #ddd; /* Slight border color change on hover */
+}
+#orange_tag_table td:last-child {
+    white-space: normal; /* Allows text to wrap */
+}
+body {
+    background: url('../images/steel_coils.jpg') no-repeat center center fixed; 
+    background-size: cover; /* Cover the entire page */
+}
     </style>
 
     <title>S.M.A.R.T.</title>
     <!-- Add your CSS styles here -->
 </head>
-<body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
+<body>
 <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
 <div class="return-button-container">
     <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
@@ -461,12 +446,7 @@ $(document).ready( function () {
     </div>
   </div>
 </div>
-        <button id="myOpenTicketsButton" class="btn btn-secondary" style="display:none;" onclick="viewMyOpenTickets()">My Open Tickets</button>
-        <?php if ($_SESSION['user_type'] == 'maintenance-tech'): ?>
-        <script>
-        document.getElementById('myOpenTicketsButton').style.display = 'block';
-        </script>
-        <?php endif; ?>
+        
         </div>
     </div>
     <div class="card-deck mt-3">
@@ -530,35 +510,35 @@ $query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location
 
 $result = mysqli_query($database, $query);
 while ($row = mysqli_fetch_assoc($result)): ?>
-    <tr class="<?php echo $row['ticket_status']; ?>">
-        <td><?php echo $row['orange_tag_id']; ?></td>
-        <td><?php echo date('m-d-Y', strtotime($row['orange_tag_creation_date'])); ?></td>
-        <td><?php echo date('m-d-Y', strtotime($row['orange_tag_due_date'])); ?></td>
-        <td><?php echo $row['originator']; ?></td>
-        <td><?php echo $row['ticket_type']; ?></td>
-        <td><?php echo $row['priority']; ?></td>
-        <td><?php echo $row['work_order_number']; ?></td>
+    <tr class="<?php echo htmlspecialchars($row['ticket_status'], ENT_QUOTES, 'UTF-8'); ?>">
+        <td><?php echo htmlspecialchars($row['orange_tag_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_creation_date'])), ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars(date('m-d-Y', strtotime($row['orange_tag_due_date'])), ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars($row['originator'], ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars($row['ticket_type'], ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars($row['priority'], ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars($row['work_order_number'], ENT_QUOTES, 'UTF-8'); ?></td>
         <td class="repair-technician">
         <?php 
         $technicians = explode(',', $row['repair_technician']);
         foreach ($technicians as $technician) {
             if (!empty($technician)) {
-                $tech_query = "SELECT `username` FROM `Users` WHERE `id` = $technician"; // Replace 'id' with the correct column name
+                $tech_query = "SELECT `username` FROM `Users` WHERE `id` = $technician"; // Ensure 'id' is the correct column name
                 $tech_result = mysqli_query($database, $tech_query);
                 if ($tech_result) {
                     $tech_data = mysqli_fetch_assoc($tech_result);
-                    echo htmlspecialchars($tech_data['username']) . '<br>';
+                    echo htmlspecialchars($tech_data['username'], ENT_QUOTES, 'UTF-8') . '<br>';
                 } else {
                     // Handle error, e.g., log it or echo a message
-                    echo "Error fetching technician data: " . mysqli_error($database);
+                    echo "Error fetching technician data: " . htmlspecialchars(mysqli_error($database), ENT_QUOTES, 'UTF-8');
                 }
             }
         }
         ?>
     </td>
-        <td><?php echo $row['location']; ?></td>
-        <td class="ticket-status"><?php echo $row['ticket_status']; ?></td>
-        <td><?php echo $row['orange_tag_description']; ?></td>
+        <td><?php echo htmlspecialchars($row['location'], ENT_QUOTES, 'UTF-8'); ?></td>
+        <td class="ticket-status"><?php echo htmlspecialchars($row['ticket_status'], ENT_QUOTES, 'UTF-8'); ?></td>
+        <td><?php echo htmlspecialchars($row['orange_tag_description'], ENT_QUOTES, 'UTF-8'); ?></td>
     </tr>
 <?php endwhile; ?>
                     </tbody>
@@ -666,8 +646,8 @@ $lines_result = mysqli_query($database, $lines_query);
     <select class="form-control" id="line_name" name="Line Name">
     <option value="" selected disabled hidden></option>
         <?php while ($line = mysqli_fetch_assoc($lines_result)): ?>
-            <option value="<?php echo $line['line_id']; ?>">
-                <?php echo $line['Line_Name'] . ' - ' . $line['Line_Location']; ?>
+            <option value="<?php echo htmlspecialchars($line['line_id'], ENT_QUOTES, 'UTF-8'); ?>">
+                <?php echo htmlspecialchars($line['Line_Name'], ENT_QUOTES, 'UTF-8') . ' - ' . htmlspecialchars($line['Line_Location'], ENT_QUOTES, 'UTF-8'); ?>
             </option>
         <?php endwhile; ?>
     </select>
@@ -678,25 +658,25 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 
 
-                                <div class="form-group">
-                                    <label for="supervisor">Supervisor</label>
-                                    <select class="form-control" id="supervisor" name="Supervisor" required>
-                                        <option value="" selected disabled hidden></option>
-                                        <?php while ($row = mysqli_fetch_assoc($supervisors)): ?>
-                                        <option value="<?php echo $row['employee_id']; ?>">
-                                        <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
-                                        </option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="orange_tag_creation_date">Creation Date</label>
-                                    <input type="date" class="form-control" id="orange_tag_creation_date" name="Creation Date" value="<?php echo date('Y-m-d'); ?>" required readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="orange_tag_creation_time">Creation Time</label>
-                                    <input type="time" class="form-control" id="orange_tag_creation_time" name="Creation Time" value="<?php echo date('H:i'); ?>" required readonly>
-                                </div>
+<div class="form-group">
+    <label for="supervisor">Supervisor</label>
+    <select class="form-control" id="supervisor" name="Supervisor" required>
+        <option value="" selected disabled hidden></option>
+        <?php while ($row = mysqli_fetch_assoc($supervisors)): ?>
+        <option value="<?php echo htmlspecialchars($row['employee_id'], ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8'); ?>
+        </option>
+        <?php endwhile; ?>
+    </select>
+</div>
+<div class="form-group">
+    <label for="orange_tag_creation_date">Creation Date</label>
+    <input type="date" class="form-control" id="orange_tag_creation_date" name="Creation Date" value="<?php echo htmlspecialchars(date('Y-m-d'), ENT_QUOTES, 'UTF-8'); ?>" required readonly>
+</div>
+<div class="form-group">
+    <label for="orange_tag_creation_time">Creation Time</label>
+    <input type="time" class="form-control" id="orange_tag_creation_time" name="Creation Time" value="<?php echo htmlspecialchars(date('H:i'), ENT_QUOTES, 'UTF-8'); ?>" required readonly>
+</div>
                                 
                             </div>
                         </div>
@@ -861,11 +841,11 @@ $lines_result = mysqli_query($database, $lines_query);
 </div>
 
 <div class="form-group">
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="reviewed_by_safety_coordinator" onchange="toggleDateField('safety_coordinator_review_date', this.checked)">
-        <label class="form-check-label" for="reviewed_by_safety_coordinator">Reviewed By Safety Coordinator</label>
-        <input type="text" class="form-control" id="location_code" name="location_code" value="<?php echo $_SESSION['location_code']; ?>" style="display: none;">
-    </div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" id="reviewed_by_safety_coordinator" onchange="toggleDateField('safety_coordinator_review_date', this.checked)">
+    <label class="form-check-label" for="reviewed_by_safety_coordinator">Reviewed By Safety Coordinator</label>
+    <input type="text" class="form-control" id="location_code" name="location_code" value="<?php echo htmlspecialchars($_SESSION['location_code'], ENT_QUOTES, 'UTF-8'); ?>" style="display: none;">
+</div>
     <input type="date" class="form-control" id="safety_coordinator_review_date" name="safety_coordinator_review_date" style="display: none;">
 </div>
 
@@ -1002,37 +982,39 @@ $(document).ready(function() {
     $('#save-part').click(function() {
         // Create a part object from the form data
         var part = {
-            date_used: $('#date_used').val(),
-            orange_tag_id: $('#orange_tag_id').val(),
-            part_description: $('#part_description').val(),
-            quantity: $('#quantity').val(),
-            brand_name: $('#brand_name').val(),
-            model_number: $('#model_number').val(),
-            serial_number: $('#serial_number').val(),
-            dimensions: $('#dimensions').val()
-        };
+    date_used: $('#date_used').val(),
+    orange_tag_id: $('#orange_tag_id').val(),
+    part_description: $('#part_description').val(),
+    quantity: $('#quantity').val(),
+    brand_name: $('#brand_name').val(),
+    model_number: $('#model_number').val(),
+    serial_number: $('#serial_number').val(),
+    dimensions: $('#dimensions').val()
+};
 
-        // Add the part to the parts array
-        parts.push(part);
+// Add the part to the parts array
+parts.push(part);
 
-        // Clear the table
-        $('#parts_list tbody').empty();
+// Clear the table
+$('#parts_list tbody').empty();
 
-        // Add each part to the table
-        $.each(parts, function(i, part) {
-            var row = '<tr>' +
-                '<td>' + part.date_used + '</td>' +
-                '<td>' + part.part_description + '</td>' +
-                '<td>' + part.quantity + '</td>' +
-                '<td>' + part.brand_name + '</td>' +
-                '<td>' + part.model_number + '</td>' +
-                '<td>' + part.serial_number + '</td>' +
-                '<td>' + part.dimensions + '</td>' +
-                '</tr>';
-            $('#parts_list tbody').append(row);
-        });
+// Add each part to the table
+$.each(parts, function(i, part) {
+    // Create a new row and cells using jQuery to ensure proper escaping
+    var $row = $('<tr></tr>');
+    $('<td></td>').text(part.date_used).appendTo($row);
+    $('<td></td>').text(part.part_description).appendTo($row);
+    $('<td></td>').text(part.quantity).appendTo($row);
+    $('<td></td>').text(part.brand_name).appendTo($row);
+    $('<td></td>').text(part.model_number).appendTo($row);
+    $('<td></td>').text(part.serial_number).appendTo($row);
+    $('<td></td>').text(part.dimensions).appendTo($row);
 
-        $('#addPartModal').modal('hide');
+    // Append the row to the table body
+    $('#parts_list tbody').append($row);
+});
+
+$('#addPartModal').modal('hide');
     });
 
     $('#save-ticket').click(function() {
@@ -1091,33 +1073,7 @@ $(document).ready(function() {
         success: function(response) {
             // Handle the response from the server
             console.log(response);
-            $.ajax({
-    url: '../configurations/send_email.php', // Replace with the URL of your PHP script for sending emails
-    method: 'POST',
-    
-    data: {
-        // Include only the ticket details information from the 'ticket-details' tab
-        'technicians[]': repair_technicians,
-        orange_tag_id: $('#orange_tag_id').val(),
-        ticket_type: $('#ticket_type').val(),
-        originator_name: $('#originator_name').val(),
-        location: $('#location').val(),
-        priority: $('#priority').val(),
-        supervisor: $('#supervisor').val(),
-        orange_tag_creation_date: $('#orange_tag_creation_date').val(),
-        orange_tag_creation_time: $('#orange_tag_creation_time').val(),
-        orange_tag_description: $('#orange_tag_description').val()
-    },
-    success: function(response) {
-        // Handle the response from the server
-        console.log(response);
-       
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-        console.error('AJAX Error:', textStatus, errorThrown);
-        console.error('Response Text:', jqXHR.responseText);
-    }
-});
+            
         },
         error: function(jqXHR, textStatus, errorThrown) {
             // Handle any errors
@@ -1361,16 +1317,15 @@ $.ajax({
 
         // Add each part to the table
         $.each(parts, function(i, part) {
-            var row = '<tr>' +
-                '<td>' + part.date_used + '</td>' +
-                '<td>' + part.part_description + '</td>' +
-                '<td>' + part.quantity + '</td>' +
-                '<td>' + part.brand_name + '</td>' +
-                '<td>' + part.model_number + '</td>' +
-                '<td>' + part.serial_number + '</td>' +
-                '<td>' + part.dimensions + '</td>' +
-                '</tr>';
-            $('#parts_list tbody').append(row);
+            var $row = $('<tr></tr>');
+            $('<td></td>').text(part.date_used).appendTo($row);
+            $('<td></td>').text(part.part_description).appendTo($row);
+            $('<td></td>').text(part.quantity).appendTo($row);
+            $('<td></td>').text(part.brand_name).appendTo($row);
+            $('<td></td>').text(part.model_number).appendTo($row);
+            $('<td></td>').text(part.serial_number).appendTo($row);
+            $('<td></td>').text(part.dimensions).appendTo($row);
+            $('#parts_list tbody').append($row);
         });
 
         // Toggle the parts form based on whether there are parts
@@ -1746,6 +1701,40 @@ $('#print-workorder').on('click', function() {
 });
 
 
+});
+
+$(document).ready(function() {
+    // Check if the DataTable instance exists and destroy it before reinitializing
+if ($.fn.DataTable.isDataTable('#orange_tag_table')) {
+    $('#orange_tag_table').DataTable().destroy();
+}
+
+// Now reinitialize the DataTable
+$('#orange_tag_table').DataTable({
+    // Your initialization options
+    "drawCallback": function(settings) {
+        // Your drawCallback function here
+    }
+});
+
+
+});
+$('#orange_tag_table').DataTable({
+    autoWidth: false,
+    columnDefs: [
+        { width: '8%', targets: 1 }, // Example width for the second column
+        { width: '8%', targets: 2 }, // Example width for the third column
+        { width: '7%', targets: 3 }, // Example width for the third column
+        { width: '9%', targets: 4 }, // Example width for the third column
+        { width: '7%', targets: 5}, // Example width for the third column
+        { width: '5%', targets: 9 }, // Example width for the third column
+       
+       
+       
+        
+        // Define widths for all columns except the last one
+        // No width defined for the last column to allow it to expand
+    ]
 });
 </script>
 </body>

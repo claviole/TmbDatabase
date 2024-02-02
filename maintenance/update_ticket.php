@@ -1,7 +1,10 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 // Include your database connection file here
 include '../configurations/connection.php';
 
@@ -42,14 +45,24 @@ $ticket_status = mysqli_real_escape_string($database, $_POST['ticket_status']);
 $date_closed = mysqli_real_escape_string($database, $_POST['date_closed']);
 $work_order_number = mysqli_real_escape_string($database, $_POST['work_order_number']);
 
-// Update data in the database
-$query = "UPDATE `orange_tag` SET `ticket_type`='$ticket_type', `originator`='$originator', `location`='$location', `priority`='$priority',`line_name`='$line_name',`die_number`='$die_number', `supervisor`='$supervisor', `orange_tag_creation_date`='$orange_tag_creation_date', `orange_tag_creation_time`='$orange_tag_creation_time', `orange_tag_due_date`='$orange_tag_due_date', `repairs_made`='$repairs_made', `root_cause`='$root_cause', `equipment_down_time`='$equipment_down_time', `total_repair_time`='$total_repair_time', `area_cleaned`='$area_cleaned', `follow_up_necessary`='$follow_up_necessary', `parts_needed`='$parts_needed', `reviewed_by_supervisor`='$reviewed_by_supervisor', `reviewed_by_safety_coordinator`='$reviewed_by_safety_coordinator', `supervisor_review_date`='$supervisor_review_date', `safety_coordinator_review_date`='$safety_coordinator_review_date', `verified`='$verified', `date_verified`='$date_verified', `orange_tag_description`='$orange_tag_description', `repair_technician`='$repair_technician', `total_cost`='$total_cost', `ticket_status`='$ticket_status', `work_order_number`='$work_order_number', `location_code`='$location_code', `originator_name`='$originator_name',`date_closed`='$date_closed'  WHERE `orange_tag_id`='$orange_tag_id'";
+// Prepare an update statement
+$query = "UPDATE `orange_tag` SET `ticket_type`=?, `originator`=?, `originator_name`=?, `location`=?, `priority`=?, `line_name`=?, `die_number`=?, `supervisor`=?, `orange_tag_creation_date`=?, `orange_tag_creation_time`=?, `orange_tag_due_date`=?, `repairs_made`=?, `root_cause`=?, `equipment_down_time`=?, `total_repair_time`=?, `area_cleaned`=?, `follow_up_necessary`=?, `parts_needed`=?, `reviewed_by_supervisor`=?, `reviewed_by_safety_coordinator`=?, `supervisor_review_date`=?, `safety_coordinator_review_date`=?, `verified`=?, `date_verified`=?, `orange_tag_description`=?, `repair_technician`=?, `total_cost`=?, `ticket_status`=?, `work_order_number`=?, `location_code`=?, `date_closed`=? WHERE `orange_tag_id`=?";
 
-$result = mysqli_query($database, $query);
+$stmt = mysqli_prepare($database, $query);
 
-if ($result) {
+// Bind variables to the prepared statement as parameters
+mysqli_stmt_bind_param($stmt, 'ssssisssssssssssssssssssssssssss', $ticket_type, $originator, $originator_name, $location, $priority, $line_name, $die_number, $supervisor, $orange_tag_creation_date, $orange_tag_creation_time, $orange_tag_due_date, $repairs_made, $root_cause, $equipment_down_time, $total_repair_time, $area_cleaned, $follow_up_necessary, $parts_needed, $reviewed_by_supervisor, $reviewed_by_safety_coordinator, $supervisor_review_date, $safety_coordinator_review_date, $verified, $date_verified, $orange_tag_description, $repair_technician, $total_cost, $ticket_status, $work_order_number, $location_code, $date_closed, $orange_tag_id);
+
+// Attempt to execute the prepared statement
+if (mysqli_stmt_execute($stmt)) {
     echo "Ticket updated successfully";
 } else {
-    echo "Error: " . mysqli_error($database);
+    echo "Error: " . mysqli_stmt_error($stmt);
 }
+
+// Close statement
+mysqli_stmt_close($stmt);
+
+// Close connection
+mysqli_close($database);
 ?>

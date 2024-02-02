@@ -1,4 +1,10 @@
 <?php
+session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 // Include your database connection file here
 include '../configurations/connection.php';
 

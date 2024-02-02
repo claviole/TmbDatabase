@@ -1,12 +1,17 @@
 <?php
 include '../../../configurations/connection.php'; // Adjust the path as necessary
 require '../../../configurations/vendor/autoload.php'; // Make sure this path correctly points to Composer's autoload.php
-
+session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../../../index.php");
+    exit();
+}
 use \Mailjet\Resources;
 
 // Mailjet API credentials
-$apiKey = '75714be908e64ce7a2686eeca5afb921';
-$apiSecret = '1b9d487cd5b4c212b6b95e28c768815e';
+$apiKey=$APIKey; 
+$apiSecret=$APISecret; 
 
 // Insert form data into the accident_report table
 $stmt = $database->prepare("INSERT INTO `accident_report` (`employee_id`,`non_employee_name`, `accident_type`, `date_added`, `accident_date`, `accident_time`, `shift`, `time_sent_to_clinic`, `date_sent_to_clinic`, `accident_location`, `time_of_report`, `shift_start_time`, `accident_description`, `consecutive_days_worked`, `proper_ppe_used`, `proper_ppe_used_explain`, `procedure_followed`, `procedure_followed_explain`, `potential_severity`, `potential_severity_explain`, `environmental_impact`, `environmental_impact_explain`, `prevent_reoccurance`, `immediate_corrective_action`, `irp_required`, `irp_names`, `equip_out_of_service`, `equip_out_of_service_explain`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -77,14 +82,23 @@ if (isset($_FILES['fileUpload']['name']) && is_array($_FILES['fileUpload']['name
 // Prepare the email content with a link to the full report
 $subject = "New Accident Report Submitted";
 $fullReportUrl = "http://targetmetalsync.com/human_resources/safety/accident_log/index.php?accident_id=" . $accidentId; // Replace with your actual URL
+// Ensure the dynamic data is sanitized before including it in the HTML content
+$employeeFname = htmlspecialchars($employeeFname, ENT_QUOTES, 'UTF-8');
+$employeeLname = htmlspecialchars($employeeLname, ENT_QUOTES, 'UTF-8');
+$accidentType = htmlspecialchars($_POST['accident_type'], ENT_QUOTES, 'UTF-8');
+$accidentDate = htmlspecialchars($_POST['accident_date'], ENT_QUOTES, 'UTF-8');
+$accidentLocation = htmlspecialchars($_POST['accident_location'], ENT_QUOTES, 'UTF-8');
+$accidentDescription = htmlspecialchars($_POST['accident_description'], ENT_QUOTES, 'UTF-8');
+$fullReportUrl = htmlspecialchars($fullReportUrl, ENT_QUOTES, 'UTF-8');
+
 $htmlPart = "<div style='font-family: Arial, sans-serif;'>
                 <h2 style='color: #f7931e;'>Accident Report Details</h2>
                 <hr style='border: 1px solid #f7931e;'>
                 <p><strong>Employee Name:</strong> {$employeeFname} {$employeeLname}</p>
-                <p><strong>Accident Type:</strong> {$_POST['accident_type']}</p>
-                <p><strong>Date of Accident:</strong> {$_POST['accident_date']}</p>
-                <p><strong>Location:</strong> {$_POST['accident_location']}</p>
-                <p><strong>Description:</strong> {$_POST['accident_description']}</p>
+                <p><strong>Accident Type:</strong> {$accidentType}</p>
+                <p><strong>Date of Accident:</strong> {$accidentDate}</p>
+                <p><strong>Location:</strong> {$accidentLocation}</p>
+                <p><strong>Description:</strong> {$accidentDescription}</p>
                 <p>For the full report, please <a href='{$fullReportUrl}'>click here</a>.</p>
                 <p style='font-size: 0.9em; color: #666;'>This is an automated message, please do not reply directly to this email.</p>
             </div>";

@@ -1,6 +1,11 @@
 <?php
 include '../../../configurations/connection.php';
-
+session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../../index.php");
+    exit();
+}
 $accidentId = $_GET['accidentId'];
 $fileName = urldecode($_GET['fileName']);
 

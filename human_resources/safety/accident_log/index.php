@@ -205,18 +205,18 @@ p {
     </tr>
 </thead>
 <tbody>
-    <?php while($row = mysqli_fetch_assoc($result)): ?>
-        <tr>
-            <td class="accident-id" data-id="<?= $row['accident_id'] ?>"><?= $row['accident_id'] ?></td>
-            <td><?= $row['employee_fname'] . ' ' . $row['employee_lname'] ?></td>
-            <td><?= $row['accident_type'] ?></td>
-            <td><?= $row['date_added'] ?></td>
-            <td><?= $row['accident_date'] ?></td>
-            <td><?= $row['accident_time'] ?></td>
-            <td><?= $row['shift'] ?></td>
-            <td><?= $row['accident_location'] ?></td>
-        </tr>
-    <?php endwhile; ?>
+<?php while($row = mysqli_fetch_assoc($result)): ?>
+    <tr>
+        <td class="accident-id" data-id="<?= htmlspecialchars($row['accident_id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($row['accident_id'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['accident_type'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['date_added'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['accident_date'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['accident_time'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['shift'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['accident_location'], ENT_QUOTES, 'UTF-8') ?></td>
+    </tr>
+<?php endwhile; ?>
 </tbody>
 </table>
 <!-- Modal -->
@@ -246,11 +246,11 @@ p {
                     </select>
                     <label for="employeeName">Employee Name</label>
                     <select id="employeeName" class="form-control">
-    <?php while ($row = mysqli_fetch_assoc($employees)): ?>
-        <option value="<?php echo $row['employee_id']; ?>">
-            <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
-        </option>
-    <?php endwhile; ?>
+                    <?php while ($row = mysqli_fetch_assoc($employees)): ?>
+    <option value="<?php echo htmlspecialchars($row['employee_id'], ENT_QUOTES, 'UTF-8'); ?>">
+        <?php echo htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8'); ?>
+    </option>
+<?php endwhile; ?>
 </select>
 <input type="text" id="nonEmployeeName" class="form-control" style="display: none;">
                     <label for="currentDate">Current Date</label>

@@ -44,7 +44,7 @@ $employees = mysqli_query($database, $query);
 
 <script>
 $(document).ready( function () {
-    $('.table-auto').DataTable();
+    $('#observation-table').DataTable();
 });
 </script>
     <title>S.A.F.E.</title>
@@ -143,8 +143,8 @@ $(document).ready( function () {
         border-color: #6c757d;
     }
 
-    .low-score {
-    background-color: #FFCCCC; /* Light red color */
+    #observation-table .low-score {
+    background-color: #FFCCCC !important; /* Light red color */
 }
 h1, h2, h3, p {
     margin: 0 0 15px 0;
@@ -202,7 +202,7 @@ p {
     <a href="../index.php" class="return-button">Return to Safety Menu</a>
 </div>
 <!-- Table -->
-<table class="table-auto w-full">
+<table class="table-auto w-full " id="observation-table">
     <thead>
     <tr>
         <th>Observation ID</th>
@@ -214,16 +214,16 @@ p {
     </tr>
 </thead>
 <tbody>
-    <?php while($row = mysqli_fetch_assoc($result)): ?>
-        <tr <?php if ($row['observation_score'] <= 5) echo 'class="low-score"'; ?>>
-            <td class="observation-id" data-id="<?= $row['observation_id'] ?>"><?= $row['observation_id'] ?></td>
-            <td><?= $row['employee_fname'] . ' ' . $row['employee_lname'] ?></td>
-            <td><?= $row['observation_score'] ?></td>
-            <td><?= $row['observation_date'] ?></td>
-            <td><?= $row['observation_time'] ?></td>
-            <td><?= $row['observation_description'] ?></td>
-        </tr>
-    <?php endwhile; ?>
+<?php while($row = mysqli_fetch_assoc($result)): ?>
+    <tr <?php if ($row['observation_score'] <= 5) echo 'class="low-score"'; ?>>
+        <td class="observation-id" data-id="<?= htmlspecialchars($row['observation_id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($row['observation_id'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['observation_score'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['observation_date'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['observation_time'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td><?= htmlspecialchars($row['observation_description'], ENT_QUOTES, 'UTF-8') ?></td>
+    </tr>
+<?php endwhile; ?>
 </tbody>
 </table>
 
@@ -257,11 +257,11 @@ function updateScoreDescription(value) {
 </script>
                     <label for="employeeName">Employee Name</label>
 <select id="employeeName" class="form-control">
-    <?php while ($row = mysqli_fetch_assoc($employees)): ?>
-        <option value="<?php echo $row['employee_id']; ?>">
-            <?php echo $row['employee_fname'] . ' ' . $row['employee_lname']; ?>
-        </option>
-    <?php endwhile; ?>
+<?php while ($row = mysqli_fetch_assoc($employees)): ?>
+    <option value="<?php echo htmlspecialchars($row['employee_id'], ENT_QUOTES, 'UTF-8'); ?>">
+        <?php echo htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8'); ?>
+    </option>
+<?php endwhile; ?>
 </select>
                     <label for="observationDate">Observation Date</label>
                     <input type="date" id="observationDate" class="form-control">
@@ -340,6 +340,22 @@ document.querySelector('.btn-primary').addEventListener('click', function (e) {
     } else {
         alert('Please fill out all required fields.');
     }
+});
+$(document).ready(function() {
+    $('#observation-table').DataTable({
+        destroy: true,
+        "drawCallback": function(settings) {
+            // Iterate over all rows in the table
+            this.api().rows().every(function(rowIdx, tableLoop, rowLoop) {
+                var data = this.data();
+                // data[2] is the value of the third column (0-based index)
+                if (data[2] <= 5) {
+                    // Add 'low-score' class to the row
+                    $(this.node()).addClass('low-score');
+                }
+            });
+        }
+    });
 });
 </script>
 </body>

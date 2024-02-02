@@ -4,7 +4,7 @@ include '../../configurations/connection.php'; // Assuming you have a db_connect
 date_default_timezone_set('America/Chicago');
 if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit();
 }
 ?>
@@ -63,11 +63,9 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 
     </div>
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
-    <?php
-    echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";
-    ?>
-    <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
-</div>
+<?php
+echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . "             " . date("m/d/Y") . "<br>";
+?>
 <div id="password-change-modal" style="display: none;">
     <form id="password-change-form">
         <label for="current-password">Current Password:</label>

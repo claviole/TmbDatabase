@@ -1,9 +1,12 @@
 <?php
 // Include your database connection file here
 include '../configurations/connection.php';
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../index.php");
+    exit();
+}
 
 // Sanitize input
 $orange_tag_id = mysqli_real_escape_string($database, $_POST['orange_tag_id']);
@@ -41,14 +44,24 @@ $total_cost = mysqli_real_escape_string($database, $_POST['total_cost']);
 $ticket_status = mysqli_real_escape_string($database, $_POST['ticket_status']);
 $work_order_number = mysqli_real_escape_string($database, $_POST['work_order_number']);
 
-// Insert data into the database
-$query = "INSERT INTO `orange_tag` (`orange_tag_id`, `ticket_type`, `originator`,`originator_name`, `location`, `priority`,`line_name`,`die_number`, `supervisor`, `orange_tag_creation_date`, `orange_tag_creation_time`, `orange_tag_due_date`, `repairs_made`, `root_cause`, `equipment_down_time`, `total_repair_time`, `area_cleaned`, `follow_up_necessary`, `parts_needed`, `reviewed_by_supervisor`, `reviewed_by_safety_coordinator`, `supervisor_review_date`, `safety_coordinator_review_date`, `verified`, `date_verified`,`orange_tag_description`, `repair_technician`, `total_cost`, `ticket_status`, `work_order_number`, `location_code`) VALUES ('$orange_tag_id', '$ticket_type', '$originator','$originator_name', '$location', '$priority','$line_name','$die_number', '$supervisor', '$orange_tag_creation_date', '$orange_tag_creation_time', '$orange_tag_due_date', '$repairs_made', '$root_cause', '$equipment_down_time', '$total_repair_time', '$area_cleaned', '$follow_up_necessary', '$parts_needed', '$reviewed_by_supervisor', '$reviewed_by_safety_coordinator', '$supervisor_review_date', '$safety_coordinator_review_date', '$verified', '$date_verified', '$orange_tag_description', '$repair_technician','$total_cost', '$ticket_status', '$work_order_number','$location_code')";
+// Prepare an insert statement
+$query = "INSERT INTO `orange_tag` (`orange_tag_id`, `ticket_type`, `originator`, `originator_name`, `location`, `priority`, `line_name`, `die_number`, `supervisor`, `orange_tag_creation_date`, `orange_tag_creation_time`, `orange_tag_due_date`, `repairs_made`, `root_cause`, `equipment_down_time`, `total_repair_time`, `area_cleaned`, `follow_up_necessary`, `parts_needed`, `reviewed_by_supervisor`, `reviewed_by_safety_coordinator`, `supervisor_review_date`, `safety_coordinator_review_date`, `verified`, `date_verified`, `orange_tag_description`, `repair_technician`, `total_cost`, `ticket_status`, `work_order_number`, `location_code`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-$result = mysqli_query($database, $query);
+$stmt = mysqli_prepare($database, $query);
 
-if ($result) {
+// Bind variables to the prepared statement as parameters
+mysqli_stmt_bind_param($stmt, 'sssssisssssssssssssssssssssssss', $orange_tag_id, $ticket_type, $originator, $originator_name, $location, $priority, $line_name, $die_number, $supervisor, $orange_tag_creation_date, $orange_tag_creation_time, $orange_tag_due_date, $repairs_made, $root_cause, $equipment_down_time, $total_repair_time, $area_cleaned, $follow_up_necessary, $parts_needed, $reviewed_by_supervisor, $reviewed_by_safety_coordinator, $supervisor_review_date, $safety_coordinator_review_date, $verified, $date_verified, $orange_tag_description, $repair_technician, $total_cost, $ticket_status, $work_order_number, $location_code);
+
+// Attempt to execute the prepared statement
+if (mysqli_stmt_execute($stmt)) {
     echo "Ticket added successfully";
 } else {
-    echo "Error: " . mysqli_error($database);
+    echo "Error: " . mysqli_stmt_error($stmt);
 }
+
+// Close statement
+mysqli_stmt_close($stmt);
+
+// Close connection
+mysqli_close($database);
 ?>
