@@ -15,7 +15,7 @@ FROM accident_report
 JOIN employees ON accident_report.employee_id = employees.employee_id";
 $result = mysqli_query($database, $query);
 
-$query = "SELECT employee_id, employee_fname, employee_lname FROM employees";
+$query = "SELECT employee_id, employee_fname, employee_lname FROM employees WHERE location_code = '$_SESSION[location_code]' ";
 $employees = mysqli_query($database, $query);
 ?>
 

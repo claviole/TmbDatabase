@@ -3,7 +3,11 @@ include '../../../configurations/connection.php';
 
 $accidentId = $_GET['id'];
 
-$query = "SELECT * FROM accident_report WHERE accident_id = $accidentId";
+// Adjusted query to join the accident_report table with the employees table
+$query = "SELECT ar.*, e.employee_fname, e.employee_lname FROM accident_report ar 
+          LEFT JOIN employees e ON ar.employee_id = e.employee_id 
+          WHERE ar.accident_id = $accidentId";
+
 $result = mysqli_query($database, $query);
 $accident = mysqli_fetch_assoc($result);
 
@@ -40,9 +44,8 @@ $files = mysqli_fetch_all($result, MYSQLI_ASSOC);
 </div>
 <div class="modal-body">
     <p><strong>Accident ID:</strong> <?= $accident['accident_id'] ?></p>
-    <p><strong>Employee ID:</strong> <?= $accident['employee_id'] ?></p>
+    <p><strong>Employee Name:</strong> <?= htmlspecialchars($accident['employee_fname']) ?> <?= htmlspecialchars($accident['employee_lname']) ?></p>
     <p><strong>Non-Employee Name:</strong> <?= $accident['non_employee_name'] ?></p>
-    <p><strong>Foreman ID:</strong> <?= $accident['foreman_id'] ?></p>
     <p><strong>Accident Type:</strong> <?= $accident['accident_type'] ?></p>
     <p><strong>Date Added:</strong> <?= $accident['date_added'] ?></p>
     <p><strong>Accident Date:</strong> <?= $accident['accident_date'] ?></p>
