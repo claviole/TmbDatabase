@@ -1,60 +1,49 @@
 <?php
-    //Unset all the server side variables
-    session_start();
-    $_SESSION["user"]="";
-    $_SESSION["usertype"]="";
-    $_SESSION["location_code"]="";
+session_start();
+include "configurations/connection.php";
+$pepper = $PEPPER; // Replace with your actual pepper
 
-    // Set the new timezone
-    date_default_timezone_set('America/Chicago');
-    $date = date('m-d-Y');
+if($_POST){
+    $useremail = $_POST['useremail'];
+    $userpassword = $_POST['userpassword'];
 
-    $_SESSION["date"]=$date;
+    $stmt = $database->prepare("SELECT * FROM `Users` WHERE `email` = ?");
+    $stmt->bind_param("s", $useremail);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    //import database connection
-    include "configurations/connection.php";
-    $pepper = $PEPPER; // Replace with your actual pepper
+    if($result->num_rows > 0){
+        $row = $result->fetch_assoc();
+        if(password_verify($pepper . $userpassword, $row['password'])) {
+            $_SESSION["user"] = $row["username"];
+            $_SESSION["user_type"] = $row["user_type"];
+            $_SESSION["location_code"] = $row["location_code"];
+            $_SESSION["user_id"] = $row["id"];
 
-    if($_POST){
-        $useremail=$_POST['useremail'];
-        $userpassword=$_POST['userpassword'];
-
-        // Prepare the statement
-        $stmt = $database->prepare("SELECT * FROM `Users` WHERE `email` = ?");
-        $stmt->bind_param("s", $useremail);
-
-        // Execute the statement
-        $stmt->execute();
-
-        // Get the result
-        $result = $stmt->get_result();
-        if($result->num_rows>0){
-            $row=$result->fetch_assoc();
-            if(password_verify($pepper . $userpassword, $row['password'])) {
-                $_SESSION["user"]=$row["username"];
-                $_SESSION["user_type"]=$row["user_type"];
-                $_SESSION["location_code"]=$row["location_code"];
-                $_SESSION["user_id"]=$row["id"];
-                if($_SESSION["user_type"]=="sales"){
-                    header("Location: super-admin/index.php");
-                }
-                elseif($_SESSION["user_type"]=="super-admin"){
-                    header("Location: super-admin/index.php");
-                }
-                elseif($_SESSION["user_type"]=="human-resources"){
-                    header("Location: super-admin/index.php");
-                }
-                elseif($_SESSION["user_type"]=="maintenance-tech"){
-                    header("Location: maintenance/orange_tag_db.php");
-                }
-                elseif($_SESSION["user_type"]=="floor-user"){
-                    header("Location: maintenance/orange_tag_db.php");
-                }
+            // Check if a redirect URL is provided
+            $redirectUrl = isset($_POST['redirect']) ? $_POST['redirect'] : '';
+            if (!empty($redirectUrl)) {
+                header("Location: $redirectUrl");
             } else {
-                echo "<script>alert('Login Failed')</script>";
+                // Default redirection based on user type
+                switch ($_SESSION["user_type"]) {
+                    case "sales":
+                    case "super-admin":
+                    case "human-resources":
+                        header("Location: super-admin/index.php");
+                        break;
+                    case "maintenance-tech":
+                    case "floor-user":
+                        header("Location: maintenance/orange_tag_db.php");
+                        break;
+                }
             }
+            exit();
+        } else {
+            echo "<script>alert('Login Failed')</script>";
         }
     }
+}
 ?>
     <!DOCTYPE html>
 <html lang="en">
@@ -184,6 +173,7 @@
                         <input type="Password" name="userpassword" class="block w-full rounded-md border border-gray-200 bg-gray-50 py-4 pl-10 pr-4 text-black placeholder-gray-500 caret-blue-600 transition-all duration-200 focus:border-blue-600 focus:bg-white focus:outline-none" placeholder="Password" required>
                     </div>
                 </div>
+                <input type="hidden" id="redirect" name="redirect" value="">
 
                 <tr>
                     <td class="mb-4">
@@ -301,6 +291,15 @@
     });
   });
 });
+
+$(document).ready(function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var redirect = urlParams.get('redirect');
+    if (redirect) {
+        $('#redirect').val(redirect);
+    }
+});
+
 </script>
 </body>
 </html>

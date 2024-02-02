@@ -152,6 +152,20 @@ button:active {
     echo "Welcome, " . $_SESSION['user']  ."             ". date("m/d/Y") . "<br>";
     ?>
     <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
+    
+    <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
+    <div id="location-change-dropdown" style="position: absolute; top: 0; right: -150px;">
+        <select id="locationCodeSelect" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <option value="sv" <?php echo ($_SESSION['location_code'] == 'sv') ? 'selected' : ''; ?>>Sauk Village</option>
+            <option value="nv" <?php echo ($_SESSION['location_code'] == 'nv') ? 'selected' : ''; ?>>North Vernon</option>
+            <option value="nb" <?php echo ($_SESSION['location_code'] == 'nb') ? 'selected' : ''; ?>>New Boston</option>
+            <option value="fr" <?php echo ($_SESSION['location_code'] == 'fr') ? 'selected' : ''; ?>>Flatrock</option>
+            <option value="tc" <?php echo ($_SESSION['location_code'] == 'tc') ? 'selected' : ''; ?>>Torch</option>
+            <option value="gb" <?php echo ($_SESSION['location_code'] == 'gb') ? 'selected' : ''; ?>>Gibraltar</option>
+        </select>
+    </div>
+<?php } ?>
+
 </div>
 <div id="password-change-modal" style="display: none;">
     <form id="password-change-form">
@@ -283,73 +297,28 @@ document.querySelectorAll('button').forEach(button => {
         }
     });
 });
-document.querySelector('button[onclick="window.location.href=\'add_new_customer/add_new_customer.php\'"]').onclick = function() {
-    Swal.fire({
-    title: 'Add New Customer',
-    width:'700px',
-    html: `
-        <style>
-            .swal2-input {
-                width: 85% !important;
-            }
-        </style>
-        <input id="swal-input1" class="swal2-input" placeholder="Customer Name">
-        <input id="swal-input2" class="swal2-input" placeholder="Customer Address">
-        <input id="swal-input3" class="swal2-input" placeholder="Customer City">
-        <input id="swal-input4" class="swal2-input" placeholder="Customer State">
-        <input id="swal-input5" class="swal2-input" placeholder="Customer Zip">
-        <input id="swal-input6" class="swal2-input" placeholder="Customer Phone">
-        <input id="swal-input7" class="swal2-input" placeholder="Customer Email">
-        <input id="swal-input8" class="swal2-input" placeholder="Customer Contact">
-    `,
-        preConfirm: () => {
-    const values = [
-        document.getElementById('swal-input1').value,
-        document.getElementById('swal-input2').value,
-        document.getElementById('swal-input3').value,
-        document.getElementById('swal-input4').value,
-        document.getElementById('swal-input5').value,
-        document.getElementById('swal-input6').value,
-        document.getElementById('swal-input7').value,
-        document.getElementById('swal-input8').value
-    ];
-    // Check if any of the fields are empty
-    if (values.some(value => value === '')) {
-        Swal.showValidationMessage('Please fill out all fields');
-        return;
-    }
-    return values;
-}
-    }).then((result) => {
-        if (result.isConfirmed) {
-            var formData = new FormData();
-            formData.append('customerName', result.value[0]);
-            formData.append('customerAddress', result.value[1]);
-            formData.append('customerCity', result.value[2]);
-            formData.append('customerState', result.value[3]);
-            formData.append('customerZip', result.value[4]);
-            formData.append('customerPhone', result.value[5]);
-            formData.append('customerEmail', result.value[6]);
-            formData.append('customerContact', result.value[7]);
 
-            fetch('add_new_customer/submit_new_customer.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(response => {
-                if (response.status === 'error') {
-                    throw new Error(response.message);
-                }
-                Swal.fire('Success', 'New customer added successfully', 'success');
-            })
-            .catch(error => {
-                Swal.fire('Error', `Request failed: ${error}`, 'error');
-            });
+document.getElementById('locationCodeSelect').addEventListener('change', function() {
+    var newLocationCode = this.value;
+    fetch('../configurations/update_location.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'location_code=' + newLocationCode
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            Swal.fire('Location Updated', '', 'success');
+            // Optionally refresh the page to reflect changes
+            location.reload();
+        } else {
+            Swal.fire('Error', 'Failed to update location', 'error');
         }
-    });
-};
-
+    })
+    .catch(error => console.error('Error:', error));
+});
 
 </script>
 </html>
