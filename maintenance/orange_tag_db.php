@@ -71,6 +71,14 @@ $priority4TicketCount = $data['total'];
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="printWorkOrder.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<script>
+$(document).ready( function () {
+    $('.table-auto').DataTable();
+});
+</script>
 
     <style>
         .return-button {
@@ -122,13 +130,7 @@ $priority4TicketCount = $data['total'];
     }
 
     
-    .table-auto tbody tr .accident-id {
-    cursor: pointer;
-}
-
-.table-auto tbody tr:hover {
-    background-color: #e0e0e0;
-}
+  
 .modal-dialog.custom-modal {
         max-width: 1000px; /* Adjust this value to set the width of your form */
     }
@@ -136,50 +138,7 @@ $priority4TicketCount = $data['total'];
         height: 150px; /* Adjust as needed */
         overflow-y: auto;
     }
-    .scrollable-table {
-        overflow-x: auto; /* Enable horizontal scrolling */
-        overflow-y: auto; /* Enable vertical scrolling */
-        max-height: 700px; /* Adjust as needed */
-        border: 1px solid #dee2e6;
-        border-radius: 10px;
-        
-    }
-
-    .table {
-        width: 100%;
-        margin-bottom: 1rem;
-        color: #212529;
-        table-layout: auto; /* Allow cells to adjust their widths as needed */
-        border: 1px solid #dee2e6;
-        border-radius: 10px
-    }
-    .table-striped {
-        background-color: #fff; /* Background color for the table */
-        border-collapse: collapse;
-        width: 100%;
-        border: 1px solid #ddd; /* Gray borders for the table */
-        border-radius: 10px; /* Rounded border corners for the table */
-    }
-
-    .table-striped th {
-        background-color: #FFA500; /* Background color for the headers */
-        color: #fff; /* Text color for the headers */
-        padding: 10px;
-        text-align: left;
-        position: sticky;
-        top: 0; /* This will make the header stick to the top */
-        z-index: 10; /* This will make sure the header is above the table rows */
-    }
-    .table-striped td {
-        border: 1px solid #ddd; /* Border color for the cells */
-        padding: 8px;
-    }
-
-   
-    .table-striped tr:hover {
-   
-        cursor: pointer;
-    }
+    
     .modal .btn-primary {
         background-color: #FFA500; /* Background color for the primary button */
         border-color: #FFA500; /* Border color for the primary button */
@@ -208,11 +167,7 @@ $priority4TicketCount = $data['total'];
         color: #fff; /* Text color for the primary button */
         
     }
-    #orange_tag_table th:nth-child(2), /* Creation Date */
-    #orange_tag_table th:nth-child(3) /* Due Date */
-    {
-        min-width: 150px; /* Adjust as needed */
-    }
+    
     @media print {
     /* All your print styles go here */
     body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
@@ -230,6 +185,104 @@ $priority4TicketCount = $data['total'];
     /* Hide elements not needed for printing */
     .print-hide { display: none; }
 }
+/* Styling for DataTables' table */
+.dataTables_wrapper .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    table-layout: auto; /* Allow cells to adjust their widths as needed */
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+}
+
+/* Styling for rows */
+.dataTables_wrapper .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+}
+
+/* Styling for table headers */
+/* Styling for table headers */
+#orange_tag_table thead th {
+    background-color: #FFA500; /* Orange background */
+    color: #000; /* Black text */
+    /* Other styles */
+}
+.dataTables_wrapper .table thead th {
+    background-color: #FFA500 !important; /* Orange background */
+    color: #000 !important; /* Black text */
+    padding: 10px;
+    text-align: left;
+    position: sticky;
+    top: 0; /* This will make the header stick to the top */
+    z-index: 10; /* This will make sure the header is above the table rows */
+}
+/* Styling for table cells */
+.dataTables_wrapper .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+/* Hover effect for rows */
+.dataTables_wrapper .table-striped tbody tr:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+/* Adjusting the DataTables pagination buttons to match your theme */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #212529; /* Button text color */
+    padding: 0.5em 1em;
+    margin: 0 2px;
+    border: 1px solid transparent; /* Remove border */
+    border-radius: 5px; /* Rounded corners for buttons */
+    background-color: #FFA500; /* Button background color */
+    box-shadow: none; /* Remove default DataTables button shadow */
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #e69500; /* Darker shade for hover */
+    border-color: transparent;
+}
+
+/* Active pagination button */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important;
+    background-color: #007bff !important; /* Bootstrap primary color for active button */
+    border-color: transparent;
+}
+/* Change search input text color to white */
+.dataTables_wrapper .dataTables_filter input {
+    color: black; /* Text color */
+    padding: 0.25em 0.5em;
+}
+
+/* Change pagination buttons text color to white */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #fff !important; /* Text color */
+}
+
+/* Change the text color of DataTables length menu (show entries) to white */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_length label {
+    color: black; /* Text color */
+}
+
+/* Change the text color of DataTables "Showing 1 to 10 of 50 entries" to white */
+.dataTables_wrapper .dataTables_info {
+    color: #fff; /* Text color */
+}
+.dataTables_length label,
+.dataTables_filter label {
+    color: white !important;
+}
+
+/* Change DataTables pagination buttons text color to white */
+.dataTables_wrapper .dataTables_paginate .paginate_button.next, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous {
+    color: white !important;
+}
+
     </style>
 
     <title>S.M.A.R.T.</title>
@@ -242,7 +295,7 @@ $priority4TicketCount = $data['total'];
 </div>
 <?php endif; ?>
     <h2 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/home_page_SMART_header.png" alt="company header" width="50%" height="40%" > 
+        <img src="../images/home_page_SMART_header.png" alt="company header" width="30%" height="20%" > 
     </h2>
   
 </div>
@@ -441,9 +494,8 @@ $priority4TicketCount = $data['total'];
 </div>
     <div class="row mt-3">
         <div class="col-12">
-            <div class="table-responsive">
-            <div class="scrollable-table">
-                <table id = "orange_tag_table" class="table table-striped">
+           
+                <table id = "orange_tag_table" class="table-auto">
                     <thead>
                         <tr>
                             <th>Orange Tag ID</th>
@@ -503,9 +555,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                     </tbody>
                 </table>
                 </div>
-            </div>
         </div>
-    </div>
 </div>
 
 <!-- Full-screen loading overlay -->
