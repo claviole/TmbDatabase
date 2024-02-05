@@ -3,20 +3,7 @@ session_start();
 include '../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
 // Prepare a parameterized statement
-$stmt = $database->prepare("SELECT COUNT(*) as count FROM invoice WHERE approval_status = ?");
-// Bind the 'Awaiting Approval' parameter
-$stmt->bind_param("s", $approval_status);
 
-// Set the parameter and execute
-$approval_status = 'Awaiting Approval';
-$stmt->execute();
-
-// Fetch the result
-$result = $stmt->get_result();
-$awaiting_approval_count = $result->fetch_assoc()['count'];
-
-// Close the statement
-$stmt->close();
 
 // Check if the user is logged in 
 if(!isset($_SESSION['user']) ){
@@ -37,25 +24,9 @@ if(!isset($_SESSION['user']) ){
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <title>Admin Dashboard</title>
+    <title>Purchase Requests</title>
     <style>
-          .flashing {
-        animation: flash .5s linear infinite;
-    }
-        @keyframes flash {
-    0% {background-color: white;}
-    50% {background-color: yellow;}
-    100% {background-color: white;}
-}
-    .notification {
-        position: absolute;
-        top: 0;
-        right: 300px;
-        padding: 10px;
-        background-color: #f2f2f2;
-        border: 1px solid #ccc;
-        
-    }
+  
     .return-button {
             display: inline-block;
             padding: 10px 20px;
@@ -104,49 +75,32 @@ button:active {
     transform: translateY(1px); /* Slightly press the button on click */
     box-shadow: 0 9px 20px rgba(0, 0, 0, 0.15); /* Lessen the shadow on click */
 }
+
     </style>
     
 </head>
 <body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
-
+<div class="return-button-container">
+    <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
+</div>
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
-        <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
-        <div class="notification<?php echo $awaiting_approval_count > 0 ? ' flashing' : ''; ?>">
-    <a href="quote_approvals/quote_approval.php" style="color: inherit; text-decoration: none;">
-        Quotes Awaiting Approval: <?php echo $awaiting_approval_count; ?>
-    </a>
-    <?php } ?>
-</div>
      
     </h1>
     
     <div class ="flex justify-center">
-        <!-- 
-    <div class ="flex flex-col justify-content: center  py-10 px-0 "  >
-     <button data-role="super-admin sales"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " onclick="startNewQuote()">Start New Quote</button> 
-    <button data-role="super-admin sales" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='lookup_quote/lookup_quote.php'">Look Up Quote</button>
-    <button data-role="super-admin" style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md " data-url='award_quotes/award_quotes.php'">Award Quotes</button>
-
-    </div>
-    -->
+   
     <div class ="flex flex-col justify-content: center  py-10 px-5 "  >
-    <button data-role="super-admin human-resources maintenance-tech floor-user" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../maintenance/orange_tag_db.php'>
-    S.M.A.R.T Database<br>
-    <span style="font-size: 0.75em;">Safety, Maintenance And Repair Tracking</span>
+    <button id="newPurchaseRequestBtn" data-role="super-admin" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md">
+    New Purchase Request
 </button>
-<button data-role="super-admin human-resources" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../human_resources/HR/index.php'>
-    S.T.A.R.T Database<br>
+<button data-role="super-admin " style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url=manage_expense_requests/index.php>
+    Manage Expenses<br>
     <span style="font-size: 0.75em;">Skills Training And Resource Tracking</span>
 </button>
-<button data-role="super-admin human-resources" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../human_resources/safety/index.php'>
-    S.A.F.E Database<br>
-    <span style="font-size: 0.75em;">Safety Awareness & Follow-up Environment</span>
-</button>
-<button data-role="super-admin" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../purchase_requests/index.php'>Purchase Requests</button>
-    <button data-role="super-admin"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-bottom: 10px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../admin-dashboard/management/management.php'>User Management</button>
-    </div>
-    </div>
+</div>
+</div>
+
     
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
     <?php
@@ -181,43 +135,12 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 </div>
 <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
 
-<form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
-    <input type="submit" value="Log Out">
-</form>
+
 </div>
-
-
-
 </body>
 
 <script>
-    function startNewQuote() {
-    Swal.fire({
-        title: 'Select Quote Type',
-        input: 'radio',
-        inputOptions: {
-            'blanking': 'Detail Blanking Quote',
-            'quick': 'Quick Blanking Quote'
-        },
-        inputValidator: (value) => {
-            if (!value) {
-                return 'You need to choose something!'
-            }
-        },
-        showCancelButton: true, // This will show the cancel button
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            if (result.value === 'blanking') {
-                window.location.href = 'New_Quote/start_new_invoice.php';
-            } else if (result.value === 'quick') {
-                window.location.href = 'quick_quote/new_quick_quote.php';
-            }
-        }
-    });
-}
-function getPasswordChangeForm() {
+    function getPasswordChangeForm() {
     return `
         <form id="password-change-form" style="display: flex; flex-direction: column; align-items: center;">
             <label for="current-password" style="margin-top: 10px;">Current Password:</label>
@@ -276,6 +199,27 @@ document.getElementById('settings-icon').addEventListener('click', function() {
         }
     });
 });
+document.getElementById('locationCodeSelect').addEventListener('change', function() {
+    var newLocationCode = this.value;
+    fetch('../configurations/update_location.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'location_code=' + newLocationCode
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            Swal.fire('Location Updated', '', 'success');
+            // Optionally refresh the page to reflect changes
+            location.reload();
+        } else {
+            Swal.fire('Error', 'Failed to update location', 'error');   
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
 document.querySelectorAll('button').forEach(button => {
     button.addEventListener('click', function(event) {
         var allowedRoles = this.getAttribute('data-role').split(' ');
@@ -299,27 +243,25 @@ document.querySelectorAll('button').forEach(button => {
     });
 });
 
-document.getElementById('locationCodeSelect').addEventListener('change', function() {
-    var newLocationCode = this.value;
-    fetch('../configurations/update_location.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'location_code=' + newLocationCode
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.status === 'success') {
-            Swal.fire('Location Updated', '', 'success');
-            // Optionally refresh the page to reflect changes
-            location.reload();
-        } else {
-            Swal.fire('Error', 'Failed to update location', 'error');
+document.getElementById('newPurchaseRequestBtn').addEventListener('click', function() {
+    Swal.fire({
+        title: 'Select the request type',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Travel Approval',
+        denyButtonText: `Expense Report`,
+        cancelButtonText: 'Office Supplies',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'new_purchase_request/travel_approval.php';
+        } else if (result.isDenied) {
+            window.location.href = 'new_purchase_request/expense_report.php';
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            window.location.href = 'new_purchase_request/office_supplies.php';
         }
-    })
-    .catch(error => console.error('Error:', error));
+    });
 });
-
 </script>
+
 </html>
+```

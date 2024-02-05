@@ -356,7 +356,7 @@ body {
             <button class="btn btn-primary btn-block" onclick="generateReport('openTags')">All Open Tags</button>
         </div>
         <div class="col-md-6 mb-2">
-            <button id="TagsByTech" class="btn btn-primary btn-block">Tags by Tech</button>
+            <button id="TagsByTech" class="btn btn-primary btn-block">Tags by Technician</button>
         </div>
         <div class="col-md-6 mb-2">
             <button id="TagsByPriority" class="btn btn-primary btn-block" data-toggle="modal" data-target="#prioritySelectionModal">Tags by Priority</button>
@@ -1719,23 +1719,37 @@ $('#orange_tag_table').DataTable({
 
 
 });
-$('#orange_tag_table').DataTable({
-    autoWidth: false,
-    columnDefs: [
-        { width: '8%', targets: 1 }, // Example width for the second column
-        { width: '8%', targets: 2 }, // Example width for the third column
-        { width: '7%', targets: 3 }, // Example width for the third column
-        { width: '9%', targets: 4 }, // Example width for the third column
-        { width: '7%', targets: 5}, // Example width for the third column
-        { width: '5%', targets: 9 }, // Example width for the third column
-       
-       
-       
-        
-        // Define widths for all columns except the last one
-        // No width defined for the last column to allow it to expand
-    ]
+$.fn.dataTable.ext.type.order['orange-tag-pre'] = function (data) {
+    // Extract the number from your tag format (assuming it's always at the end)
+    return parseInt(data.split('-')[1], 10);
+};
+$.fn.dataTable.ext.type.order['work-order-pre'] = function (data) {
+    // Extract the numeric part from the format 'WO-#'
+    return parseInt(data.replace(/^[^\d]+/, ''), 10);
+};
+$(document).ready(function () {
+    // Check if the DataTable instance exists and destroy it before reinitializing
+    if ($.fn.DataTable.isDataTable('#orange_tag_table')) {
+        $('#orange_tag_table').DataTable().destroy();
+    }
+
+    // Now reinitialize the DataTable
+    $('#orange_tag_table').DataTable({
+        autoWidth: false,
+        columnDefs: [
+            { type: 'orange-tag', targets: 0 }, // Apply custom sorting to the orange tag column
+            { type: 'work-order', targets: 6 },
+            { width: '8%', targets: 1 },
+            { width: '8%', targets: 2 },
+            { width: '7%', targets: 3 },
+            { width: '9%', targets: 4 },
+            { width: '7%', targets: 5},
+            { width: '5%', targets: 9 },
+            // Other columnDefs as needed
+        ]
+    });
 });
+
 </script>
 </body>
 </html>
