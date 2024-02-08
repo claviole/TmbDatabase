@@ -1,6 +1,9 @@
 <?php
 session_start();
 include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
+
+include '../../configurations/handle_request.php'; // Assuming you have a handle_request.php file for handling approval/denial requests
+
 date_default_timezone_set('America/Chicago');
 // Prepare a parameterized statement
 
@@ -56,34 +59,7 @@ if(!isset($_SESSION['user']) ){
             margin-right: 10px;
         }
 
-        button {
-    margin-bottom: 20px;
-    background-color: #007BFF; /* Change to a more professional color */
-    color: white;
-    border: none;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    transition: all 0.3s ease; /* Smooth transition for all changes */
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-    border-radius: 25px; /* More rounded corners */
-    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.25); /* More pronounced shadow */
-    outline: none; /* Remove outline */
-}
-
-button:hover {
-    background-color: #0056b3; /* Darken the color on hover */
-    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.5); /* Darken the shadow on hover */
-    transform: translateY(-2px); /* Slightly lift the button on hover */
-}
-
-button:active {
-    transform: translateY(1px); /* Slightly press the button on click */
-    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.15); /* Lessen the shadow on click */
-}
+    
    /* DataTables Container */
    .dataTables_wrapper {
         color: black; /* Sets default text color to black for readability */
@@ -138,72 +114,108 @@ button:active {
         color: white !important; /* White text color for readability */
         background-color: #28a745 !important; /* Green background for distinction */
     }
-    .modal-dialog {
-    max-width: 80%; /* Adjust this value to control the width of the modal */
+
+
+
+/* Labels */
+.form-group > label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
 }
+
+/* File List Styling */
+.list-unstyled {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.list-unstyled li a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.list-unstyled li a:hover {
+    text-decoration: underline;
+}
+
+.modal-md {
+    max-width: 60%; /* Adjust this value based on your preference */
+}
+
 .modal-content {
-    background-color: #f8f9fa; /* Light grey background */
-    border: 1px solid #dee2e6; /* Grey border */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Shadow for depth */
+    background-color: #fff; /* Keeps modal background light */
+    color: #333; /* Dark text for better readability */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.modal-header {
-    background-color: #ffebee; /* Light red background */
-    color: #495057; /* Dark grey text */
-    border-bottom: 1px solid #dee2e6; /* Grey border */
+/* Adjusting form and button colors */
+.form-control, .form-control[readonly] {
+    background-color: #f2f2f2; /* Light grey background */
+    color: #333; /* Dark text for better readability */
 }
 
-.modal-body {
-    background-color: #ffffff; /* White background for the body */
-    color: #495057; /* Dark grey text */
-}
+.btn {
+        display: inline-block !important;
+        font-weight: 400 !important;
+        color: #212529 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        user-select: none !important;
+        background-color: transparent !important;
+        border: 1px solid transparent !important;
+        padding: 0.375rem 0.75rem !important;
+        font-size: 1rem !important;
+        line-height: 1.5 !important;
+        border-radius: 0.25rem !important;
+        transition: color 0.15s ease-in-out !important, background-color 0.15s ease-in-out !important, border-color 0.15s ease-in-out !important, box-shadow 0.15s ease-in-out !important;
+    }
 
-.modal-footer {
-    background-color: #f5f5f5; /* Light grey background */
-    border-top: 1px solid #dee2e6; /* Grey border */
-}
+    .btn-primary {
+        color: #fff !important;
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
 
-.modal-title {
-    font-weight: bold;
-}
+    .btn-danger {
+        color: #fff !important;
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
 
-#approveButton, #denyButton {
-    border-radius: 5px;
-}
+    .btn-secondary {
+        color: #fff !important;
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+    }
 
-#approveButton {
-    background-color: #c62828; /* Darker red for approve button */
-    border-color: #b71c1c;
-}
+    .btn-primary:hover, .btn-danger:hover, .btn-secondary:hover {
+        opacity: 0.85 !important;
+    }
 
-#denyButton {
-    background-color: #6c757d; /* Grey for deny button */
-    border-color: #5a6268;
-}
-.form-control {
-    background-color: #ffffff; /* White background */
-    border: 1px solid #ccc; /* Light grey border */
-    color: #495057; /* Dark grey text */
-}
+    .btn:focus, .btn:active {
+        outline: none !important;
+        box-shadow: none !important;
+    }
     </style>
     
 </head>
 <body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
 <!-- Modal -->
-<div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true" style="display: none;">
-  <div class="modal-dialog" role="document">
+<!-- Modal -->
+<div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document"> <!-- Adjusted for a wider modal -->
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="expenseModalLabel">Expense Details</h5>
+      <div class="modal-header border-b-2 border-gray-200">
+        <h5 class="modal-title text-xl font-semibold" id="expenseModalLabel">Expense Details</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" id="modalBody">
+      <div class="modal-body p-4" id="modalBody">
         <!-- Dynamic content will be loaded here -->
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer border-t-2 border-gray-200">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" id="approveButton">Approve</button>
         <button type="button" class="btn btn-danger" id="denyButton">Deny</button>
@@ -267,6 +279,31 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 
 
 </div>
+<!-- Denial Reason Modal -->
+<div class="modal fade" id="denialReasonModal" tabindex="-1" aria-labelledby="denialReasonModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="denialReasonModalLabel">Denial Reason</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="denialReasonForm">
+          <div class="form-group">
+            <label for="denialReasonText" class="col-form-label">Reason:</label>
+            <textarea class="form-control" id="denialReasonText"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submitDenialReason">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 
 <script>
@@ -293,7 +330,7 @@ function fetchExpenseDetails(expenseId) {
             // Ensure the response contains the details
             if(response.details) {
                 var expenseType = response.details.expense_type; // Correctly access expense_type
-                populateModal(expenseType, response.details); // Populate modal based on expense type
+                populateModal(expenseType, response); // Populate modal based on expense type
                 $('#expenseModal').modal('show'); // Show the modal
             } else {
                 console.error('Expense details not found in the response');
@@ -304,70 +341,247 @@ function fetchExpenseDetails(expenseId) {
         }
     });
 }
-function populateModal(expenseType, details) {
+function populateModal(expenseType, response) { // Adjusted to receive the entire response
     var modalBody = $('#modalBody');
     modalBody.empty(); // Clear previous content
+    var details = response.details; // Access details
+     // Adjust modal dialog class for better width control
+     $('#expenseModal .modal-dialog').addClass('modal-md').removeClass('modal-lg');
 
-    if(expenseType === 'Expense Report') {
+if(expenseType === 'Expense Report') {
+    var formHtml = `
+    <form>
+    <input type="hidden" id="selectedPurchaseRequest" data-employee-name="${details.employee_name}" data-expense-id="${details.expense_id}">
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="expenseType">Expense Type:</label>
+                <input type="text" class="form-control" id="expenseType" value="${expenseType}" readonly>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="employeeName">Employee Name:</label>
+                <input type="text" class="form-control" id="employeeName" value="${details.employee_name}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="monthOfExpense">Month of Expense:</label>
+                <input type="text" class="form-control" id="monthOfExpense" value="${details.month_of_expense}" readonly>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="dateOfVisit">Date of Visit:</label>
+                <input type="text" class="form-control" id="dateOfVisit" value="${details.date_of_visit}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" class="form-control" id="customerName" value="${details.customer_name}" readonly>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="customerLocation">Customer Location:</label>
+                <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="mileage">Mileage:</label>
+                <input type="text" class="form-control" id="mileage" value="${details.mileage}" readonly>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="mileageExpense">Mileage Expense:</label>
+                <input type="text" class="form-control" id="mileageExpense" value="${details.mileage_expense}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="mealsExpense">Meals Expense:</label>
+                <input type="text" class="form-control" id="mealsExpense" value="${details.meals_expense}" readonly>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="entertainmentExpense">Entertainment Expense:</label>
+                <input type="text" class="form-control" id="entertainmentExpense" value="${details.entertainment_expense}" readonly>
+            </div>
+        </div>
+    </form>
+`;
+modalBody.append(formHtml);
+
+    // Handle files separately
+    if(response.files && response.files.length > 0) {
+        var fileListHtml = '<div class="form-group"><label>Files:</label><ul class="list-unstyled">';
+        response.files.forEach(function(file) {
+            var downloadUrl = `download.php?file=${encodeURIComponent(file.file_name)}`;
+            fileListHtml += `<li><a href="${downloadUrl}" target="_blank">${file.file_name}</a></li>`;
+        });
+        fileListHtml += '</ul></div>';
+        modalBody.append(fileListHtml);
+    }
+}
+else if (expenseType === 'Travel Approval') {
         var formHtml = `
-            <form>
-                <div class="form-group">
-                    <label for="expenseType">Expense Type:</label>
-                    <input type="text" class="form-control" id="expenseType" value="${expenseType}" readonly>
-                </div>
-                <div class="form-group">
+        <form>
+        <input type="hidden" id="selectedPurchaseRequest" data-employee-name="${details.employee_name}" data-expense-id="${details.expense_id}">
+            <div class="row">
+                <div class="col-md-6 form-group">
                     <label for="employeeName">Employee Name:</label>
                     <input type="text" class="form-control" id="employeeName" value="${details.employee_name}" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="monthOfExpense">Month of Expense:</label>
-                    <input type="text" class="form-control" id="monthOfExpense" value="${details.month_of_expense}" readonly>
+                <div class="col-md-6 form-group">
+                    <label for="expenseType">Expense Type:</label>
+                    <input type="text" class="form-control" id="expenseType" value="${expenseType}" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="dateOfVisit">Date of Visit:</label>
-                    <input type="text" class="form-control" id="dateOfVisit" value="${details.date_of_visit}" readonly>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="travelStartDate">Travel Start Date:</label>
+                    <input type="text" class="form-control" id="travelStartDate" value="${details.travel_start_date}" readonly>
                 </div>
-                <div class="form-group">
+                <div class="col-md-6 form-group">
+                    <label for="travelEndDate">Travel End Date:</label>
+                    <input type="text" class="form-control" id="travelEndDate" value="${details.travel_end_date}" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
                     <label for="customerName">Customer Name:</label>
                     <input type="text" class="form-control" id="customerName" value="${details.customer_name}" readonly>
                 </div>
-                <div class="form-group">
+                <div class="col-md-6 form-group">
                     <label for="customerLocation">Customer Location:</label>
                     <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="mileage">Mileage:</label>
-                    <input type="text" class="form-control" id="mileage" value="${details.mileage}" readonly>
+            </div>
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label for="additionalComments">Additional Comments:</label>
+                    <textarea class="form-control" id="additionalComments" readonly>${details.additional_comments}</textarea>
                 </div>
-                <div class="form-group">
-                    <label for="mileageExpense">Mileage Expense:</label>
-                    <input type="text" class="form-control" id="mileageExpense" value="${details.mileage_expense}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="mealsExpense">Meals Expense:</label>
-                    <input type="text" class="form-control" id="mealsExpense" value="${details.meals_expense}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="entertainmentExpense">Entertainment Expense:</label>
-                    <input type="text" class="form-control" id="entertainmentExpense" value="${details.entertainment_expense}" readonly>
-                </div>
-            </form>
+            </div>
+        </form>
         `;
         modalBody.append(formHtml);
+    
 
-        // Handle files separately
-        if(details.files && details.files.length > 0) {
-            var fileListHtml = '<div class="form-group"><label>Files:</label><ul class="list-unstyled">';
-            details.files.forEach(function(file) {
-                fileListHtml += `<li><a href="${file.file_path}" target="_blank">${file.file_name}</a></li>`;
-            });
-            fileListHtml += '</ul></div>';
-            modalBody.append(fileListHtml);
-        }
+    // Handle files separately, if applicable
+    if(response.files && response.files.length > 0) {
+        var fileListHtml = '<div class="form-group"><label>Files:</label><ul class="list-unstyled">';
+        response.files.forEach(function(file) {
+            var downloadUrl = `download.php?file=${encodeURIComponent(file.file_name)}`;
+            fileListHtml += `<li><a href="${downloadUrl}" target="_blank">${file.file_name}</a></li>`;
+        });
+        fileListHtml += '</ul></div>';
+        modalBody.append(fileListHtml);
+    }
+}
+else if (expenseType === 'Office Supplies') {
+        var formHtml = `
+        <form>
+            <input type="hidden" id="selectedPurchaseRequest" data-employee-name="${details.employee_name}" data-expense-id="${details.expense_id}">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="employeeName">Employee Name:</label>
+                    <input type="text" class="form-control" id="employeeName" value="${details.employee_name}" readonly>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="expenseType">Expense Type:</label>
+                    <input type="text" class="form-control" id="expenseType" value="${expenseType}" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="customerLocation">Customer Location:</label>
+                    <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="vendorName">Vendor Name:</label>
+                    <input type="text" class="form-control" id="vendorName" value="${details.vendor_name}" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="monthOfExpense">Month of Expense:</label>
+                    <input type="text" class="form-control" id="monthOfExpense" value="${details.month_of_expense}" readonly>
+                </div>
+            </div>
+        </form>
+        <h5>Items:</h5>
+        <ul class="list-group">`;
+
+        response.items.forEach(item => {
+            formHtml += `
+    <li class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="flex: 1; margin-right: 15px;"><strong>Item:</strong> ${item.item_name}</div>
+        <div style="flex: 1; margin-right: 15px;"><strong>Quantity:</strong> ${item.item_quantity}</div>
+        <div style="flex: 1; margin-right: 15px;"><strong>Price per Item:</strong> ${item.price_per_item}</div>
+        <div style="flex: 1; margin-right: 15px;"><strong>Total Cost:</strong> ${item.total_cost}</div>
+        <div style="flex: 1;"><strong>Department:</strong> ${item.department}</div>
+    </li>`;
+        });
+
+        formHtml += `</ul>`;
+        modalBody.append(formHtml);
     }
 
-    // Dynamically add Approve and Deny buttons if needed
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('approveButton').addEventListener('click', function() {
+        // Assuming 'selectedPurchaseRequest' is the element that holds both the employee name and expense ID
+        var selectedElement = document.getElementById('selectedPurchaseRequest');
+        var employeeName = selectedElement.getAttribute('data-employee-name'); // Adjust the ID as necessary
+        var expenseId = selectedElement.getAttribute('data-expense-id'); // Get the expense ID
+        sendRequest('approve', employeeName, expenseId);
+    });
+
+    document.getElementById('denyButton').addEventListener('click', function() {
+    // Show the Bootstrap modal
+    $('#denialReasonModal').modal('show');
+});
+
+document.getElementById('submitDenialReason').addEventListener('click', function() {
+    var reason = document.getElementById('denialReasonText').value;
+    if (reason) {
+        var selectedElement = document.getElementById('selectedPurchaseRequest');
+        var employeeName = selectedElement.getAttribute('data-employee-name');
+        var expenseId = selectedElement.getAttribute('data-expense-id');
+
+        // Assuming sendRequest is your function to handle the request
+        sendRequest('deny', employeeName, expenseId, reason);
+
+        // Hide the modal after submission
+        $('#denialReasonModal').modal('hide');
+    } else {
+        // Optionally, alert the user that a reason is required
+        alert('Please enter a reason for denial.');
+    }
+});
+
+    function sendRequest(action, username, expenseId, reason = '') {
+      var formHtml = document.getElementById('modalBody').innerHTML; // Get the form HTML
+    fetch('../../configurations/handle_request.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=${action}&username=${username}&expenseId=${expenseId}&reason=${reason}&formHtml=${encodeURIComponent(formHtml)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Operation successful: ' + data.message);
+            // Optionally, refresh the page or update the UI accordingly
+            location.reload();
+        } else {
+            alert('Operation failed: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+});
+
 
 </script>
 

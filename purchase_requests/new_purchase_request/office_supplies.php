@@ -90,6 +90,7 @@ button:active {
     <div class="bg-white p-8 rounded-lg shadow-lg max-w-7xl mx-auto">
         <h2 class="text-2xl font-bold mb-5 text-center">Office Supplies Request</h2>
         <form id="officeSuppliesForm" method="POST" action="submit_office_supplies.php" enctype="multipart/form-data" class="space-y-4">
+            
             <div>
                 <label for="customer_location" class="block text-gray-700 text-sm font-bold mb-2">Facility:</label>
                 <select id="customer_location" name="customer_location" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -117,6 +118,7 @@ button:active {
     </select>
 </div>
             <div>
+            <input type="hidden" name="expense_type" value="Office Supplies">
                 <Label for="employee_name" class="block text-gray-700 text-sm font-bold mb-2">Employee Name:</Label>
                 <input type="text" id="employee_name" name="employee_name" value="<?php echo htmlspecialchars($_SESSION['user']); ?>" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
             <div>
@@ -149,34 +151,64 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 ?>
 </div>
 <script>
-document.getElementById('addItemButton').addEventListener('click', function() {
-    const form = document.getElementById('officeSuppliesForm');
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('addItemButton').addEventListener('click', function() {
+        const container = document.getElementById('itemsContainer');
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('item');
+        itemDiv.innerHTML = `
+            <input type="text" name="item_names[]" placeholder="Item Name" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="number" name="item_quantities[]" placeholder="Quantity" class="item-quantity shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="text" name="item_prices[]" placeholder="Price per Item" class="item-price shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="number" name="item_total_costs[]" placeholder="Total Cost" class="item-total-cost shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required readonly>
+            <input type="text" name="department[]" placeholder="Department" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <button type="button" class="removeItemButton bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">Remove</button>
+        `;
+        container.appendChild(itemDiv);
 
-    form.addEventListener('submit', function(e) {
+        // Add remove functionality to the button
+        itemDiv.querySelector('.removeItemButton').addEventListener('click', function() {
+            itemDiv.remove();
+        });
+
+        // Add event listeners to quantity and price inputs for automatic total cost calculation
+        const quantityInput = itemDiv.querySelector('.item-quantity');
+        const priceInput = itemDiv.querySelector('.item-price');
+        const totalCostInput = itemDiv.querySelector('.item-total-cost');
+
+        const updateTotalCost = () => {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const totalCost = quantity * price;
+            totalCostInput.value = totalCost.toFixed(2); // Assuming 2 decimal places for currency
+        };
+
+        quantityInput.addEventListener('input', updateTotalCost);
+        priceInput.addEventListener('input', updateTotalCost);
+    });
+
+    document.getElementById('officeSuppliesForm').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevent the default form submission
 
         const formData = new FormData(this);
 
-        // Perform the AJAX request
         fetch('submit_office_supplies.php', {
             method: 'POST',
             body: formData,
         })
-        .then(response => response.json()) // Assuming the server responds with JSON
+        .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
-                // Use SweetAlert for success message
                 Swal.fire({
                     icon: 'success',
                     title: 'Submitted!',
                     text: data.message,
                 }).then((result) => {
                     if (result.isConfirmed || result.isDismissed) {
-                        window.location.href = '../index.php'; // Redirect after acknowledging the alert
+                        window.location.href = '../index.php';
                     }
                 });
             } else {
-                // Use SweetAlert for error message
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
@@ -185,7 +217,6 @@ document.getElementById('addItemButton').addEventListener('click', function() {
             }
         })
         .catch((error) => {
-            // Handle any errors that occurred during the fetch
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -193,38 +224,6 @@ document.getElementById('addItemButton').addEventListener('click', function() {
             });
         });
     });
-    const container = document.getElementById('itemsContainer');
-    const itemDiv = document.createElement('div');
-    itemDiv.classList.add('item');
-    itemDiv.innerHTML = `
-        <input type="text" name="item_names[]" placeholder="Item Name" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        <input type="number" name="item_quantities[]" placeholder="Quantity" class="item-quantity shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        <input type="text" name="item_prices[]" placeholder="Price per Item" class="item-price shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        <input type="number" name="item_total_costs[]" placeholder="Total Cost" class="item-total-cost shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required readonly>
-        <input type="text" name="department[]" placeholder="Department" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-        <button type="button" class="removeItemButton bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">Remove</button>
-    `;
-    container.appendChild(itemDiv);
-
-    // Add remove functionality to the button
-    itemDiv.querySelector('.removeItemButton').addEventListener('click', function() {
-        itemDiv.remove();
-    });
-
-    // Add event listeners to quantity and price inputs for automatic total cost calculation
-    const quantityInput = itemDiv.querySelector('.item-quantity');
-    const priceInput = itemDiv.querySelector('.item-price');
-    const totalCostInput = itemDiv.querySelector('.item-total-cost');
-
-    const updateTotalCost = () => {
-        const quantity = parseFloat(quantityInput.value) || 0;
-        const price = parseFloat(priceInput.value) || 0;
-        const totalCost = quantity * price;
-        totalCostInput.value = totalCost.toFixed(2); // Assuming 2 decimal places for currency
-    };
-
-    quantityInput.addEventListener('input', updateTotalCost);
-    priceInput.addEventListener('input', updateTotalCost);
 });
 
 

@@ -30,6 +30,22 @@ if (isset($_POST['id'])) {
         // Fetch the details
         if ($row = mysqli_fetch_assoc($result)) {
             $response['details'] = $row;
+            // Check if the expense type is Office Supplies before fetching items
+            if ($row['expense_type'] === 'Office Supplies') {
+                // Prepare the SQL query to fetch associated expense items
+                $itemsQuery = "SELECT * FROM expense_items WHERE expense_id = ?";
+                if ($itemsStmt = mysqli_prepare($database, $itemsQuery)) {
+                    mysqli_stmt_bind_param($itemsStmt, "i", $expenseId);
+                    mysqli_stmt_execute($itemsStmt);
+                    $itemsResult = mysqli_stmt_get_result($itemsStmt);
+                    $items = [];
+                    while ($itemRow = mysqli_fetch_assoc($itemsResult)) {
+                        $items[] = $itemRow;
+                    }
+                    $response['items'] = $items;
+                    mysqli_stmt_close($itemsStmt);
+                }
+            }
         } else {
             // If no record is found
             echo json_encode(['error' => 'No expense record found.']);

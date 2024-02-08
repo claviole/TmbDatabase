@@ -1,5 +1,6 @@
 <?php
 include '../../../configurations/connection.php';
+session_start();
 if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../../../index.php");
