@@ -95,8 +95,7 @@ button:active {
     New Purchase Request
 </button>
 <button data-role="super-admin " style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url=manage_expense_requests/index.php>
-    Manage Expenses<br>
-    <span style="font-size: 0.75em;">Skills Training And Resource Tracking</span>
+    Manage Expenses
 </button>
 </div>
 </div>

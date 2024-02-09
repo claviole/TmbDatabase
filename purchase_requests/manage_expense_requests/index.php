@@ -270,8 +270,7 @@ if(!isset($_SESSION['user']) ){
     <?php
 echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . "             " . date("m/d/Y") . "<br>";
 ?>
-    <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
-    
+   
   
 
 </div>
