@@ -249,14 +249,14 @@ document.getElementById('newPurchaseRequestBtn').addEventListener('click', funct
         showCancelButton: true,
         confirmButtonText: 'Travel Approval',
         denyButtonText: `Expense Report`,
-        cancelButtonText: 'Office Supplies',
+        cancelButtonText: 'Itemized Expenses',
     }).then((result) => {
         if (result.isConfirmed) {
             window.location.href = 'new_purchase_request/travel_approval.php';
         } else if (result.isDenied) {
             window.location.href = 'new_purchase_request/expense_report.php';
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-            window.location.href = 'new_purchase_request/office_supplies.php';
+            window.location.href = 'new_purchase_request/itemized_expense.php';
         }
     });
 });

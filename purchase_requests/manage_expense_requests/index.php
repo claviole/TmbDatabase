@@ -113,12 +113,18 @@ if(!isset($_SESSION['user']) ){
     .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
         color: white !important; /* White text color for readability */
         background-color: #28a745 !important; /* Green background for distinction */
+        cursor: pointer;
     }
 
     .dataTables_wrapper .dataTables_paginate .paginate_button.next, 
 .dataTables_wrapper .dataTables_paginate .paginate_button.previous{
     background-color: #1B145D !important; /* Dark background for the header */
         color: white !important; /* White text color for header */
+}
+
+.paginate_button.next:hover, .paginate_button.previous:hover {
+    background-color: #111 !important; /* Darker blue on hover for visual feedback */
+    cursor: pointer !important;
 }
 
 /* Labels */
@@ -201,11 +207,13 @@ if(!isset($_SESSION['user']) ){
         outline: none !important;
         box-shadow: none !important;
     }
+    #purchaseRequestsTable tbody tr:hover {
+    cursor: pointer;
+}
     </style>
     
 </head>
 <body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
-<!-- Modal -->
 <!-- Modal -->
 <div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document"> <!-- Adjusted for a wider modal -->
@@ -221,6 +229,7 @@ if(!isset($_SESSION['user']) ){
       </div>
       <div class="modal-footer border-t-2 border-gray-200">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="printButton" onclick=printExpenseDetails()>Print</button>
         <button type="button" class="btn btn-primary" id="approveButton">Approve</button>
         <button type="button" class="btn btn-danger" id="denyButton">Deny</button>
       </div>
@@ -253,12 +262,12 @@ if(!isset($_SESSION['user']) ){
             $result = mysqli_query($database, $query);
             while($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>
-                        <td>{$row['expense_id']}</td>
-                        <td>{$row['expense_type']}</td>
-                        <td>{$row['customer_name']}</td>
-                        <td>{$row['customer_location']}</td>
-                        <td>{$row['employee_name']}</td>
-                        <td>{$row['approval_status']}</td>
+                        <td>".htmlspecialchars($row['expense_id'], ENT_QUOTES, 'UTF-8')."</td>
+                        <td>".htmlspecialchars($row['expense_type'], ENT_QUOTES, 'UTF-8')."</td>
+                        <td>".htmlspecialchars($row['customer_name'], ENT_QUOTES, 'UTF-8')."</td>
+                        <td>".htmlspecialchars($row['customer_location'], ENT_QUOTES, 'UTF-8')."</td>
+                        <td>".htmlspecialchars($row['employee_name'], ENT_QUOTES, 'UTF-8')."</td>
+                        <td>".htmlspecialchars($row['approval_status'], ENT_QUOTES, 'UTF-8')."</td>
                       </tr>";
             }
             ?>
@@ -585,6 +594,11 @@ document.getElementById('submitDenialReason').addEventListener('click', function
 }
 });
 
+function printExpenseDetails() {
+    var selectedElement = document.getElementById('selectedPurchaseRequest');
+    var expenseId = selectedElement.getAttribute('data-expense-id');
+    window.open(`print.php?expenseId=${expenseId}`, '_blank');
+}
 
 </script>
 
