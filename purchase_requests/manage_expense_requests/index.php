@@ -115,7 +115,11 @@ if(!isset($_SESSION['user']) ){
         background-color: #28a745 !important; /* Green background for distinction */
     }
 
-
+    .dataTables_wrapper .dataTables_paginate .paginate_button.next, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous{
+    background-color: #1B145D !important; /* Dark background for the header */
+        color: white !important; /* White text color for header */
+}
 
 /* Labels */
 .form-group > label {
