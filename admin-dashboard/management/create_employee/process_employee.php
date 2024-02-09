@@ -1,13 +1,14 @@
 <?php
 session_start();
 // Check if the user is logged in and is an admin
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
+if (!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin') {
     // Not logged in or not an admin, redirect to login page
     header("Location: ../../../index.php");
     exit();
 }
-include '../../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
-$pepper = $PEPPER; // Replace with your actual pepper
+
+include '../../../configurations/connection.php'; // Database connection
+$pepper = $PEPPER; // Your actual pepper for password hashing
 
 // Include Mailjet Client
 use \Mailjet\Resources;
@@ -18,15 +19,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
-    // Other form processing...
+    $user_role = $_POST['user_role']; // Assuming this is posted from your form
+    $location_code = $_POST['location_code']; // Assuming this is posted from your form
 
     // Generate a random 6 character password
     $password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
 
-    // Hash the password and other database operations...
-    // After successfully creating the user and before redirecting...
+    // Hash the password
+    $hashedPassword = password_hash($pepper . $password, PASSWORD_BCRYPT);
 
-    // Prepare the Mailjet client
+    // Combine the first name and last name into a username
+    $username = $first_name . ' ' . $last_name;
+
+    // Prepare an SQL statement to insert the new user
+    $stmt = $database->prepare("INSERT INTO `Users` (`username`, `email`, `password`, `user_type`, `location_code`) VALUES (?, ?, ?, ?, ?)");
+
+    // Bind the parameters
+    $stmt->bind_param("sssss", $username, $email, $hashedPassword, $user_role, $location_code);
+
+    // Execute the statement and check if the user was successfully inserted
+    if ($stmt->execute()) {
     $apiKey = '75714be908e64ce7a2686eeca5afb921';
     $apiSecret = '1b9d487cd5b4c212b6b95e28c768815e';
     $mj = new \Mailjet\Client($apiKey, $apiSecret, true, ['version' => 'v3.1']);
@@ -66,16 +78,17 @@ $body = [
     try {
         $response = $mj->post(Resources::$Email, ['body' => $body]);
         if ($response->success()) {
-            // Redirect with success message
             header("Location: create_employee.php?email_sent=success");
         } else {
-            // Handle failure
             header("Location: create_employee.php?email_sent=failure");
         }
     } catch (Exception $e) {
-        // Handle exception
-        header("Location: create_employee.php?email_sent=exception");
+        header("Location: create_employee.php?email_sent=exception&message=" . urlencode($e->getMessage()));
     }
-    exit();
+} else {
+    // Handle error when user insertion fails
+    header("Location: create_employee.php?error=database_error");
+}
+exit();
 }
 ?>

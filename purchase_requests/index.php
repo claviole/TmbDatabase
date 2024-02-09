@@ -252,14 +252,64 @@ document.getElementById('newPurchaseRequestBtn').addEventListener('click', funct
         cancelButtonText: 'Itemized Expenses',
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location.href = 'new_purchase_request/travel_approval.php';
+            // For Travel Approval, gl_code is "NULL"
+            submitFormWithGLCode('new_purchase_request/travel_approval.php', 'NULL');
         } else if (result.isDenied) {
-            window.location.href = 'new_purchase_request/expense_report.php';
+            // For Expense Report, gl_code is 7920
+            submitFormWithGLCode('new_purchase_request/expense_report.php', '7920');
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-            window.location.href = 'new_purchase_request/itemized_expense.php';
+            initiateItemizedExpenseFlow();
         }
     });
 });
+function initiateItemizedExpenseFlow() {
+    fetchDropdownData('fetch_locations.php', {}, 'Select Location', 'location_code');
+}
+
+function fetchDropdownData(endpoint, data, title, nextStep) {
+    fetch(`../configurations/${endpoint}`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(options => {
+        // Remove null or empty keys
+        if (options.hasOwnProperty('') && options[''] === null) {
+            delete options[''];
+        }
+
+        console.log(options); // Debugging line to check the options format
+
+        Swal.fire({
+            title: title,
+            input: 'select',
+            inputOptions: options,
+            inputPlaceholder: `Select a ${title.toLowerCase()}`,
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const selectedValue = result.value;
+                console.log(`Selected: ${selectedValue}`); // Debugging line to check the selected value
+
+                if (nextStep === 'location_code') {
+                    fetchDropdownData('fetch_first_category.php', {location_code: selectedValue}, 'Select First Category', 'first_cat');
+                } else if (nextStep === 'first_cat') {
+                    fetchDropdownData('fetch_second_category.php', {first_cat: selectedValue}, 'Select Second Category', 'second_cat');
+                } else if (nextStep === 'second_cat') {
+                    fetchDropdownData('fetch_names.php', {second_cat: selectedValue}, 'Select Name', 'submit');
+                } else if (nextStep === 'submit') {
+                    // Submit the form or redirect with the selected GL code
+                    window.location.href = `/purchase_requests/new_purchase_request/itemized_expense.php?gl_code=${selectedValue}`;
+                }
+            }
+        });
+    });
+}
+
+
 </script>
 
 </html>

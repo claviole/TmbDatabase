@@ -1,4 +1,7 @@
 <?php
+
+// Check if gl_code is set in the query string
+$glCode = isset($_GET['gl_code']) ? $_GET['gl_code'] : '';
 session_start();
 include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
@@ -12,6 +15,24 @@ if(!isset($_SESSION['user']) ){
     exit();
 }
 
+
+$glCode = $_GET['gl_code']; // Or use a more secure method to get the gl_code
+
+$query = "SELECT expense_name FROM expense_types WHERE gl_code = ?";
+$stmt = $database->prepare($query);
+$stmt->bind_param("i", $glCode);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    $expenseName = $row['expense_name'];
+    // You can now use $expenseName as needed, for example, displaying it or storing it in an input field
+} else {
+    // Handle the case where no matching gl_code is found
+}
+
+$stmt->close();
+$database->close();
 ?>
 
 <!DOCTYPE html>
@@ -118,7 +139,7 @@ button:active {
     </select>
 </div>
             <div>
-            <input type="hidden" name="expense_type" value="Office Supplies">
+            <input type="hidden" name="expense_type" value="<?php echo htmlspecialchars($glCode); ?>">
                 <Label for="employee_name" class="block text-gray-700 text-sm font-bold mb-2">Employee Name:</Label>
                 <input type="text" id="employee_name" name="employee_name" value="<?php echo htmlspecialchars($_SESSION['user']); ?>" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
             <div>
