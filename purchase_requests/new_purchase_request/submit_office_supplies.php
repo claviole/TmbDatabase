@@ -90,9 +90,9 @@ $itemsHtml .= "</table>";
 
             // Check if the email was sent successfully
             if ($emailResult['status'] === 'success') {
-                echo json_encode(['status' => 'success', 'message' => 'Office supplies request submitted and email sent successfully.']);
+                echo json_encode(['status' => 'success', 'message' => 'Itemized expense request submitted and email sent successfully.']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Office supplies request submitted but failed to send email.']);
+                echo json_encode(['status' => 'error', 'message' => 'Itemized expense request submitted but failed to send email.']);
             }
         } else {
             echo json_encode(['status' => 'error', 'message' => 'ERROR: Could not execute query. ' . mysqli_error($database)]);

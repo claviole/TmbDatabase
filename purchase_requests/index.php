@@ -263,8 +263,12 @@ document.getElementById('newPurchaseRequestBtn').addEventListener('click', funct
         }
     });
 });
+var userLocationCode = '<?php echo $_SESSION["location_code"]; ?>';
 function initiateItemizedExpenseFlow() {
-    fetchDropdownData('fetch_locations.php', {}, 'Select Location', 'location_code');
+    const selectedLocationCode = userLocationCode; // Use the global variable directly
+
+// Proceed to fetch the first category based on the user's location code
+fetchDropdownData('fetch_first_category.php', {location_code: selectedLocationCode}, 'Select First Category', 'first_cat');
 }
 
 function fetchDropdownData(endpoint, data, title, nextStep) {
