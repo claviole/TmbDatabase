@@ -69,12 +69,12 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
 
 
 </head>
-<body style="background-image: url('../../../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
 <div class="return-button-container">
     <a href="../management.php" class="return-button">Return to Menu</a>
 </div>
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%"> 
        
 
      

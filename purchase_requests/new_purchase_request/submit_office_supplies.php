@@ -8,17 +8,28 @@ header('Content-Type: application/json');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect and sanitize input data
     $employee_name = mysqli_real_escape_string($database, $_SESSION['user']); // Assuming the username is stored in the session
-    $expense_type = "Office Supplies"; // Assuming the expense type is fixed
     $customer_location = mysqli_real_escape_string($database, $_POST['customer_location']);
     $vendor_name = mysqli_real_escape_string($database, $_POST['vendor_name']);
     $month_of_expense = mysqli_real_escape_string($database, $_POST['month_of_expense']);
+    $gl_code = mysqli_real_escape_string($database, $_POST['expense_type']);
     // Add other fields as necessary
-
+    $query = "SELECT expense_name FROM expense_types WHERE gl_code = ?";
+    $stmt = $database->prepare($query);
+    $stmt->bind_param("i", $gl_code);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($row = $result->fetch_assoc()) {
+        $expense_type = $row['expense_name'];
+    } else {
+        // Handle the case where no matching gl_code is found
+        // For example, set a default expense_type or throw an error
+    }
     // Prepare an INSERT statement for the office supplies request
-    $query = "INSERT INTO purchase_requests (employee_name,expense_type, customer_location, vendor_name, month_of_expense) VALUES (?, ?, ?, ?, ?)";
+    $query = "INSERT INTO purchase_requests (employee_name,gl_code,expense_type, customer_location, vendor_name, month_of_expense) VALUES (?, ?, ?, ?, ?, ?)";
 
     if ($stmt = mysqli_prepare($database, $query)) {
-        mysqli_stmt_bind_param($stmt, "sssss", $employee_name,$expense_type, $customer_location, $vendor_name, $month_of_expense);
+        mysqli_stmt_bind_param($stmt, "sissss", $employee_name, $gl_code, $expense_type, $customer_location, $vendor_name, $month_of_expense);
 
         if (mysqli_stmt_execute($stmt)) {
             $expense_id = mysqli_stmt_insert_id($stmt);
@@ -66,6 +77,8 @@ $itemsHtml .= "</table>";
             // Prepare data for the email
             $formData = [
                 'Employee Name' => $employee_name,
+                'Expense Type' => $expense_type,
+                'GL Code' => $gl_code,
                 'Customer Location' => $customer_location,
                 'Vendor Name' => $vendor_name,
                 'Month of Expense' => $month_of_expense,

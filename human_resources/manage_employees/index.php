@@ -177,17 +177,19 @@ $location_code = $_SESSION['location_code'];
     </style>
     
 </head>
-<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
 <div class="return-button-container">
-    <a href="../../super-admin/index.php" class="return-button">Return to Main Menu</a>
+    <a href="../../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
+
+
+<h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
  
- 
+ </h1>
 </div>
      
-    </h1>
+  
     
     <div class="flex justify-center">
     <?php

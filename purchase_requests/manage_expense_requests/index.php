@@ -213,7 +213,8 @@ if(!isset($_SESSION['user']) ){
     </style>
     
 </head>
-<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
+
 <!-- Modal -->
 <div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document"> <!-- Adjusted for a wider modal -->
@@ -236,12 +237,12 @@ if(!isset($_SESSION['user']) ){
     </div>
   </div>
 </div>
-<div class="return-button-container">
+
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="15%">
+    <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
-     
     </h1>
     <div style="padding: 20px;">
     <table id="purchaseRequestsTable" class="display" style="width:100%">
@@ -485,54 +486,55 @@ else if (expenseType === 'Travel Approval') {
         modalBody.append(fileListHtml);
     }
 }
-else if (expenseType === 'Office Supplies') {
-        var formHtml = `
-        <form>
-            <input type="hidden" id="selectedPurchaseRequest" data-employee-name="${details.employee_name}" data-expense-id="${details.expense_id}">
-            <div class="row">
-                <div class="col-md-6 form-group">
-                    <label for="employeeName">Employee Name:</label>
-                    <input type="text" class="form-control" id="employeeName" value="${details.employee_name}" readonly>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label for="expenseType">Expense Type:</label>
-                    <input type="text" class="form-control" id="expenseType" value="${expenseType}" readonly>
-                </div>
+else {
+    // Code for all other expense types, including "Office Supplies"
+    var formHtml = `
+    <form>
+        <input type="hidden" id="selectedPurchaseRequest" data-employee-name="${details.employee_name}" data-expense-id="${details.expense_id}">
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="employeeName">Employee Name:</label>
+                <input type="text" class="form-control" id="employeeName" value="${details.employee_name}" readonly>
             </div>
-            <div class="row">
-                <div class="col-md-6 form-group">
-                    <label for="customerLocation">Customer Location:</label>
-                    <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label for="vendorName">Vendor Name:</label>
-                    <input type="text" class="form-control" id="vendorName" value="${details.vendor_name}" readonly>
-                </div>
+            <div class="col-md-6 form-group">
+                <label for="expenseType">Expense Type:</label>
+                <input type="text" class="form-control" id="expenseType" value="${expenseType}" readonly>
             </div>
-            <div class="row">
-                <div class="col-md-6 form-group">
-                    <label for="monthOfExpense">Month of Expense:</label>
-                    <input type="text" class="form-control" id="monthOfExpense" value="${details.month_of_expense}" readonly>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="customerLocation">Customer Location:</label>
+                <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
             </div>
-        </form>
-        <h5>Items:</h5>
-        <ul class="list-group">`;
+            <div class="col-md-6 form-group">
+                <label for="vendorName">Vendor Name:</label>
+                <input type="text" class="form-control" id="vendorName" value="${details.vendor_name}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="monthOfExpense">Month of Expense:</label>
+                <input type="text" class="form-control" id="monthOfExpense" value="${details.month_of_expense}" readonly>
+            </div>
+        </div>
+    </form>
+    <h5>Items:</h5>
+    <ul class="list-group">`;
+    console.log(response);
+    response.items.forEach(item => {
+        formHtml += `
+        <li class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="flex: 1; margin-right: 15px;"><strong>Item:</strong> ${item.item_name}</div>
+            <div style="flex: 1; margin-right: 15px;"><strong>Quantity:</strong> ${item.item_quantity}</div>
+            <div style="flex: 1; margin-right: 15px;"><strong>Price per Item:</strong> ${item.price_per_item}</div>
+            <div style="flex: 1; margin-right: 15px;"><strong>Total Cost:</strong> ${item.total_cost}</div>
+            <div style="flex: 1;"><strong>Department:</strong> ${item.department}</div>
+        </li>`;
+    });
 
-        response.items.forEach(item => {
-            formHtml += `
-    <li class="list-group-item" style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="flex: 1; margin-right: 15px;"><strong>Item:</strong> ${item.item_name}</div>
-        <div style="flex: 1; margin-right: 15px;"><strong>Quantity:</strong> ${item.item_quantity}</div>
-        <div style="flex: 1; margin-right: 15px;"><strong>Price per Item:</strong> ${item.price_per_item}</div>
-        <div style="flex: 1; margin-right: 15px;"><strong>Total Cost:</strong> ${item.total_cost}</div>
-        <div style="flex: 1;"><strong>Department:</strong> ${item.department}</div>
-    </li>`;
-        });
-
-        formHtml += `</ul>`;
-        modalBody.append(formHtml);
-    }
+    formHtml += `</ul>`;
+    modalBody.append(formHtml);
+}
 
 }
 

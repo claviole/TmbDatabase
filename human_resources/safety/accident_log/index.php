@@ -183,13 +183,17 @@ p {
     </style>
     
 </head>
-<body style="background-image: url('../../../images/steel_coils.jpg'); background-size: cover;">
-<div class="return-button-container" style="display: flex; justify-content: space-between; align-items: center;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
+<h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
+    <div class="return-button-container" style="display: flex; justify-content: space-between; align-items: center;">
 <button type="button" class="accident-button" style="background-color: #FFA500; color: black; border: 1px solid black;">New Accident</button>
     
 
     <a href="../index.php" class="return-button">Return to Safety Menu</a>
 </div>
+ </h1>
+
 <table class="table-auto w-full">
     
     <thead>

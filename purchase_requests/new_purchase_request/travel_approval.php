@@ -78,15 +78,15 @@ button:active {
     </style>
     
 </head>
-<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
 
-<div class="return-button-container">
+
+    <h2 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="15%">
+    <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
-     
-    </h1>
+    </h2>
     <div class="container mx-auto p-4">
         <div class="max-w-2xl mx-auto bg-white p-5 rounded shadow">
             <h2 class="text-2xl font-bold mb-4 text-center">Travel Approval Form</h2>

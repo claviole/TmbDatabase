@@ -38,17 +38,19 @@ date_default_timezone_set('America/Chicago');
     </style>
     
 </head>
-<body style="background-image: url('../../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
 <div class="return-button-container">
     <a href="../../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../../images/home_page_company_header_hr.png" alt="company header" width="30%" height="20%" > 
+
+
+<h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
  
- 
+ </h1>
 </div>
      
-    </h1>
+   
     
     <div class ="flex justify-center">
     <div class ="flex flex-col justify-content: center  py-10 px-0 "  >

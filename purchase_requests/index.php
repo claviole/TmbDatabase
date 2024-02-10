@@ -79,13 +79,13 @@ button:active {
     </style>
     
 </head>
-<body style="background-image: url('../images/steel_coils.jpg'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
+
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
 <div class="return-button-container">
     <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/home_page_company_header.png" alt="company header" width="30%" height="20%" > 
-     
     </h1>
     
     <div class ="flex justify-center">
@@ -253,10 +253,10 @@ document.getElementById('newPurchaseRequestBtn').addEventListener('click', funct
     }).then((result) => {
         if (result.isConfirmed) {
             // For Travel Approval, gl_code is "NULL"
-            submitFormWithGLCode('new_purchase_request/travel_approval.php', 'NULL');
+            window.location.href = `/purchase_requests/new_purchase_request/travel_approval.php?gl_code=NULL`;
         } else if (result.isDenied) {
             // For Expense Report, gl_code is 7920
-            submitFormWithGLCode('new_purchase_request/expense_report.php', '7920');
+            window.location.href = `/purchase_requests/new_purchase_request/expense_report.php?gl_code=7920`;
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             initiateItemizedExpenseFlow();
         }

@@ -18,14 +18,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mileage_expense = mysqli_real_escape_string($database, $_POST['mileage_expense']);
     $meals_expense = mysqli_real_escape_string($database, $_POST['meals_expense']);
     $entertainment_expense = mysqli_real_escape_string($database, $_POST['entertainment_expense']);
+    $gl_code = mysqli_real_escape_string($database, $_POST['expense_type']);
     // Add other fields as necessary
+    $query = "SELECT expense_name FROM expense_types WHERE gl_code = ?";
+    $stmt = $database->prepare($query);
+    $stmt->bind_param("i", $gl_code);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($row = $result->fetch_assoc()) {
+        $expense_type = $row['expense_name'];
+    } else {
+        // Handle the case where no matching gl_code is found
+        // For example, set a default expense_type or throw an error
+    }
 
     // Prepare an INSERT statement
-    $query = "INSERT INTO purchase_requests (employee_name, expense_type, month_of_expense, date_of_visit, customer_name, customer_location, mileage, mileage_expense, meals_expense, entertainment_expense) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO purchase_requests (employee_name,gl_code, expense_type, month_of_expense, date_of_visit, customer_name, customer_location, mileage, mileage_expense, meals_expense, entertainment_expense) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     if ($stmt = mysqli_prepare($database, $query)) {
         // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "ssssssdddd", $employee_name, $expense_type, $month_of_expense, $date_of_visit, $customer_name, $customer_location, $mileage, $mileage_expense, $meals_expense, $entertainment_expense);
+        mysqli_stmt_bind_param($stmt, "sisssssdddd", $employee_name,$gl_code, $expense_type, $month_of_expense, $date_of_visit, $customer_name, $customer_location, $mileage, $mileage_expense, $meals_expense, $entertainment_expense);
 
         // Attempt to execute the prepared statement
         if (mysqli_stmt_execute($stmt)) {
@@ -59,6 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $formData = [
                 'Employee Name' => $employee_name,
                 'Expense Type' => $expense_type,
+                'GL Code' => $gl_code,
                 'Month of Expense' => $month_of_expense,
                 'Date of Visit' => $date_of_visit,
                 'Customer Name' => $customer_name,

@@ -62,7 +62,7 @@ $expenseType = $details['expense_type'];
 <body onload="window.print();">
     <div class="container">
         <div class="header">
-            <h2>Expense Details - <?= htmlspecialchars($expenseType) ?></h2>
+            <h2>Expense Details- <?= htmlspecialchars($expenseType) ?></h2>
         </div>
         <?php
         // Display fields based on expense type
@@ -89,7 +89,7 @@ $expenseType = $details['expense_type'];
 
                 echo "<div class='detail'><strong>Additional Comments:</strong> " . htmlspecialchars($details['additional_comments']) . "</div>";
                 break;
-                case 'Office Supplies':
+                default:
                     echo "<div class='detail'><strong>Employee Name:</strong> " . htmlspecialchars($details['employee_name']) . "</div>";
                     echo "<div class='detail'><strong>Customer Location:</strong> " . htmlspecialchars($details['customer_location']) . "</div>";
                     echo "<div class='detail'><strong>Vendor Name:</strong> " . htmlspecialchars($details['vendor_name']) . "</div>";
@@ -124,6 +124,9 @@ $expenseType = $details['expense_type'];
             // Add other cases as necessary
         }
         ?>
+        <div class="footer">
+            <p>GL Code: <?= htmlspecialchars($details['gl_code']) ?></p>
+        </div>
     </div>
 </body>
 </html>

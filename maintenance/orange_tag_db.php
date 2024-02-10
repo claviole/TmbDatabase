@@ -274,7 +274,7 @@ $(document).ready( function () {
     white-space: normal; /* Allows text to wrap */
 }
 body {
-    background: url('../images/steel_coils.jpg') no-repeat center center fixed; 
+    background: url('<?php echo $backgroundImage; ?>') no-repeat center center fixed; 
     background-size: cover; /* Cover the entire page */
 }
     </style>
@@ -283,15 +283,16 @@ body {
     <!-- Add your CSS styles here -->
 </head>
 <body>
-<?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
+
+
+<h2 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
+    <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
 <div class="return-button-container">
     <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
 <?php endif; ?>
-    <h2 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="../images/home_page_SMART_header.png" alt="company header" width="30%" height="20%" > 
-    </h2>
-  
+  </h2>
 </div>
 <!-- Add this in your HTML where you want the loading symbol to appear -->
 
