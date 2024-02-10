@@ -284,16 +284,16 @@ body {
 </head>
 <body>
 
-
-<h2 style="display: flex; justify-content: center; align-items: flex-start;"> 
-    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
-    <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
+<?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
 <div class="return-button-container">
     <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
 <?php endif; ?>
-  </h2>
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" style="width: 30%; height: auto; margin-bottom: 10px;">
+    <img src="/images/smart_logo.png" alt="smart logo" style="width: 30%; height: 30%;">
 </div>
+
 <!-- Add this in your HTML where you want the loading symbol to appear -->
 
      

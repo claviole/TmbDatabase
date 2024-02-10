@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 include '../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
@@ -23,10 +25,7 @@ if(!isset($_SESSION['user']) ){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../index.php");
     exit();
-}
-
-?>
-
+}?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +106,7 @@ button:active {
     </style>
     
 </head>
-<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
+<body style="background-image: url('<?php echo $backgroundImage;?>'); background-size: cover;">
 
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%"> 
@@ -163,6 +162,7 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
             <option value="fr" <?php echo ($_SESSION['location_code'] == 'fr') ? 'selected' : ''; ?>>Flatrock</option>
             <option value="tc" <?php echo ($_SESSION['location_code'] == 'tc') ? 'selected' : ''; ?>>Torch</option>
             <option value="gb" <?php echo ($_SESSION['location_code'] == 'gb') ? 'selected' : ''; ?>>Gibraltar</option>
+            <option value="riv" <?php echo ($_SESSION['location_code'] == 'riv') ? 'selected' : ''; ?>>Riverview</option>
         </select>
     </div>
 <?php } ?>

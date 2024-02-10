@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Start buffering output
 session_start();
 include "configurations/connection.php";
 $pepper = $PEPPER; // Replace with your actual pepper

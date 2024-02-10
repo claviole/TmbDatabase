@@ -237,12 +237,12 @@ if(!isset($_SESSION['user']) ){
     </div>
   </div>
 </div>
-
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="15%">
-    <div class="return-button-container">
+<div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Dashboard</a>
 </div>
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+    <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="15%">
+   
     </h1>
     <div style="padding: 20px;">
     <table id="purchaseRequestsTable" class="display" style="width:100%">
