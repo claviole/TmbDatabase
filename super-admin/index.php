@@ -110,12 +110,14 @@ button:active {
 
     <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
         <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%"> 
+        <!--
         <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
         <div class="notification<?php echo $awaiting_approval_count > 0 ? ' flashing' : ''; ?>">
     <a href="quote_approvals/quote_approval.php" style="color: inherit; text-decoration: none;">
         Quotes Awaiting Approval: <?php echo $awaiting_approval_count; ?>
     </a>
     <?php } ?>
+        -->
 </div>
      
     </h1>
