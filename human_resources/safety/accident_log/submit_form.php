@@ -36,7 +36,7 @@ if ($employeeRow = $employeeResult->fetch_assoc()) {
 }
 
 // Check if files were uploaded
-if (isset($_FILES['fileUpload']['name']) && is_array($_FILES['fileUpload']['name'])) {
+if (isset($_FILES['fileUpload']['name']) && is_array($_FILES['fileUpload']['name']) && $_FILES['fileUpload']['error'][0] !== UPLOAD_ERR_NO_FILE) {
     // Loop through each file
     for ($i = 0; $i < count($_FILES['fileUpload']['name']); $i++) {
         // Check if file uploaded without errors
@@ -140,7 +140,7 @@ $body = [
     'Messages' => [
         [
             'From' => [
-                'Email' => "claviolette@targetmetalblanking.com",
+                'Email' => "system.notification@targetmetalsync.com",
                 'Name' => "Target Metal Sync"
             ],
             'To' => $recipients,
