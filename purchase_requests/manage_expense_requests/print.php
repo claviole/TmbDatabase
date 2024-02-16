@@ -70,7 +70,6 @@ $expenseType = $details['expense_type'];
             case 'Expense Report':
                 echo "<div class='detail'><strong>Employee Name:</strong> " . htmlspecialchars($details['employee_name']) . "</div>";
                 echo "<div class='detail'><strong>Month of Expense:</strong> " . htmlspecialchars($details['month_of_expense']) . "</div>";
-                echo "<div class='detail'><strong>Date of Visit:</strong> " . htmlspecialchars($details['date_of_visit']) . "</div>";
                 echo "<div class='detail'><strong>Approval Status:</strong> " . htmlspecialchars($details['approval_status']) . "</div>";
                 $expenseReportItemsQuery = "SELECT * FROM expense_report_items WHERE expense_id = ?";
                 $expenseReportItemsStmt = $database->prepare($expenseReportItemsQuery);

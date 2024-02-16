@@ -10,13 +10,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $employee_name = mysqli_real_escape_string($database, $_POST['employee_name']);
     $expense_type = "Expense Report"; // Hardcoded value for "Expense Report"
     $month_of_expense = mysqli_real_escape_string($database, $_POST['month_of_expense']);
-    $date_of_visit = mysqli_real_escape_string($database, $_POST['date_of_visit']);
+  
     $gl_code = mysqli_real_escape_string($database, $_POST['expense_type']);
 
     // Prepare an INSERT statement for the main expense report
-    $query = "INSERT INTO purchase_requests (employee_name, gl_code, expense_type, month_of_expense, date_of_visit) VALUES (?, ?, ?, ?, ?)";
+    $query = "INSERT INTO purchase_requests (employee_name, gl_code, expense_type, month_of_expense) VALUES (?, ?, ?, ?)";
     if ($stmt = mysqli_prepare($database, $query)) {
-        mysqli_stmt_bind_param($stmt, "sisss", $employee_name, $gl_code, $expense_type, $month_of_expense, $date_of_visit);
+        mysqli_stmt_bind_param($stmt, "siss", $employee_name, $gl_code, $expense_type, $month_of_expense);
         if (mysqli_stmt_execute($stmt)) {
             $expense_id = mysqli_stmt_insert_id($stmt);
             mysqli_stmt_close($stmt);
@@ -46,26 +46,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Insert expense items
             $numItems = count($_POST['customer_name']);
-            $insertItemQuery = "INSERT INTO expense_report_items (expense_id, customer_name, customer_location, mileage, mileage_expense, meals_expense, entertainment_expense) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $insertItemQuery = "INSERT INTO expense_report_items (expense_id, customer_name, customer_location, mileage, mileage_expense, meals_expense, entertainment_expense, date_of_visit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             for ($i = 0; $i < $numItems; $i++) {
                 if ($itemStmt = mysqli_prepare($database, $insertItemQuery)) {
-                    mysqli_stmt_bind_param($itemStmt, "issssss", $expense_id, $_POST['customer_name'][$i], $_POST['customer_location'][$i], $_POST['mileage'][$i], $_POST['mileage_expense'][$i], $_POST['meals_expense'][$i], $_POST['entertainment_expense'][$i]);
+                    mysqli_stmt_bind_param($itemStmt, "isssssss", $expense_id, $_POST['customer_name'][$i], $_POST['customer_location'][$i], $_POST['mileage'][$i], $_POST['mileage_expense'][$i], $_POST['meals_expense'][$i], $_POST['entertainment_expense'][$i], $_POST['date_of_visit'][$i]);
                     mysqli_stmt_execute($itemStmt);
                     mysqli_stmt_close($itemStmt);
                 }
             }
 
             // Construct HTML table for expense items
-$expenseItemsTable = '<table border="1"><tr><th>Customer Name</th><th>Customer Location</th><th>Mileage</th><th>Mileage Expense</th><th>Meals Expense</th><th>Entertainment Expense</th></tr>';
+$expenseItemsTable = '<table border="1"><tr><th>Customer Name</th><th>Customer Location</th><th>Date Of Visit </th><th>Mileage</th><th>Mileage Expense</th><th>Meals Expense</th><th>Entertainment Expense</th></tr>';
 
 for ($i = 0; $i < $numItems; $i++) {
     $expenseItemsTable .= '<tr>';
-    $expenseItemsTable .= '<td>' . htmlspecialchars($_POST['customer_name'][$i]) . '</td>';
-    $expenseItemsTable .= '<td>' . htmlspecialchars($_POST['customer_location'][$i]) . '</td>';
-    $expenseItemsTable .= '<td>' . htmlspecialchars($_POST['mileage'][$i]) . '</td>';
-    $expenseItemsTable .= '<td>' . htmlspecialchars($_POST['mileage_expense'][$i]) . '</td>';
-    $expenseItemsTable .= '<td>' . htmlspecialchars($_POST['meals_expense'][$i]) . '</td>';
-    $expenseItemsTable .= '<td>' . htmlspecialchars($_POST['entertainment_expense'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . htmlspecialchars($_POST['customer_name'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . htmlspecialchars($_POST['customer_location'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . htmlspecialchars($_POST['date_of_visit'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . htmlspecialchars($_POST['mileage'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . "$". htmlspecialchars($_POST['mileage_expense'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . "$". htmlspecialchars($_POST['meals_expense'][$i]) . '</td>';
+    $expenseItemsTable .= '<td style="text-align: center;">' . "$". htmlspecialchars($_POST['entertainment_expense'][$i]) . '</td>';
     $expenseItemsTable .= '</tr>';
 }
 
@@ -78,7 +79,6 @@ $formData = [
     'Expense Type' => $expense_type,
     'GL Code' => $gl_code,
     'Month of Expense' => $month_of_expense,
-    'Date of Visit' => $date_of_visit,
     'Expense Items' => $expenseItemsTable, // Include the expense items table
     // Include additional fields as needed
 ];

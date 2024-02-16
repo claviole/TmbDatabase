@@ -30,9 +30,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt = mysqli_prepare($database, $query)) {
         mysqli_stmt_bind_param($stmt, "sissss", $employee_name, $gl_code, $expense_type, $customer_location, $vendor_name, $month_of_expense);
+        // After successfully inserting the office supplies request and obtaining $expense_id
 
         if (mysqli_stmt_execute($stmt)) {
             $expense_id = mysqli_stmt_insert_id($stmt);
+            if (!empty($_FILES['fileUpload']['name'][0])) {
+                $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+            
+                foreach ($_FILES['fileUpload']['name'] as $key => $value) {
+                    $fileTmpName = $_FILES['fileUpload']['tmp_name'][$key];
+                    $fileName = uniqid() . '-' . basename($_FILES['fileUpload']['name'][$key]);
+                    $filePath = $uploadDir . $fileName;
+            
+                    if (move_uploaded_file($fileTmpName, $filePath)) {
+                        $insertFileQuery = "INSERT INTO expense_files (expense_id, file_name, file_path) VALUES (?, ?, ?)";
+                        if ($fileStmt = mysqli_prepare($database, $insertFileQuery)) {
+                            mysqli_stmt_bind_param($fileStmt, "iss", $expense_id, $fileName, $filePath);
+                            mysqli_stmt_execute($fileStmt);
+                            mysqli_stmt_close($fileStmt);
+                        }
+                    }
+                }
+            }
 
 // Initialize HTML string for items with a styled table
 $itemsHtml = "<table style='width: 100%; border-collapse: collapse; border: 1px solid #ddd; font-family: Arial, sans-serif;'>";

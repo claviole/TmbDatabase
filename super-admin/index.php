@@ -36,6 +36,7 @@ if(!isset($_SESSION['user']) ){
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Admin Dashboard</title>
     <style>
           .flashing {
@@ -103,6 +104,52 @@ button:active {
     transform: translateY(1px); /* Slightly press the button on click */
     box-shadow: 0 9px 20px rgba(0, 0, 0, 0.15); /* Lessen the shadow on click */
 }
+.swal2-popup {
+  font-family: Arial, sans-serif;
+  font-size: 1.2rem;
+}
+
+.swal2-input, .swal2-textarea {
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  box-shadow: none;
+  transition: border-color 0.3s;
+}
+
+.swal2-input:focus, .swal2-textarea:focus {
+  border-color: #a5dc86;
+}
+
+.swal2-confirm {
+  background-color: #3085d6;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+
+.swal2-styled.swal2-confirm:focus {
+  box-shadow: 0 0 0 3px rgba(48, 133, 214, 0.5);
+}
+
+.swal2-cancel {
+  color: #555;
+}
+
+.swal2-title {
+  color: #333;
+  font-weight: bold;
+}
+
+/* Additional custom styles */
+.swal2-input, .swal2-textarea {
+  width: 90%; /* Adjust input width */
+  margin: 0 auto; /* Center inputs */
+}
+
+.swal2-textarea {
+  height: 120px; /* Adjust textarea height */
+}
     </style>
     
 </head>
@@ -146,6 +193,8 @@ button:active {
 </button>
 <button data-role="super-admin" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../purchase_requests/index.php'>Purchase Requests</button>
     <button data-role="super-admin"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-bottom: 10px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../admin-dashboard/management/management.php'>User Management</button>
+    <button data-role="super-admin sales human-resources" id="suggestionButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Have a suggestion or question?</button>
+
     </div>
     </div>
     
@@ -154,6 +203,7 @@ button:active {
 echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . "             " . date("m/d/Y") . "<br>";
 ?>
     <i class="fas fa-cog" id="settings-icon" style="cursor: pointer;"></i>
+    <i class="fas fa-plane-departure" id="oof-button" style="cursor: pointer; margin-left: 20px;"></i>
     
     <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
     <div id="location-change-dropdown" style="position: absolute; top: 0; right: -150px;">
@@ -322,6 +372,112 @@ document.getElementById('locationCodeSelect').addEventListener('change', functio
     })
     .catch(error => console.error('Error:', error));
 });
-
+document.getElementById('suggestionButton').addEventListener('click', function() {
+    Swal.fire({
+        title: 'Submit an Inquiry',
+        html: `
+            <input type="text" id="suggestionSubject" class="swal2-input" placeholder="Subject" required>
+            <textarea id="suggestionDescription" class="swal2-textarea" placeholder="Description" required></textarea>
+        `,
+        confirmButtonText: 'Submit',
+        focusConfirm: false,
+        showCancelButton: true, // Adds a cancel button
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const subject = document.getElementById('suggestionSubject').value;
+            const description = document.getElementById('suggestionDescription').value;
+            if (!subject || !description) {
+                Swal.showValidationMessage("Please fill in both the subject and description");
+                return false;
+            }
+            return { subject: subject, description: description };
+        }
+    }).then((result) => {
+        if (result.value) {
+            // Send the suggestion via AJAX to a PHP handler
+            $.ajax({
+                url: '../configurations/submit_suggestion.php', // Adjust the path as necessary
+                type: 'POST',
+                data: {
+                    subject: result.value.subject,
+                    description: result.value.description
+                },
+                success: function(response) {
+                    Swal.fire('Submitted!', 'Your suggestion has been submitted.', 'success');
+                },
+                error: function() {
+                    Swal.fire('Error', 'There was a problem submitting your suggestion.', 'error');
+                }
+            });
+        }
+    });
+});
+document.getElementById('oof-button').addEventListener('click', function() {
+    fetch('../configurations/get_current_designee.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'user_id=' + '<?php echo $_SESSION['user_id']; ?>' // Assuming user_id is stored in session
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Check if data.designee is explicitly "NULL" or empty and adjust accordingly
+        const currentDesignee = (data.designee && data.designee !== "NULL") ? data.designee : '';
+        const placeholderText = currentDesignee ? '' : 'OOF currently not enabled. Please enter a designee email.';
+        Swal.fire({
+            title: 'Out of Office Settings',
+            html: `
+                <input type="email" id="designeeEmail" class="swal2-input" 
+                placeholder="${placeholderText}" 
+                value="${currentDesignee ? currentDesignee : ''}">
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Set Designee',
+            cancelButtonText: 'Disable Out of Office',
+            showDenyButton: true,
+            denyButtonText: `Cancel`,
+            preConfirm: () => {
+                return document.getElementById('designeeEmail').value;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Set Designee
+                $.ajax({
+                    url: '../configurations/set_designee.php',
+                    type: 'POST',
+                    data: {
+                        user_id: '<?php echo $_SESSION['user_id']; ?>',
+                        designee_email: result.value
+                    },
+                    success: function(response) {
+                        Swal.fire('Success', 'Designee set successfully.', 'success');
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'There was a problem setting the designee.', 'error');
+                    }
+                });
+            } else if (result.isDismissed && Swal.DismissReason.cancel) {
+                // Disable Out of Office
+                $.ajax({
+                    url: '../configurations/disable_oof.php',
+                    type: 'POST',
+                    data: {
+                        user_id: '<?php echo $_SESSION['user_id']; ?>'
+                    },
+                    success: function(response) {
+                        Swal.fire('Success', 'Out of Office disabled successfully.', 'success');
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'There was a problem disabling Out of Office.', 'error');
+                    }
+                });
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
 </script>
 </html>

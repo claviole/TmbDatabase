@@ -45,6 +45,7 @@ if ($row = $result->fetch_assoc()) {
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLEYS7vn5FTgmGoHl7-5kdWcCE62CMhc8&libraries=places"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
     <title>Expense Report</title>
     <style>
   
@@ -146,7 +147,7 @@ button:active {
         </div>
     </div>
 </div>
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-6xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-10xl mx-auto">
             <h2 class="text-2xl font-bold mb-5 text-center">Expense Report</h2>
             
             <form id="expenseReportForm" enctype="multipart/form-data" class="space-y-4">
@@ -155,7 +156,7 @@ button:active {
             <input type="hidden" name="expense_type" value="<?php echo htmlspecialchars($glCode); ?>">
                 <input type="hidden" name="employee_name" value="<?php echo htmlspecialchars($_SESSION['user']); ?>">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-rows-2 md:grid-cols-1 gap-4">
                     <div>
                         <label for="month_of_expense" class="block text-gray-700 text-sm font-bold mb-2">Month of Expense:</label>
                         <select id="month_of_expense" name="month_of_expense" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -165,31 +166,30 @@ button:active {
                         </select>
                     </div>
 
-                    <div>
-                        <label for="date_of_visit" class="block text-gray-700 text-sm font-bold mb-2">Date of Visit:</label>
-                        <input type="date" id="date_of_visit" name="date_of_visit" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
 
                     <!-- Dynamic table for multiple expenses -->
-        <table id="expensesTable" class="mt-4">
-            <thead>
-                <tr>
-                    <th>Customer Name</th>
-                    <th>Customer Location</th>
-                    <th>Mileage</th>
-                    <th>Mileage Expense</th>
-                    <th>Meals Expense</th>
-                    <th>Entertainment Expense</th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr class="expenseRow">
-    <td><input type="text" name="customer_name[]" class="shadow border rounded"></td>
-    <td><input type="text" name="customer_location[]" class="shadow border rounded customer_location"></td> <!-- Added class customer_location -->
-    <td><input type="number" step="0.01" name="mileage[]" class="shadow border rounded mileage"></td> <!-- Added class mileage -->
-    <td><input type="number" step="0.01" name="mileage_expense[]" class="shadow border rounded mileage_expense"></td> <!-- Ensure this class exists for the JS function -->
-    <td><input type="number" step="0.01" name="meals_expense[]" class="shadow border rounded"></td>
-    <td><input type="number" step="0.01" name="entertainment_expense[]" class="shadow border rounded"></td>
+                    <table id="expensesTable" class="mt-4">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Customer Location</th>
+                            <th>Date of Visit</th>
+                            <th>Mileage</th>
+                            <th>Mileage Expense</th>
+                            <th>Meals Expense</th>
+                            <th>Entertainment Expense</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="expenseRow">
+    <td><input type="text" name="customer_name[]" class="shadow border rounded" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td><input type="text" name="customer_location[]" class="shadow border rounded customer_location" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td><input type="date" name="date_of_visit[]" class="shadow border rounded date_of_visit" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td><input type="number" step="0.01" name="mileage[]" class="shadow border rounded mileage" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td><input type="number" step="0.01" name="mileage_expense[]" class="shadow border rounded mileage_expense" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td><input type="number" step="0.01" name="meals_expense[]" class="shadow border rounded" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td><input type="number" step="0.01" name="entertainment_expense[]" class="shadow border rounded" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;"></td>
+    <td></td> <!-- This cell is reserved for the delete button on additional rows -->
 </tr>
             </tbody>
         </table>
@@ -242,6 +242,12 @@ function calculateMileageExpense(input, index) {
    
 $(document).ready(function() {
    // Initialize for existing inputs on document ready
+     // Prevent form submission on Enter key press
+     $(document).on('keypress', function(e) {
+        if (e.which == 13) {
+            e.preventDefault();
+        }
+    });
    $('.customer_location').each(function(index, input) {
         initializeAutocomplete(input);
     });
@@ -250,8 +256,13 @@ $(document).ready(function() {
     });
 
     $('#addAnotherExpense').click(function() {
-    var newRow = $('.expenseRow:first').clone();
+        var newRow = $('.expenseRow:first').clone();
     newRow.find('input').val('');
+
+    // Add the delete button to the new row
+    var deleteButtonHtml = '<button type="button" class="deleteRowBtn"><i class="fas fa-trash"></i></button>';
+    newRow.find('td:last').html(deleteButtonHtml); // Assuming the delete button is in the last cell
+
     $('#expensesTable tbody').append(newRow);
 
     // Re-initialize for the new row inputs
@@ -267,6 +278,7 @@ $(document).ready(function() {
         document.querySelectorAll('.expenseItem').forEach(function(item, index) {
         formData.append('customer_name[]', item.querySelector('.customer_name').value);
         formData.append('customer_location[]', item.querySelector('.customer_location').value);
+        formData.append('date_of_visit[]', item.querySelector('.date_of_visit').value);
         formData.append('mileage[]', item.querySelector('.mileage').value);
         formData.append('mileage_expense[]', item.querySelector('.mileage_expense').value);
         formData.append('meals_expense[]', item.querySelector('.meals_expense').value);
@@ -307,6 +319,10 @@ $(document).ready(function() {
             }
         });
     });
+});
+// Event delegation to handle click event on dynamically added delete buttons
+$('#expensesTable').on('click', '.deleteRowBtn', function() {
+    $(this).closest('tr').remove(); // Remove the closest table row
 });
     </script>
 </body>

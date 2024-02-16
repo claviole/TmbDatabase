@@ -380,10 +380,6 @@ if(expenseType === 'Expense Report') {
                 <label for="monthOfExpense">Month of Expense:</label>
                 <input type="text" class="form-control" id="monthOfExpense" value="${details.month_of_expense}" readonly>
             </div>
-            <div class="col-md-6 form-group">
-                <label for="dateOfVisit">Date of Visit:</label>
-                <input type="text" class="form-control" id="dateOfVisit" value="${details.date_of_visit}" readonly>
-            </div>
         </div>
         <h5>Items:</h5>
     <ul class="list-group">`;
@@ -392,6 +388,7 @@ if(expenseType === 'Expense Report') {
         <li class="list-group-item">
             <div><strong>Customer Name:</strong> ${item.customer_name}</div>
             <div><strong>Customer Location:</strong> ${item.customer_location}</div>
+            <div><strong>Date of Visit:</strong> ${item.date_of_visit}</div>
             <div><strong>Mileage:</strong> ${item.mileage}</div>
             <div><strong>Mileage Expense:</strong> ${item.mileage_expense}</div>
             <div><strong>Meals Expense:</strong> ${item.meals_expense}</div>
@@ -523,6 +520,17 @@ else {
 
     formHtml += `</ul>`;
     modalBody.append(formHtml);
+
+    // Handle files separately, if applicable
+    if(response.files && response.files.length > 0) {
+        var fileListHtml = '<div class="form-group"><label>Files:</label><ul class="list-unstyled">';
+        response.files.forEach(function(file) {
+            var downloadUrl = `download.php?file=${encodeURIComponent(file.file_name)}`;
+            fileListHtml += `<li><a href="${downloadUrl}" target="_blank">${file.file_name}</a></li>`;
+        });
+        fileListHtml += '</ul></div>';
+        modalBody.append(fileListHtml);
+    }
 }
 
 }
