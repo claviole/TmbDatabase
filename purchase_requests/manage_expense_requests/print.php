@@ -71,24 +71,58 @@ $expenseType = $details['expense_type'];
                 echo "<div class='detail'><strong>Employee Name:</strong> " . htmlspecialchars($details['employee_name']) . "</div>";
                 echo "<div class='detail'><strong>Month of Expense:</strong> " . htmlspecialchars($details['month_of_expense']) . "</div>";
                 echo "<div class='detail'><strong>Date of Visit:</strong> " . htmlspecialchars($details['date_of_visit']) . "</div>";
-                echo "<div class='detail'><strong>Customer Name:</strong> " . htmlspecialchars($details['customer_name']) . "</div>";
-                echo "<div class='detail'><strong>Customer Location:</strong> " . htmlspecialchars($details['customer_location']) . "</div>";
-                echo "<div class='detail'><strong>Mileage:</strong> " . htmlspecialchars($details['mileage']) . "</div>";
-                echo "<div class='detail'><strong>Mileage Expense:</strong> " . htmlspecialchars($details['mileage_expense']) . "</div>";
-                echo "<div class='detail'><strong>Meals Expense:</strong> " . htmlspecialchars($details['meals_expense']) . "</div>";
-                echo "<div class='detail'><strong>Entertainment Expense:</strong> " . htmlspecialchars($details['entertainment_expense']) . "</div>";
                 echo "<div class='detail'><strong>Approval Status:</strong> " . htmlspecialchars($details['approval_status']) . "</div>";
-                break;
-            case 'Travel Approval':
-                echo "<div class='detail'><strong>Employee Name:</strong> " . htmlspecialchars($details['employee_name']) . "</div>";
-                echo "<div class='detail'><strong>Travel Start Date:</strong> " . htmlspecialchars($details['travel_start_date']) . "</div>";
-                echo "<div class='detail'><strong>Travel End Date:</strong> " . htmlspecialchars($details['travel_end_date']) . "</div>";
-                echo "<div class='detail'><strong>Customer Name:</strong> " . htmlspecialchars($details['customer_name']) . "</div>";
-                echo "<div class='detail'><strong>Customer Location:</strong> " . htmlspecialchars($details['customer_location']) . "</div>";
-                echo "<div class='detail'><strong>Approval Status:</strong> " . htmlspecialchars($details['approval_status']) . "</div>";
+                $expenseReportItemsQuery = "SELECT * FROM expense_report_items WHERE expense_id = ?";
+                $expenseReportItemsStmt = $database->prepare($expenseReportItemsQuery);
+                $expenseReportItemsStmt->bind_param("i", $expenseId);
+                $expenseReportItemsStmt->execute();
+                $expenseReportItemsResult = $expenseReportItemsStmt->get_result();
 
-                echo "<div class='detail'><strong>Additional Comments:</strong> " . htmlspecialchars($details['additional_comments']) . "</div>";
+                if($expenseReportItemsResult->num_rows > 0) {
+                    echo "<div class='detail'><strong>Details</strong></div>";
+                    echo "<table style='width:100%; border-collapse: collapse;'>";
+                    echo "<tr><th style='border: 1px solid #ddd; padding: 8px;'>Customer Name</th><th style='border: 1px solid #ddd; padding: 8px;'>Customer Location</th><th style='border: 1px solid #ddd; padding: 8px;'>Mileage</th><th style='border: 1px solid #ddd; padding: 8px;'>Mileage Expense</th><th style='border: 1px solid #ddd; padding: 8px;'>Meals Expense</th><th style='border: 1px solid #ddd; padding: 8px;'>Entertainment Expense</th></tr>";
+                    while($item = $expenseReportItemsResult->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($item['customer_name']) . "</td>";
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($item['customer_location']) . "</td>";
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($item['mileage']) . "</td>";
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($item['mileage_expense']) . "</td>";
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($item['meals_expense']) . "</td>";
+                        echo "<td style='border: 1px solid #ddd; padding: 8px;'>" . htmlspecialchars($item['entertainment_expense']) . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<div class='detail'>No expense items found for this expense.</div>";
+                }
                 break;
+                case 'Travel Approval':
+                    echo "<div class='detail'><strong>Employee Name:</strong> " . htmlspecialchars($details['employee_name']) . "</div>";
+                    echo "<div class='detail'><strong>Travel Start Date:</strong> " . htmlspecialchars($details['travel_start_date']) . "</div>";
+                    echo "<div class='detail'><strong>Travel End Date:</strong> " . htmlspecialchars($details['travel_end_date']) . "</div>";
+                    echo "<div class='detail'><strong>Approval Status:</strong> " . htmlspecialchars($details['approval_status']) . "</div>";
+                    echo "<div class='detail'><strong>Additional Comments:</strong> " . htmlspecialchars($details['additional_comments']) . "</div>";
+                
+                    // Query to fetch travel items associated with this expense_id
+                    $travelItemsQuery = "SELECT * FROM travel_items WHERE expense_id = ?";
+                    $travelItemsStmt = $database->prepare($travelItemsQuery);
+                    $travelItemsStmt->bind_param("i", $expenseId);
+                    $travelItemsStmt->execute();
+                    $travelItemsResult = $travelItemsStmt->get_result();
+                
+                    if ($travelItemsResult->num_rows > 0) {
+                        echo "<div class='detail'><strong>Customer Details:</strong></div>";
+                        while ($travelItem = $travelItemsResult->fetch_assoc()) {
+                            echo "<div class='detail'>";
+                            echo "<strong>Customer Name:</strong> " . htmlspecialchars($travelItem['customer_name']) . "<br>";
+                            echo "<strong>Customer Location:</strong> " . htmlspecialchars($travelItem['customer_location']);
+                            echo "</div>";
+                        }
+                    } else {
+                        echo "<div class='detail'>No customer details found for this travel expense.</div>";
+                    }
+                    break;
                 default:
                     echo "<div class='detail'><strong>Employee Name:</strong> " . htmlspecialchars($details['employee_name']) . "</div>";
                     echo "<div class='detail'><strong>Customer Location:</strong> " . htmlspecialchars($details['customer_location']) . "</div>";

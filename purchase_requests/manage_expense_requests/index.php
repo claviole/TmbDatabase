@@ -11,7 +11,7 @@ date_default_timezone_set('America/Chicago');
 // Check if the user is logged in 
 if(!isset($_SESSION['user']) ){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../../index.php");
+    header("Location: /../index.php?redirect=" . urlencode('https://targetmetalsync.com' . $_SERVER['REQUEST_URI']));
     exit();
 }
 
@@ -385,36 +385,22 @@ if(expenseType === 'Expense Report') {
                 <input type="text" class="form-control" id="dateOfVisit" value="${details.date_of_visit}" readonly>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 form-group">
-                <label for="customerName">Customer Name:</label>
-                <input type="text" class="form-control" id="customerName" value="${details.customer_name}" readonly>
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="customerLocation">Customer Location:</label>
-                <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 form-group">
-                <label for="mileage">Mileage:</label>
-                <input type="text" class="form-control" id="mileage" value="${details.mileage}" readonly>
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="mileageExpense">Mileage Expense:</label>
-                <input type="text" class="form-control" id="mileageExpense" value="${details.mileage_expense}" readonly>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 form-group">
-                <label for="mealsExpense">Meals Expense:</label>
-                <input type="text" class="form-control" id="mealsExpense" value="${details.meals_expense}" readonly>
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="entertainmentExpense">Entertainment Expense:</label>
-                <input type="text" class="form-control" id="entertainmentExpense" value="${details.entertainment_expense}" readonly>
-            </div>
-        </div>
+        <h5>Items:</h5>
+    <ul class="list-group">`;
+    response.items.forEach(item => {
+        formHtml += `
+        <li class="list-group-item">
+            <div><strong>Customer Name:</strong> ${item.customer_name}</div>
+            <div><strong>Customer Location:</strong> ${item.customer_location}</div>
+            <div><strong>Mileage:</strong> ${item.mileage}</div>
+            <div><strong>Mileage Expense:</strong> ${item.mileage_expense}</div>
+            <div><strong>Meals Expense:</strong> ${item.meals_expense}</div>
+            <div><strong>Entertainment Expense:</strong> ${item.entertainment_expense}</div>
+        </li>
+        `;
+    });
+    formHtml += `
+    </ul>
     </form>
 `;
 modalBody.append(formHtml);
@@ -454,16 +440,7 @@ else if (expenseType === 'Travel Approval') {
                     <input type="text" class="form-control" id="travelEndDate" value="${details.travel_end_date}" readonly>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6 form-group">
-                    <label for="customerName">Customer Name:</label>
-                    <input type="text" class="form-control" id="customerName" value="${details.customer_name}" readonly>
-                </div>
-                <div class="col-md-6 form-group">
-                    <label for="customerLocation">Customer Location:</label>
-                    <input type="text" class="form-control" id="customerLocation" value="${details.customer_location}" readonly>
-                </div>
-            </div>
+           
             <div class="row">
                 <div class="col-12 form-group">
                     <label for="additionalComments">Additional Comments:</label>
@@ -472,6 +449,18 @@ else if (expenseType === 'Travel Approval') {
             </div>
         </form>
         `;
+         // Dynamically add customer details if they exist in the response, using a list
+    if (response.customers && response.customers.length > 0) {
+        formHtml += `<h5>Customer Details:</h5><ul class="list-group">`;
+        response.customers.forEach(customer => {
+            formHtml += `
+            <li class="list-group-item">
+                <div><strong>Customer Name:</strong> ${customer.customer_name}</div>
+                <div><strong>Customer Location:</strong> ${customer.customer_location}</div>
+            </li>`;
+        });
+        formHtml += `</ul>`;
+    }
         modalBody.append(formHtml);
     
 
@@ -540,35 +529,60 @@ else {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('approveButton').addEventListener('click', function() {
-        // Assuming 'selectedPurchaseRequest' is the element that holds both the employee name and expense ID
-        var selectedElement = document.getElementById('selectedPurchaseRequest');
-        var employeeName = selectedElement.getAttribute('data-employee-name'); // Adjust the ID as necessary
-        var expenseId = selectedElement.getAttribute('data-expense-id'); // Get the expense ID
-        sendRequest('approve', employeeName, expenseId);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to approve this request.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, approve it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var selectedElement = document.getElementById('selectedPurchaseRequest');
+                var employeeName = selectedElement.getAttribute('data-employee-name');
+                var expenseId = selectedElement.getAttribute('data-expense-id');
+                sendRequest('approve', employeeName, expenseId);
+            }
+        });
     });
 
     document.getElementById('denyButton').addEventListener('click', function() {
-    // Show the Bootstrap modal
-    $('#denialReasonModal').modal('show');
-});
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to deny this request.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, deny it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show the Bootstrap modal for entering denial reason
+                $('#denialReasonModal').modal('show');
+            }
+        });
+    });
 
-document.getElementById('submitDenialReason').addEventListener('click', function() {
-    var reason = document.getElementById('denialReasonText').value;
-    if (reason) {
-        var selectedElement = document.getElementById('selectedPurchaseRequest');
-        var employeeName = selectedElement.getAttribute('data-employee-name');
-        var expenseId = selectedElement.getAttribute('data-expense-id');
-
-        // Assuming sendRequest is your function to handle the request
-        sendRequest('deny', employeeName, expenseId, reason);
-
-        // Hide the modal after submission
-        $('#denialReasonModal').modal('hide');
-    } else {
-        // Optionally, alert the user that a reason is required
-        alert('Please enter a reason for denial.');
-    }
-});
+    document.getElementById('submitDenialReason').addEventListener('click', function() {
+        var reason = document.getElementById('denialReasonText').value;
+        if (reason) {
+            var selectedElement = document.getElementById('selectedPurchaseRequest');
+            var employeeName = selectedElement.getAttribute('data-employee-name');
+            var expenseId = selectedElement.getAttribute('data-expense-id');
+            sendRequest('deny', employeeName, expenseId, reason);
+            // Hide the modal after submission
+            $('#denialReasonModal').modal('hide');
+        } else {
+            // Optionally, alert the user that a reason is required
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a reason for denial.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
 
     function sendRequest(action, username, expenseId, reason = '') {
       var formHtml = document.getElementById('modalBody').innerHTML; // Get the form HTML
@@ -601,6 +615,15 @@ function printExpenseDetails() {
     var expenseId = selectedElement.getAttribute('data-expense-id');
     window.open(`print.php?expenseId=${expenseId}`, '_blank');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const expenseId = urlParams.get('expenseId');
+    if (expenseId) {
+        fetchExpenseDetails(expenseId); // Assuming this function fetches and populates the modal with expense details
+        $('#expenseModal').modal('show'); // Assuming 'expenseModal' is the ID of your modal
+    }
+});
 
 </script>
 

@@ -263,34 +263,44 @@ if($_POST){
     var email = $('#email').val();
 
     $.ajax({
-      url: 'configurations/reset_password.php',
-      method: 'POST',
-      data: { email: email },
-      success: function(response) {
-        // Close the modal
-        $('#forgotPasswordModal').modal('hide');
+  url: 'configurations/reset_password.php',
+  method: 'POST',
+  data: { email: email },
+  success: function(response) {
+    // Close the modal
+    $('#forgotPasswordModal').modal('hide');
 
-        // Show a success message
-        Swal.fire({
-          icon: 'success',
-          title: 'Password Reset',
-          text: 'A new password has been sent to your email. It may take 5-10 minutes to arrive in your inbox.',
-          confirmButtonText: 'OK'
-        });
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        // Handle any errors
-        console.error(textStatus, errorThrown);
+    if (response.trim() === 'No account found with that email address.') {
+      // Show a specific message for no account found
+      Swal.fire({
+        icon: 'info',
+        title: 'No Account Found',
+        text: 'No account found with that email address.',
+        confirmButtonText: 'OK'
+      });
+    } else {
+      // Show a success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Password Reset',
+        text: 'A new password has been sent to your email. It may take 5-10 minutes to arrive in your inbox.',
+        confirmButtonText: 'OK'
+      });
+    }
+  },
+  error: function(jqXHR, textStatus, errorThrown) {
+    // Handle any errors
+    console.error(textStatus, errorThrown);
 
-        // Show an error message
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An error occurred while resetting your password. Please try again.',
-          confirmButtonText: 'OK'
-        });
-      }
+    // Show an error message
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'An error occurred while resetting your password. Please try again.',
+      confirmButtonText: 'OK'
     });
+  }
+});
   });
 });
 

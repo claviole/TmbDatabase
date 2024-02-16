@@ -74,8 +74,11 @@ $itemsHtml .= "</tbody></table>";
 
 // Close the table after all items are added
 $itemsHtml .= "</table>";
-            // Prepare data for the email
-            $formData = [
+$expense_id = mysqli_stmt_insert_id($stmt);
+
+// Prepare data for the email
+$formData = [
+    'Expense ID' => $expense_id,
                 'Employee Name' => $employee_name,
                 'Expense Type' => $expense_type,
                 'GL Code' => $gl_code,

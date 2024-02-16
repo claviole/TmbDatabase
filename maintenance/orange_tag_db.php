@@ -354,16 +354,16 @@ body {
       <div class="modal-body">
     <div class="row">
         <div class="col-md-6 mb-2">
-            <button class="btn btn-primary btn-block" onclick="generateReport('openTags')">All Open Tags</button>
+            <button class="btn btn-primary btn-block" onclick="generateReport('openTags')">All Open Work-orders</button>
         </div>
         <div class="col-md-6 mb-2">
-            <button id="TagsByTech" class="btn btn-primary btn-block">Tags by Technician</button>
+            <button id="TagsByTech" class="btn btn-primary btn-block">Work-orders by Technician</button>
         </div>
         <div class="col-md-6 mb-2">
-            <button id="TagsByPriority" class="btn btn-primary btn-block" data-toggle="modal" data-target="#prioritySelectionModal">Tags by Priority</button>
+            <button id="TagsByPriority" class="btn btn-primary btn-block" data-toggle="modal" data-target="#prioritySelectionModal">Work-orders by Priority</button>
         </div>
         <div class="col-md-6 mb-2">
-            <button id="TagsByType" class="btn btn-primary btn-block" data-toggle="modal" data-target="#ticketTypeSelectionModal">Tags by Type</button>
+            <button id="TagsByType" class="btn btn-primary btn-block" data-toggle="modal" data-target="#ticketTypeSelectionModal">Work-orders by Type</button>
         </div>
     </div>
 </div>

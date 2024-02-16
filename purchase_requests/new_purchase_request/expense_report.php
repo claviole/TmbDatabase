@@ -146,7 +146,7 @@ button:active {
         </div>
     </div>
 </div>
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-6xl mx-auto">
             <h2 class="text-2xl font-bold mb-5 text-center">Expense Report</h2>
             
             <form id="expenseReportForm" enctype="multipart/form-data" class="space-y-4">
@@ -170,38 +170,29 @@ button:active {
                         <input type="date" id="date_of_visit" name="date_of_visit" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                     </div>
 
-                    <div>
-                        <label for="customer_name" class="block text-gray-700 text-sm font-bold mb-2">Customer Name:</label>
-                        <input type="text" id="customer_name" name="customer_name" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-
-                    <div>
-                        <label for="customer_location" class="block text-gray-700 text-sm font-bold mb-2">Customer Location:</label>
-                        <input type="text" id="customer_location" name="customer_location" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>                    </div>
-
-                    <div class="mb-4">
-    <div class="flex items-center">
-        <label for="mileage" class="block text-gray-700 text-sm font-bold mr-2">Mileage:</label>
-        <button type="button" id="calculateDistanceBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">Calculate Distance</button>
-    </div>
-    <input type="number" id="mileage" name="mileage" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2" required>
-</div>
-
-                    <div>
-                        <label for="mileage_expense" class="block text-gray-700 text-sm font-bold mb-2">Mileage Expense:</label>
-                        <input type="text" id="mileage_expense" name="mileage_expense" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" readonly>
-                    </div>
-
-                    <div>
-                        <label for="meals_expense" class="block text-gray-700 text-sm font-bold mb-2">Meals Expense:</label>
-                        <input type="number" id="meals_expense" name="meals_expense" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-
-                    <div>
-                        <label for="entertainment_expense" class="block text-gray-700 text-sm font-bold mb-2">Entertainment Expense:</label>
-                        <input type="number" id="entertainment_expense" name="entertainment_expense" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-
+                    <!-- Dynamic table for multiple expenses -->
+        <table id="expensesTable" class="mt-4">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Customer Location</th>
+                    <th>Mileage</th>
+                    <th>Mileage Expense</th>
+                    <th>Meals Expense</th>
+                    <th>Entertainment Expense</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr class="expenseRow">
+    <td><input type="text" name="customer_name[]" class="shadow border rounded"></td>
+    <td><input type="text" name="customer_location[]" class="shadow border rounded customer_location"></td> <!-- Added class customer_location -->
+    <td><input type="number" step="0.01" name="mileage[]" class="shadow border rounded mileage"></td> <!-- Added class mileage -->
+    <td><input type="number" step="0.01" name="mileage_expense[]" class="shadow border rounded mileage_expense"></td> <!-- Ensure this class exists for the JS function -->
+    <td><input type="number" step="0.01" name="meals_expense[]" class="shadow border rounded"></td>
+    <td><input type="number" step="0.01" name="entertainment_expense[]" class="shadow border rounded"></td>
+</tr>
+            </tbody>
+        </table>
                     <div class="col-span-2">
                         <label for="fileUpload" class="block text-gray-700 text-sm font-bold mb-2">Upload Expense Related Files:</label>
                         <input type="file" id="fileUpload" name="fileUpload[]" multiple class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -209,6 +200,7 @@ button:active {
                 </div>
 
                 <div class="flex items-center justify-between mt-4">
+                <button type="button" id="addAnotherExpense" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Add Another</button>
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
                         Submit
                     </button>
@@ -225,131 +217,98 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 ?>
 </div>
 <script>
+
+
+function initializeAutocomplete(input) {
+    if (input) {
+        return new google.maps.places.Autocomplete(input, {types: ['geocode', 'establishment']});
+    }
+}
+
+function calculateMileageExpense(input, index) {
+    if (input) {
+        input.addEventListener('input', function() {
+            var mileage = parseFloat(input.value) || 0;
+            var rate = 0.67; // Define your rate per mile
+            var expense = mileage * rate;
+            var expenseInputs = document.querySelectorAll('.mileage_expense');
+            if (expenseInputs[index]) {
+                expenseInputs[index].value = expense.toFixed(2);
+            }
+        });
+    }
+}
+
+   
 $(document).ready(function() {
-    $('#mileage').on('input', function() {
-        var mileage = $(this).val();
-        var mileageExpense = mileage * 0.67; // Assuming $0.67 per mile
-        $('#mileage_expense').val(mileageExpense.toFixed(2));
+   // Initialize for existing inputs on document ready
+   $('.customer_location').each(function(index, input) {
+        initializeAutocomplete(input);
     });
+    $('.mileage').each(function(index, input) {
+        calculateMileageExpense(input, index);
+    });
+
+    $('#addAnotherExpense').click(function() {
+    var newRow = $('.expenseRow:first').clone();
+    newRow.find('input').val('');
+    $('#expensesTable tbody').append(newRow);
+
+    // Re-initialize for the new row inputs
+    var newCustomerLocationInput = newRow.find('.customer_location')[0];
+    var newMileageInput = newRow.find('.mileage')[0];
+    initializeAutocomplete(newCustomerLocationInput);
+    calculateMileageExpense(newMileageInput, $('.mileage').length - 1);
+});
 
     $('#expenseReportForm').on('submit', function(e) {
         e.preventDefault();
         var formData = new FormData(this);
+        document.querySelectorAll('.expenseItem').forEach(function(item, index) {
+        formData.append('customer_name[]', item.querySelector('.customer_name').value);
+        formData.append('customer_location[]', item.querySelector('.customer_location').value);
+        formData.append('mileage[]', item.querySelector('.mileage').value);
+        formData.append('mileage_expense[]', item.querySelector('.mileage_expense').value);
+        formData.append('meals_expense[]', item.querySelector('.meals_expense').value);
+        formData.append('entertainment_expense[]', item.querySelector('.entertainment_expense').value);
+    });
 
-        $.ajax({
+    $.ajax({
             url: 'submit_expense_report.php',
             type: 'POST',
             data: formData,
-            processData: false, // Important: Don't process the files
-            contentType: false, // Important: Set content type to false
+            contentType: false,
+            processData: false,
             success: function(response) {
-                // Assuming the response is already a JSON object
-                // If the response is a JSON string, parse it first
-                // var response = JSON.parse(data); // Use this line if response is not automatically parsed
-
-                if(response.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: response.message,
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '../index.php'; // Redirect
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: response.message,
-                    });
-                }
+                // Use SweetAlert for success message and refresh page on close
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Expense report submitted successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.reload(); // Reload the page
+                    }
+                });
             },
             error: function(xhr, status, error) {
-                // Handle AJAX error
+                // Use SweetAlert for error message and refresh page on close
                 Swal.fire({
+                    title: 'Error!',
+                    text: 'Submission error: ' + error,
                     icon: 'error',
-                    title: 'Oops...',
-                    text: "An error occurred: " + xhr.status + " " + error,
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.reload(); // Reload the page
+                    }
                 });
             }
         });
     });
 });
-
-function initializeAutocomplete() {
-    $('.address-input, #customer_location').each(function() {
-        var autocomplete = new google.maps.places.Autocomplete(this, {types: ['geocode', 'establishment']});
-        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-            // Place changed. You can perform additional actions if needed.
-        });
-    });
-}
-
-$(document).ready(function() {
-    initializeAutocomplete();
-    $('#calculateDistanceBtn').click(function() {
-        $('#distanceModalOverlay, #distanceModal').show();
-        initializeAutocomplete(); // Initialize autocomplete when the modal is shown
-    });
-
-    $('#addStopBtn').click(function() {
-        // Create a new stop address input element with a remove button
-        var newStopInput = $(`
-            <div class="address-input-container flex items-center space-x-2 mt-2">
-                <input type="text" placeholder="Stop Address" class="address-input block w-full px-4 py-2 border rounded">
-                <button type="button" class="remove-stop-btn bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `);
-
-        // Insert the new input with remove button before the last address input container
-        $('#addressInputs .address-input-container:last').before(newStopInput);
-
-        // Re-initialize autocomplete for all address inputs including the new stop address
-        initializeAutocomplete();
-    });
-
-    // Dynamically bind click event to remove buttons
-    $('#addressInputs').on('click', '.remove-stop-btn', function() {
-        $(this).closest('.address-input-container').remove(); // Remove the closest parent .address-input-container
-    });
-    // Hide modal on outside click
-    $('#distanceModalOverlay').click(function(event) {
-        // Ensure the click is not inside the modal content
-        if (!$(event.target).closest('#distanceModal .modal-content').length) {
-            $('#distanceModal, #distanceModalOverlay').hide();
-        }
-    });
-
-
-    // Calculate the distance
-    $('#calculateBtn').click(function() {
-        let addresses = $('.address-input').map(function() { return $(this).val(); }).get();
-        calculateDistance(addresses);
-        $('#distanceModalOverlay, #distanceModal').hide();
-    });
-
-    // Function to calculate distance
-    function calculateDistance(addresses) {
-        $.ajax({
-            url: '../../configurations/calculate_distance.php',
-            type: 'POST',
-            data: {addresses: JSON.stringify(addresses)},
-            success: function(distance) {
-                $('#mileage').val(distance).trigger('input');
-                $('#distanceModalOverlay, #distanceModal').hide();
-            },
-            error: function(xhr, status, error) {
-                console.error("An error occurred: " + xhr.status + " " + error);
-            }
-        });
-    }
-});
-
     </script>
 </body>
 
 </html>
-```

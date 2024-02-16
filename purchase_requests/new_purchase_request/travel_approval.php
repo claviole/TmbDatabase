@@ -75,6 +75,39 @@ button:active {
     transform: translateY(1px); /* Slightly press the button on click */
     box-shadow: 0 9px 20px rgba(0, 0, 0, 0.15); /* Lessen the shadow on click */
 }
+   /* Custom styles for the entry container */
+   .entry {
+        background-color: #f9f9f9; /* Light grey background */
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Style for individual input elements */
+    .entry input[type="text"] {
+        background-color: #ffffff; /* White background */
+        border: 1px solid #ddd; /* Light grey border */
+        border-radius: 4px;
+        padding: 8px 12px;
+        width: calc(50% - 16px); /* Adjust width as needed, accounting for padding */
+        margin-right: 8px; /* Space between inputs */
+    }
+
+    /* Style for the "Add Another" button */
+    #addAnother {
+        background-color: #4CAF50; /* Green background */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #addAnother:hover {
+        background-color: #45a049; /* Darker green on hover */
+    }
     </style>
     
 </head>
@@ -104,15 +137,15 @@ button:active {
                     <input type="date" id="travel_end_date" name="travel_end_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                 </div>
 
-                <div class="mb-4">
-                    <label for="customer_name" class="block text-gray-700 text-sm font-bold mb-2">Customer Name:</label>
-                    <input type="text" id="customer_name" name="customer_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
-
-                <div class="mb-4">
-                    <label for="customer_location" class="block text-gray-700 text-sm font-bold mb-2">Customer Location:</label>
-                    <input type="text" id="customer_location" name="customer_location" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                </div>
+                <div id="entriesContainer" class="mb-4">
+    <div class="entry p-4 bg-gray-100 rounded shadow-md">
+        <label class="block">Customer Name:</label>
+        <input type="text" name="customer_name[]" class="mt-1 p-2 w-full border rounded" required>
+        <label class="block mt-2">Customer Location:</label>
+        <input type="text" name="customer_location[]" class="mt-1 p-2 w-full border rounded" required>
+    </div>
+</div>
+<button type="button" id="addAnother" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Another</button>
 
                 <div class="mb-4">
                     <label for="additional_comments" class="block text-gray-700 text-sm font-bold mb-2">Additional Comments:</label>
@@ -139,35 +172,32 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 </body>
 <script>
 document.getElementById('travelApprovalForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault();
+    const formData = new FormData(this);
 
-    const formData = new FormData(this); // 'this' refers to the form
-
-    fetch('submit_travel_approval.php', { // Replace with the actual path to your PHP script
+    fetch('submit_travel_approval.php', {
         method: 'POST',
         body: formData
     })
     .then(response => response.json())
     .then(data => {
-        if(data.status === 'success') {
-            Swal.fire({
-                title: 'Success!',
-                text: data.message,
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed || result.dismiss) {
-                    window.location.href = '../index.php'; // Redirect after closing the alert
-                }
-            });
-        } else {
-            Swal.fire({
-                title: 'Error!',
-                text: data.message,
-                icon: 'error'
-            });
-        }
+        Swal.fire({
+            title: data.status === 'success' ? 'Success!' : 'Error!',
+            text: data.message,
+            icon: data.status
+        }).then(() => {
+            if (data.status === 'success') {
+                window.location.href = '../index.php'; // Redirect on success
+            }
+        });
     })
     .catch(error => console.error('Error:', error));
+});
+document.getElementById('addAnother').addEventListener('click', function() {
+    const container = document.getElementById('entriesContainer');
+    const newEntry = container.children[0].cloneNode(true);
+    newEntry.querySelectorAll('input').forEach(input => input.value = ''); // Clear inputs
+    container.appendChild(newEntry);
 });
 </script>
 </html>

@@ -4,37 +4,53 @@ include '../../configurations/connection.php'; // Your database connection file
 include '../../configurations/send_expense.php'; // Include the file where sendExpenseFormEmail function is defined
 header('Content-Type: application/json'); // Specify the content type as JSON
 
-// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Collect and sanitize input data
     $employee_name = mysqli_real_escape_string($database, $_POST['employee_name']);
     $expense_type = mysqli_real_escape_string($database, $_POST['expense_type']);
     $travel_start_date = mysqli_real_escape_string($database, $_POST['travel_start_date']);
     $travel_end_date = mysqli_real_escape_string($database, $_POST['travel_end_date']);
-    $customer_name = mysqli_real_escape_string($database, $_POST['customer_name']);
-    $customer_location = mysqli_real_escape_string($database, $_POST['customer_location']);
     $additional_comments = mysqli_real_escape_string($database, $_POST['additional_comments']);
 
-    // Prepare an INSERT statement
-    $query = "INSERT INTO purchase_requests (employee_name, expense_type, travel_start_date, travel_end_date, customer_name, customer_location, additional_comments, approval_status) VALUES ( ?, ?, ?, ?, ?, ?, ?, 'pending')";
+    // Prepare an INSERT statement for the main expense record
+    $query = "INSERT INTO purchase_requests (employee_name, expense_type, travel_start_date, travel_end_date, additional_comments, approval_status) VALUES (?, ?, ?, ?, ?, 'pending')";
 
     if ($stmt = mysqli_prepare($database, $query)) {
         // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "ssssssb",$employee_name, $expense_type, $travel_start_date, $travel_end_date, $customer_name, $customer_location, $additional_comments);
+        mysqli_stmt_bind_param($stmt, "sssss", $employee_name, $expense_type, $travel_start_date, $travel_end_date, $additional_comments);
 
         // Attempt to execute the prepared statement
         if (mysqli_stmt_execute($stmt)) {
-            // Prepare data for the email
+            $expense_id = mysqli_stmt_insert_id($stmt);
+
+            // Initialize formData with basic information
             $formData = [
-                
+                'Expense ID' => $expense_id,
                 'Employee Name' => $employee_name,
                 'Expense Type' => $expense_type,
                 'Travel Start Date' => $travel_start_date,
                 'Travel End Date' => $travel_end_date,
-                'Customer Name' => $customer_name,
-                'Customer Location' => $customer_location,
                 'Additional Comments' => $additional_comments,
             ];
+
+            // Loop through each customer name and location
+            foreach ($_POST['customer_name'] as $index => $name) {
+                $customerIndex = $index + 1; // Start numbering from 1
+                $customer_name = mysqli_real_escape_string($database, $name);
+                $customer_location = mysqli_real_escape_string($database, $_POST['customer_location'][$index]);
+
+                // Append each customer's info to formData
+                $formData["Customer $customerIndex Name"] = $customer_name;
+                $formData["Customer $customerIndex Location"] = $customer_location;
+
+                // Prepare an INSERT statement for each customer entry
+                $customerQuery = "INSERT INTO travel_items (expense_id, customer_name, customer_location) VALUES (?, ?, ?)";
+                if ($customerStmt = mysqli_prepare($database, $customerQuery)) {
+                    mysqli_stmt_bind_param($customerStmt, "iss", $expense_id, $customer_name, $customer_location);
+                    mysqli_stmt_execute($customerStmt);
+                    mysqli_stmt_close($customerStmt);
+                }
+            }
 
             // Send the email
             $emailResult = sendExpenseFormEmail($formData);
