@@ -22,6 +22,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_role = $_POST['user_role']; // Assuming this is posted from your form
     $location_code = $_POST['location_code']; // Assuming this is posted from your form
 
+    // Check if the email already exists in the system
+    $stmt = $database->prepare("SELECT `status` FROM Users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        if ($user['status'] === 'inactive') {
+            // User exists but is inactive, display Sweet Alert message
+            echo "<script type='text/javascript'>
+                    Swal.fire({
+                        title: 'Account Exists',
+                        text: 'That email address is already in use on another account, please submit an inquiry if this was a mistake',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'create_employee.php';
+                        }
+                    });
+                  </script>";
+            exit();
+        } else {
+           // User exists and is active, redirect with an error message
+    header("Location: create_employee.php?error=email_in_use&active=true");
+    exit();
+        }
+    }
     // Generate a random 6 character password
     $password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
 

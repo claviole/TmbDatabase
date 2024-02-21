@@ -307,8 +307,9 @@ body {
     <div class="row">
         <div class="col-12">
         <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
-        <button class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
-        <button class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
+        <button id="viewClosedBtn" class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
+        <button id="viewOpenBtn" class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
+        <button id="viewUnassignedBtn" class="btn btn-secondary" onclick="viewUnassignedTickets()">View Unassigned</button>
         <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'super-admin'): ?>
         <button id="generateReportButton" class="btn btn-info" data-toggle="modal" data-target="#reportModal">Generate Report</button>
         <?php endif; ?>
@@ -1431,26 +1432,41 @@ function toggleDateField(dateFieldId, isChecked) {
     var dateField = document.getElementById(dateFieldId);
     dateField.style.display = isChecked ? 'block' : 'none';
 }
-function viewClosedTickets() {
-    // Hide rows where the status is "Open"
-    $('#orange_tag_table tr.Open').hide();
-
-    // Show rows where the status is "Closed"
-    $('#orange_tag_table tr.Closed').show();
-}
-
-function viewOpenTickets() {
-    // Hide rows where the status is "Closed"
-    $('#orange_tag_table tr.Closed').hide();
-
-    // Show rows where the status is "Open"
-    $('#orange_tag_table tr.Open').show();
-}
-
 $(document).ready(function() {
-    viewOpenTickets();
-});
+    var table = $('#orange_tag_table').DataTable(); // Initialize your DataTable and keep a reference to it
 
+    function viewClosedTickets() {
+        // Clear any existing search filters
+        table.search('').columns().search('');
+        // Filter for "Closed" status, assuming status is in a specific column
+        table.column(9).search('Closed', true, false).draw();
+    }
+
+    function viewOpenTickets() {
+        // Clear any existing search filters
+        table.search('').columns().search('');
+        // Filter for "Open" status, assuming status is in a specific column
+        table.column(9).search('Open', true, false).draw();
+    }
+
+    function viewUnassigned() {
+        // Clear any existing search filters
+        table.search('').columns().search('');
+        // Search for rows where the 'repair-technician' column is empty
+        // Adjust the column index to match the correct column for 'repair-technician'
+        table.columns().every(function () {
+            var column = this;
+            if(column.index() === 7) {
+                column.search('^$', true, false).draw();
+            }
+        });
+    }
+
+    // Bind the functions to the button click events
+    $('#viewClosedBtn').on('click', viewClosedTickets);
+    $('#viewOpenBtn').on('click', viewOpenTickets);
+    $('#viewUnassignedBtn').on('click', viewUnassigned);
+});
 
 $(document).ready(function() {
     $('#ticket_type').change(function() {

@@ -231,6 +231,7 @@ body {
                         <label><input type="radio" name="question1_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question1_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question1_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question1_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question1_a_one"></textarea></td>
                     <td><textarea name="question1_a_two"></textarea></td>
@@ -243,6 +244,7 @@ body {
                         <label><input type="radio" name="question2_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question2_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question2_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question2_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question2_a_one"></textarea></td>
                     <td><textarea name="question2_a_two"></textarea></td>
@@ -255,6 +257,7 @@ body {
                         <label><input type="radio" name="question3_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question3_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question3_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question3_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question3_a_one"></textarea></td>
                     <td><textarea name="question3_a_two"></textarea></td>
@@ -262,11 +265,12 @@ body {
                 </tr>
                 <tr>
                     <input type="hidden" name="question4_text" value="Fire Extinguishers: Easily Accessible. Inspection Dates are within past 12 months.">
-                    <td>Fire Extinguishers: Easily Accessible. Inspection Dates are within past 12 months.</td>
+                    <td>Fire Extinguishers Easily Accessible. Inspection Dates are within past 12 months.</td>
                     <td>
                         <label><input type="radio" name="question4_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question4_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question4_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question4_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question4_a_one"></textarea></td>
                     <td><textarea name="question4_a_two"></textarea></td>
@@ -279,6 +283,7 @@ body {
                         <label><input type="radio" name="question5_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question5_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question5_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question5_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question5_a_one"></textarea></td>
                     <td><textarea name="question5_a_two"></textarea></td>
@@ -291,6 +296,7 @@ body {
                         <label><input type="radio" name="question6_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question6_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question6_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question6_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question6_a_one"></textarea></td>
                     <td><textarea name="question6_a_two"></textarea></td>
@@ -303,6 +309,7 @@ body {
                         <label><input type="radio" name="question7_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question7_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question7_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question7_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question7_a_one"></textarea></td>
                     <td><textarea name="question7_a_two"></textarea></td>
@@ -315,6 +322,7 @@ body {
                         <label><input type="radio" name="question8_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question8_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question8_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question8_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question8_a_one"></textarea></td>
                     <td><textarea name="question8_a_two"></textarea></td>
@@ -327,6 +335,7 @@ body {
                         <label><input type="radio" name="question9_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question9_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question9_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question9_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question9_a_one"></textarea></td>
                     <td><textarea name="question9_a_two"></textarea></td>
@@ -339,6 +348,7 @@ body {
                         <label><input type="radio" name="question10_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question10_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question10_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question10_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question10_a_one"></textarea></td>
                     <td><textarea name="question10_a_two"></textarea></td>
@@ -351,6 +361,7 @@ body {
                         <label><input type="radio" name="question11_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question11_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question11_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question11_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question11_a_one"></textarea></td>
                     <td><textarea name="question11_a_two"></textarea></td>
@@ -358,23 +369,25 @@ body {
                 </tr>
                 <tr>
                     <input type="hidden" name="question12_text" value="Load Limits Posted on Cranes and hooks / grabbers">
-                    <td>Load Limits Posted on Cranes and hooks / grabbers</td>
+                    <td>Load Limits Posted on Cranes and Hooks / Grabbers</td>
                     <td>
                         <label><input type="radio" name="question12_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question12_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question12_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question12_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question12_a_one"></textarea></td>
                     <td><textarea name="question12_a_two"></textarea></td>
                     <td><textarea name="question12_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question13_text" value="Storage/Elevated Platforms have 42" safety rails">
+                    <input type="hidden" name="question13_text" value="Storage/Elevated Platforms have 42 inch safety rails">
                     <td>Storage/Elevated Platforms have 42" safety rails</td>
                     <td>
                         <label><input type="radio" name="question13_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question13_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question13_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question13_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question13_a_one"></textarea></td>
                     <td><textarea name="question13_a_two"></textarea></td>
@@ -387,6 +400,7 @@ body {
                         <label><input type="radio" name="question14_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question14_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question14_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question14_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question14_a_one"></textarea></td>
                     <td><textarea name="question14_a_two"></textarea></td>
@@ -399,6 +413,7 @@ body {
                         <label><input type="radio" name="question15_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question15_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question15_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question15_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question15_a_one"></textarea></td>
                     <td><textarea name="question15_a_two"></textarea></td>
@@ -411,6 +426,7 @@ body {
                         <label><input type="radio" name="question16_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question16_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question16_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question16_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question16_a_one"></textarea></td>
                     <td><textarea name="question16_a_two"></textarea></td>
@@ -423,18 +439,20 @@ body {
                         <label><input type="radio" name="question17_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question17_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question17_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question17_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question17_a_one"></textarea></td>
                     <td><textarea name="question17_a_two"></textarea></td>
                     <td><textarea name="question17_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question18_text" value="Electrical Panels have 36" Clearance?">
+                    <input type="hidden" name="question18_text" value="Electrical Panels have 36 inches of Clearance?">
                     <td>Electrical Panels have 36" Clearance?</td>
                     <td>
                         <label><input type="radio" name="question18_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question18_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question18_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question18_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question18_a_one"></textarea></td>
                     <td><textarea name="question18_a_two"></textarea></td>
@@ -447,6 +465,7 @@ body {
                         <label><input type="radio" name="question19_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question19_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question19_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question19_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question19_a_one"></textarea></td>
                     <td><textarea name="question19_a_two"></textarea></td>
@@ -459,6 +478,7 @@ body {
                         <label><input type="radio" name="question20_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question20_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question20_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question20_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question20_a_one"></textarea></td>
                     <td><textarea name="question20_a_two"></textarea></td>
@@ -471,6 +491,7 @@ body {
                         <label><input type="radio" name="question21_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question21_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question21_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question21_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question21_a_one"></textarea></td>
                     <td><textarea name="question21_a_two"></textarea></td>
@@ -483,6 +504,7 @@ body {
                         <label><input type="radio" name="question22_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question22_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question22_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question22_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question22_a_one"></textarea></td>
                     <td><textarea name="question22_a_two"></textarea></td>
@@ -495,6 +517,7 @@ body {
                         <label><input type="radio" name="question23_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question23_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question23_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question23_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question23_a_one"></textarea></td>
                     <td><textarea name="question23_a_two"></textarea></td>
@@ -507,6 +530,7 @@ body {
                         <label><input type="radio" name="question24_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question24_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question24_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question24_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question24_a_one"></textarea></td>
                     <td><textarea name="question24_a_two"></textarea></td>
@@ -519,6 +543,7 @@ body {
                         <label><input type="radio" name="question25_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question25_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question25_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question25_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question25_a_one"></textarea></td>
                     <td><textarea name="question25_a_two"></textarea></td>
@@ -531,6 +556,7 @@ body {
                         <label><input type="radio" name="question26_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question26_ranking" value="2"> 2</label>
                         <label><input type="radio" name="question26_ranking" value="3"> 3</label>
+                        <label><input type="radio" name="question26_ranking" value="NA"> N/A</label>
                     </td>
                     <td><textarea name="question26_a_one"></textarea></td>
                     <td><textarea name="question26_a_two"></textarea></td>

@@ -173,6 +173,19 @@ if (isset($_GET['email_sent'])) {
               </script>";
     }
 }
+
+// Check for 'error' query parameter and if the email is active
+if (isset($_GET['error']) && $_GET['error'] == 'email_in_use' && isset($_GET['active']) && $_GET['active'] == 'true') {
+    // Display Sweet Alert for active email
+    echo "<script type='text/javascript'>
+            Swal.fire({
+                title: 'Email Already in Use',
+                text: 'The email address is already associated with an active account.Please submit a query for further assistance.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+          </script>";
+}
 ?>
 </body>
 </html>
