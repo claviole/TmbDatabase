@@ -3,6 +3,12 @@ session_start();
 include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
 
+
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: ../../index.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -56,6 +62,7 @@ date_default_timezone_set('America/Chicago');
     <div class ="flex flex-col justify-content: center  py-10 px-0 "  >
         <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='accident_log/index.php'">Accident Log</button>
         <button style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "onclick= "window.location.href='observations/index.php'">Observations</button>
+        <button style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" id="safetyAuditsButton">Safety Audits</button>
     </div>
     </div>
     <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0;">
@@ -141,5 +148,49 @@ document.getElementById('settings-icon').addEventListener('click', function() {
         }
     });
 });
+document.getElementById('safetyAuditsButton').addEventListener('click', function() {
+    Swal.fire({
+        title: 'Safety Audits',
+        text: 'Choose an option:',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Start New Audit',
+        cancelButtonText: 'View Previous Audits',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'safety_audits/new_audit.php';
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            // Fetch and display previous audits
+            fetch('fetch_previous_audits.php')
+                .then(response => response.json())
+                .then(audits => {
+                    if (audits.length > 0) {
+                        const optionsHtml = audits.map(audit => `<option value="${audit.checklist_id}">${audit.date_completed}</option>`).join('');
+                        Swal.fire({
+                            title: 'Select a Previous Audit',
+                            html: `<select id="audit-dropdown" class="swal2-input">${optionsHtml}</select>`,
+                            focusConfirm: false,
+                            preConfirm: () => {
+                                const selectedAuditId = document.getElementById('audit-dropdown').value;
+                                downloadAudit(selectedAuditId);
+                            },
+                            showCancelButton: true,
+                            confirmButtonText: 'Download Selected Audit',
+                            cancelButtonText: 'Cancel'
+                        });
+                    } else {
+                        Swal.fire('No Previous Audits', 'There are no previous audits to display.', 'info');
+                    }
+                })
+                .catch(error => console.error('Error fetching previous audits:', error));
+        }
+    });
+});
+
+function downloadAudit(checklistId) {
+    // Navigate to the download_audit.php script with the checklist_id as a query parameter
+    window.location.href = `download_audit.php?checklist_id=${checklistId}`;
+}
 </script>
 </html>

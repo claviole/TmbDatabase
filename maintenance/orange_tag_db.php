@@ -16,13 +16,13 @@ date_default_timezone_set('America/Chicago');
     $tag_author= $_SESSION['user'];
 
 // Fetch the data from the database
-$query = "SELECT * FROM employees WHERE job_title IN (14,18,19,22,23,24,25,26,27,31,33,38) AND `status` = 'active'"; 
+$query = "SELECT * FROM employees WHERE job_title IN (14,18,19,22,23,24,25,26,27,31,33,38) AND `status` = 'active' AND `location_code`= '{$_SESSION['location_code']}'"; 
 $supervisors = mysqli_query($database, $query);
 
-$query = "SELECT * FROM employees WHERE job_title = 25 AND `status` = 'active'";
+$query = "SELECT * FROM employees WHERE job_title = 25 AND `status` = 'active' AND `location_code`= '{$_SESSION['location_code']}'"; 
 $maintenance_managers = mysqli_query($database, $query);
 
-$query = "SELECT * FROM employees WHERE job_title = 38 AND `status` = 'active'";
+$query = "SELECT * FROM employees WHERE job_title = 38 AND `status` = 'active' AND `location_code`= '{$_SESSION['location_code']}'"; 
 $safety_coordinators = mysqli_query($database, $query);
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
@@ -277,6 +277,9 @@ body {
     background: url('<?php echo $backgroundImage; ?>') no-repeat center center fixed; 
     background-size: cover; /* Cover the entire page */
 }
+.card {
+    cursor: pointer; /* This will change the cursor to a pointer hand icon when hovering over the cards */
+}
     </style>
 
     <title>S.M.A.R.T.</title>
@@ -311,8 +314,7 @@ body {
         <?php endif; ?>
         <button class="btn btn-info" data-toggle="modal" data-target="#howToModal" style="font-size: 24px; line-height: 1; padding: 0 10px;">?</button>
 <!-- How to Use System Modal -->
-<!-- How to Use System Modal -->
-<!-- How to Use System Modal -->
+
 <div class="modal fade" id="howToModal" tabindex="-1" role="dialog" aria-labelledby="howToModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -451,31 +453,31 @@ body {
         </div>
     </div>
     <div class="card-deck mt-3">
-    <div class="card text-white bg-primary mb-3">
+    <div class="card text-white bg-primary mb-3" id="openTicketsCard" onclick="filterTable('all')">
         <div class="card-body">
             <h5 class="card-title">Open Tickets</h5>
             <p class="card-text" style="font-size: 2em;"><?php echo $openTicketCount; ?></p>
         </div>
     </div>
-    <div class="card text-white" style="background-color: #b71c1c;">
+    <div class="card text-white" style="background-color: #b71c1c;"  id="priority1Card" onclick="filterTable('1')" >
         <div class="card-body">
             <h5 class="card-title">Priority 1</h5>
             <p class="card-text" style="font-size: 2em;"><?php echo $priority1TicketCount; ?></p>
         </div>
     </div>
-    <div class="card text-white" style="background-color: #f57f17;">
+    <div class="card text-white" style="background-color: #f57f17;" id="priority2Card" onclick="filterTable('2')">
         <div class="card-body">
             <h5 class="card-title">Priority 2</h5>
             <p class="card-text" style="font-size: 2em;"><?php echo $priority2TicketCount; ?></p>
         </div>
     </div>
-    <div class="card text-white" style="background-color: #fdd835;">
+    <div class="card text-white" style="background-color: #fdd835;" id="priority3Card" onclick="filterTable('3')">
         <div class="card-body">
             <h5 class="card-title">Priority 3</h5>
             <p class="card-text" style="font-size: 2em;"><?php echo $priority3TicketCount; ?></p>
         </div>
     </div>
-    <div class="card text-white" style="background-color: #4a148c;"> <!-- Choose a color that represents Priority 4 -->
+    <div class="card text-white" style="background-color: #4a148c;" id="priority4Card" onclick="filterTable('4')"> <!-- Choose a color that represents Priority 4 -->
         <div class="card-body">
             <h5 class="card-title">Priority 4</h5>
             <p class="card-text" style="font-size: 2em;"><?php echo $priority4TicketCount; ?></p> <!-- Use the variable that holds the count for Priority 4 tickets -->
@@ -1737,6 +1739,7 @@ $(document).ready(function () {
     // Now reinitialize the DataTable
     $('#orange_tag_table').DataTable({
         autoWidth: false,
+        pageLength: 25,
         columnDefs: [
             { type: 'orange-tag', targets: 0 }, // Apply custom sorting to the orange tag column
             { type: 'work-order', targets: 6 },
@@ -1750,6 +1753,22 @@ $(document).ready(function () {
         ]
     });
 });
+
+function filterTable(priority) {
+    $('#orange_tag_table tbody tr').each(function() {
+        var row = $(this);
+        if (priority === 'all') {
+            row.show();
+        } else {
+            var ticketPriority = row.find('td').eq(5).text(); // Assuming the 6th column contains the priority
+            if (ticketPriority === priority) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        }
+    });
+}
 
 </script>
 </body>
