@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 include '../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 
@@ -263,12 +266,12 @@ if(!isset($_SESSION['user']) ){
             $result = mysqli_query($database, $query);
             while($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>
-                        <td>".htmlspecialchars($row['expense_id'], ENT_QUOTES, 'UTF-8')."</td>
-                        <td>".htmlspecialchars($row['expense_type'], ENT_QUOTES, 'UTF-8')."</td>
-                        <td>".htmlspecialchars($row['customer_name'], ENT_QUOTES, 'UTF-8')."</td>
-                        <td>".htmlspecialchars($row['customer_location'], ENT_QUOTES, 'UTF-8')."</td>
-                        <td>".htmlspecialchars($row['employee_name'], ENT_QUOTES, 'UTF-8')."</td>
-                        <td>".htmlspecialchars($row['approval_status'], ENT_QUOTES, 'UTF-8')."</td>
+                        <td>" . htmlspecialchars($row['expense_id'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                        <td>" . htmlspecialchars($row['expense_type'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                        <td>" . htmlspecialchars($row['customer_name'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                        <td>" . htmlspecialchars($row['customer_location'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                        <td>" . htmlspecialchars($row['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                        <td>" . htmlspecialchars($row['approval_status'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
                       </tr>";
             }
             ?>
