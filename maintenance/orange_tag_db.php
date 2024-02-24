@@ -27,31 +27,31 @@ $safety_coordinators = mysqli_query($database, $query);
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
 // Query for open tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `ticket_status` = 'Open'";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH)";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $openTicketCount = $data['total'];
 
 // Query for priority 1 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1 AND `ticket_status` = 'Open'";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH)";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority1TicketCount = $data['total'];
 
 // Query for priority 2 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2 AND `ticket_status` = 'Open'";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH)";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority2TicketCount = $data['total'];
 
 // Query for priority 3 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3 AND `ticket_status` = 'Open'";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH)";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority3TicketCount = $data['total'];
 
 // Query for priority 4 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 4 AND `ticket_status` = 'Open'";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 4 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH)";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority4TicketCount = $data['total'];
@@ -510,8 +510,7 @@ body {
 
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
-$query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code'";
-
+$query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH)";
 $result = mysqli_query($database, $query);
 while ($row = mysqli_fetch_assoc($result)): ?>
     <tr class="<?php echo htmlspecialchars($row['ticket_status'], ENT_QUOTES, 'UTF-8'); ?>">

@@ -54,14 +54,11 @@ if (isset($_FILES['fileUpload']['name']) && is_array($_FILES['fileUpload']['name
             $filePath = $dir . $fileName;
             // After uploading files, initialize an array to store file paths
             $uploadedFilePaths = [];
-            // Move the uploaded file to the desired directory
-            if (move_uploaded_file($fileTmpName, $filePath)) {
+             // Move the uploaded file to the desired directory
+             if (move_uploaded_file($fileTmpName, $filePath)) {
                 $stmt = $database->prepare("INSERT INTO accident_files (accident_id, file_name, file_path) VALUES (?, ?, ?)");
                 $stmt->bind_param('iss', $accidentId, $fileName, $filePath);
                 $stmt->execute();
-                
-                // Add the file path to the array
-                $uploadedFilePaths[] = $filePath;
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to upload file: ' . $_FILES['fileUpload']['name'][$i]]);
                 exit;
@@ -73,9 +70,10 @@ if (isset($_FILES['fileUpload']['name']) && is_array($_FILES['fileUpload']['name
         }
     }
     // If all files are processed successfully
-    echo json_encode(['status' => 'success', 'message' => 'All files uploaded successfully.']);
+    echo json_encode(['status' => 'success', 'message' => 'Accident report and files updated successfully.']);
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'No files to upload.']);
+    // If there are no files to upload, just update the accident report
+    echo json_encode(['status' => 'success', 'message' => 'Accident report updated successfully. No files were uploaded.']);
 }
 
 // Prepare the email content
@@ -155,11 +153,7 @@ $body = [
 try {
     $response = $mj->post(Resources::$Email, ['body' => $body]);
     if ($response->success()) {
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'success',
-            'accident_id' => $accidentId
-        ]);
+        
     } else {
         echo json_encode([
             'status' => 'error',
