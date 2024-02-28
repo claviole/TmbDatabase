@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 });
 
-function printExpenseDetails() {
+function printExpenseDetails() { 
     var selectedElement = document.getElementById('selectedPurchaseRequest');
     var expenseId = selectedElement.getAttribute('data-expense-id');
     window.open(`print.php?expenseId=${expenseId}`, '_blank');
