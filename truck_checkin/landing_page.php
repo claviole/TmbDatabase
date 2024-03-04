@@ -184,6 +184,9 @@ button:active {
                 <label for="truck_number" class="block text-gray-700 text-sm font-bold mb-2">Truck Number:</label>
                 <input type="text" id="truck_number" name="truck_number" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
+            <div class="mb-4">
+                <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight:</label>
+                <input type="text" id="weight" name="weight" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
 
             <div class="mb-6">
                 <label for="phone_number" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
@@ -193,6 +196,9 @@ button:active {
                 <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Check in
                 </button>
+            </div>
+            <div class="text-xs text-gray-600 mt-2">
+                By clicking "Check in", you agree to receive text message notifications related to your service.
             </div>
         </form>
     </div>
