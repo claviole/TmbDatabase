@@ -4,7 +4,7 @@ require '../../../configurations/vendor/autoload.php'; // Make sure this path co
 session_start();
 if(!isset($_SESSION['user'])){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../../../index.php");
+    header("Location: /index.php");
     exit();
 }
 use \Mailjet\Resources;

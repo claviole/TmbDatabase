@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../configurations/connection.php'; 
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('super-admin' || 'maintenance-tech')){
+if(!isset($_SESSION['user']) ){
     // Not logged in or not an admin, redirect to login page
     header("Location: ../index.php");
     exit();
@@ -287,11 +287,10 @@ body {
 </head>
 <body>
 
-<?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] != 'floor-user'): ?>
+
 <div class="return-button-container">
     <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
 </div>
-<?php endif; ?>
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;"> 
     <img src="<?php echo $companyHeaderImage; ?>" alt="company header" style="width: 30%; height: auto; margin-bottom: 10px;">
     <img src="/images/smart_logo.png" alt="smart logo" style="width: 30%; height: 30%;">
@@ -574,17 +573,17 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                         <a class="nav-link active" id="ticket-details-tab" data-toggle="tab" href="#ticket-details" role="tab" aria-controls="ticket-details" aria-selected="true">Ticket Details</a>
                     </li>
                     <li class="nav-item">
-                        <?php if($_SESSION['user_type'] == ('super-admin' || 'maintenance-tech')): ?>
+                        <?php if($_SESSION['user_type'] == ('super-admin' || 'maintenance-tech' || 'supervisor')): ?>
                         <a class="nav-link" id="repairs-maintenance-tab" data-toggle="tab" href="#repairs-maintenance" role="tab" aria-controls="repairs-maintenance" aria-selected="false">Repairs/Maintenance</a>
                         <?php endif; ?>
                     </li>
                     <li class="nav-item">
-                        <?php if($_SESSION['user_type'] == 'super-admin'): ?>
+                        <?php if($_SESSION['user_type'] == ('super-admin'  || 'supervisor')): ?>
                         <a class="nav-link" id="follow-up-tab" data-toggle="tab" href="#follow-up" role="tab" aria-controls="follow-up" aria-selected="false">Follow Up</a>
                         <?php endif; ?>
                     </li>
                     <li class="nav-item">
-                        <?php if($_SESSION['user_type'] == 'super-admin'): ?>
+                    <?php if($_SESSION['user_type'] == ('super-admin'  || 'supervisor')): ?>
                         <a class="nav-link" id="assign_technicians-tab" data-toggle="tab" href="#assign_technicians" role="tab" aria-controls="assign_technicians" aria-selected="false">Assign Technicians</a>
                         <?php endif; ?>
                     </li>

@@ -108,11 +108,12 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
                 </label>
                 <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="user_role" name="user_role" required>
                     <option value="Sales">Sales</option>
-                    <option value="super-admin">Management</option>
                     <option value="human-resources">Human Resources</option>
                     <option value="maintenance-tech">Maintenance Tech</option>
                     <option value="floor-user">Floor User</option>
                     <option value="accounts-payable">Accounts Payable</option>
+                    <option value="super-admin">Administrator</option>
+                    <option value="supervisor">Supervisor</option>
                 </select>
             </div>
             <div class="mb-4">

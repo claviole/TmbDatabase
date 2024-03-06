@@ -1,9 +1,9 @@
 <?php
 include '../../../configurations/connection.php';
 session_start();
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('human-resources' || 'super-admin'|| 'supervisor')){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../../../index.php");
+    header("Location: /index.php");
     exit();
 }
 $observation_score = $_POST['observation_score'];

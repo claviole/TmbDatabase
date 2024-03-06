@@ -2,6 +2,11 @@
 // Assuming you have already connected to the database and started the session at the beginning of this file
 include '../../../configurations/connection.php';
 session_start();
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: /index.php");
+    exit();
+}
 // Check if the accident ID is set
 if (!isset($_GET['id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Accident ID is required.']);

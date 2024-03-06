@@ -4,9 +4,9 @@ include '../../../configurations/connection.php'; // Assuming you have a db_conn
 date_default_timezone_set('America/Chicago');
 
 
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('human-resources' || 'super-admin' || 'supvervisor')){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../../../index.php");
+    header("Location: /index.php");
     exit();
 }
 

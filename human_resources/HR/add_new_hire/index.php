@@ -6,9 +6,9 @@ date_default_timezone_set('America/Chicago');
 
 
 // Check if the user is logged in and is an admin
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin')){
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('Human Resources' || 'super-admin'||'supervisor')){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../../../index.php");
+    header("Location: /index.php");
     exit();
 }
 

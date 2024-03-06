@@ -4,6 +4,11 @@ include '../../../configurations/connection.php'; // Adjust the path as necessar
 
 header('Content-Type: application/json');
 
+if(!isset($_SESSION['user'])){
+    // Not logged in or not an admin, redirect to login page
+    header("Location: /index.php");
+    exit();
+}
 // Check if an accident ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Accident ID is required.']);

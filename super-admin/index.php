@@ -191,9 +191,9 @@ button:active {
     S.A.F.E Database<br>
     <span style="font-size: 0.75em;">Safety Awareness & Follow-up Environment</span>
 </button>
-<button data-role="super-admin" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../purchase_requests/index.php'>Purchase Requests</button>
+<button data-role="super-admin sales human-resources supervisor accounts-payable" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../purchase_requests/index.php'>Purchase Requests</button>
     <button data-role="super-admin"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-bottom: 10px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../admin-dashboard/management/management.php'>User Management</button>
-    <button data-role="super-admin sales human-resources" id="suggestionButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Have a suggestion or question?</button>
+    <button data-role="super-admin sales human-resources supervisor accounts-payable floor-user maintenance-tech" id="suggestionButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Have a suggestion or question?</button>
 
     </div>
     </div>

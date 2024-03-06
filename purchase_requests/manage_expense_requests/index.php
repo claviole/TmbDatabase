@@ -234,8 +234,11 @@ if(!isset($_SESSION['user']) ){
       <div class="modal-footer border-t-2 border-gray-200">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" id="printButton" onclick=printExpenseDetails()>Print</button>
+        <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
         <button type="button" class="btn btn-primary" id="approveButton">Approve</button>
         <button type="button" class="btn btn-danger" id="denyButton">Deny</button>
+        <?php } ?>
+
       </div>
     </div>
   </div>

@@ -10,7 +10,7 @@ include '../configurations/connection.php';
 header('Content-Type: text/html; charset=utf-8');
 
 // Check if the user is logged in and has the right user type
-if (!isset($_SESSION['user']) || !in_array($_SESSION['user_type'], ['super-admin', 'maintenance-tech'])) {
+if (!isset($_SESSION['user']) || !in_array($_SESSION['user_type'], ['super-admin', 'maintenance-tech','supervisor'])) {
     exit('Access Denied');
 }
 

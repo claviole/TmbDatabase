@@ -3,8 +3,8 @@ session_start();
 include '../../../configurations/connection.php';
 
 // Check if the user is logged in and has the correct user type
-if (!isset($_SESSION['user']) || $_SESSION['user_type'] != 'Human Resources' && $_SESSION['user_type'] != 'super-admin') {
-    header("Location: ../../../index.php");
+if (!isset($_SESSION['user']) || $_SESSION['user_type'] != 'human-resources' && $_SESSION['user_type'] != 'super-admin' && $_SESSION['user_type'] != 'supervisor') {
+    header("Location: /index.php");
     exit();
 }
 

@@ -10,7 +10,7 @@ $awaiting_approval_count = $result->fetch_assoc()['count'];
 // Check if the user is logged in and is an admin
 if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
     // Not logged in or not an admin, redirect to login page
-    header("Location: ../../index.php");
+    header("Location: /index.php");
     exit();
 }
 
