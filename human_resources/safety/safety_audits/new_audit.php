@@ -264,8 +264,8 @@ body {
                     <td><textarea name="question3_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question4_text" value="Fire Extinguishers: Easily Accessible. Inspection Dates are within past 12 months.">
-                    <td>Fire Extinguishers Easily Accessible. Inspection Dates are within past 12 months.</td>
+                    <input type="hidden" name="question4_text" value="Fire Extinguishers: Easily Accessible. Inspection Dates are within past month.">
+                    <td>Fire Extinguishers Easily Accessible. Inspection Dates are within past month.</td>
                     <td>
                         <label><input type="radio" name="question4_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question4_ranking" value="2"> 2</label>
@@ -459,8 +459,8 @@ body {
                     <td><textarea name="question18_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question19_text" value="Clear Access to Exits & Fire extinguishers">
-                    <td>Clear Access to Exits & Fire extinguishers</td>
+                    <input type="hidden" name="question19_text" value="Pre-Shift Check Sheets - Completed & Accurate">
+                    <td>Pre-Shift Check Sheets - Completed & Accurate</td>
                     <td>
                         <label><input type="radio" name="question19_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question19_ranking" value="2"> 2</label>
@@ -472,8 +472,8 @@ body {
                     <td><textarea name="question19_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question20_text" value="Pre-Shift Check Sheets - Completed & Accurate">
-                    <td>Pre-Shift Check Sheets - Completed & Accurate</td>
+                    <input type="hidden" name="question20_text" value="Propane storage cage locked & proper distance away from building">
+                    <td>Propane storage cage locked & proper distance away from building</td>
                     <td>
                         <label><input type="radio" name="question20_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question20_ranking" value="2"> 2</label>
@@ -485,8 +485,8 @@ body {
                     <td><textarea name="question20_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question21_text" value="Propane storage cage locked & proper distance away from building">
-                    <td>Propane storage cage locked & proper distance away from building</td>
+                    <input type="hidden" name="question21_text" value="SDS labels on Proprietary Containers">
+                    <td>SDS labels on Proprietary Containers</td>
                     <td>
                         <label><input type="radio" name="question21_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question21_ranking" value="2"> 2</label>
@@ -498,8 +498,8 @@ body {
                     <td><textarea name="question21_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question22_text" value="SDS labels on Proprietary Containers">
-                    <td>SDS labels on Proprietary Containers</td>
+                    <input type="hidden" name="question22_text" value="Extinguishers Fully Charged">
+                    <td>Extinguishers Fully Charged</td>
                     <td>
                         <label><input type="radio" name="question22_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question22_ranking" value="2"> 2</label>
@@ -511,8 +511,8 @@ body {
                     <td><textarea name="question22_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question23_text" value="Extinguishers Fully Charged">
-                    <td>Extinguishers Fully Charged</td>
+                    <input type="hidden" name="question23_text" value="First Aid Supplies Stocked">
+                    <td>First Aid Supplies Stocked</td>
                     <td>
                         <label><input type="radio" name="question23_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question23_ranking" value="2"> 2</label>
@@ -524,8 +524,8 @@ body {
                     <td><textarea name="question23_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question24_text" value="First Aid Supplies Stocked">
-                    <td>First Aid Supplies Stocked</td>
+                    <input type="hidden" name="question24_text" value="Trauma Kit Stocked">
+                    <td>Trauma Kit Stocked </td>
                     <td>
                         <label><input type="radio" name="question24_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question24_ranking" value="2"> 2</label>
@@ -537,8 +537,8 @@ body {
                     <td><textarea name="question24_a_three"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question25_text" value="Trauma Kit Stocked">
-                    <td>Trauma Kit Stocked </td>
+                    <input type="hidden" name="question25_text" value="Emergency Contact Numbers Posted (Ambulance, Cab, Medical Provider, Ext)">
+                    <td>Emergency Contact Numbers Posted (Ambulance, Cab, Medical Provider, Ext).</td>
                     <td>
                         <label><input type="radio" name="question25_ranking" value="1"> 1</label>
                         <label><input type="radio" name="question25_ranking" value="2"> 2</label>
@@ -548,19 +548,6 @@ body {
                     <td><textarea name="question25_a_one"></textarea></td>
                     <td><textarea name="question25_a_two"></textarea></td>
                     <td><textarea name="question25_a_three"></textarea></td>
-                </tr>
-                <tr>
-                    <input type="hidden" name="question26_text" value="Emergency Contact Numbers Posted (Ambulance, Cab, Medical Provider, Ext)">
-                    <td>Emergency Contact Numbers Posted (Ambulance, Cab, Medical Provider, Ext).</td>
-                    <td>
-                        <label><input type="radio" name="question26_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question26_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question26_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question26_ranking" value="NA"> N/A</label>
-                    </td>
-                    <td><textarea name="question26_a_one"></textarea></td>
-                    <td><textarea name="question26_a_two"></textarea></td>
-                    <td><textarea name="question26_a_three"></textarea></td>
                 </tr>
 
                 <!-- Add more rows as needed for each question -->
@@ -579,16 +566,16 @@ body {
             </thead>
             <tbody>
                 <tr>
-                    <input type="hidden" name="question27_text" value="Were there any situations that pose an imminent danger or hazard to workers or environment?">
+                    <input type="hidden" name="question26_text" value="Were there any situations that pose an imminent danger or hazard to workers or environment?">
                     <td>Were there any situations that pose an imminent danger or hazard to workers or environment?</td>
-                    <td><input type="radio" name="question27_a_one" value="yes"> Yes <input type="radio" name="question27_a_one" value="no"> No</td>
-                    <td><textarea name="question27_a_two"></textarea></td>
+                    <td><input type="radio" name="question26_a_one" value="yes"> Yes <input type="radio" name="question26_a_one" value="no"> No</td>
+                    <td><textarea name="question26_a_two"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question28_text" value="Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?">
+                    <input type="hidden" name="question27_text" value="Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?">
                     <td>Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?</td>
-                    <td><input type="radio" name="question28_a_one value="yes"> Yes <input type="radio" name="question28_a_one" value="no"> No</td>
-                    <td><textarea name="question28_a_two"></textarea></td>
+                    <td><input type="radio" name="question27_a_one value="yes"> Yes <input type="radio" name="question27_a_one" value="no"> No</td>
+                    <td><textarea name="question27_a_two"></textarea></td>
             </tbody>
         </table>
         <div class="submit-button">

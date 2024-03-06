@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checklist_id = mysqli_insert_id($database); // Get the last inserted ID
 
    // Insert into the safety_checklist_answers table
-for ($i = 1; $i <= 28; $i++) { // Adjust the number based on your total questions
+for ($i = 1; $i <= 27; $i++) { // Adjust the number based on your total questions
     $question_text = mysqli_real_escape_string($database, $_POST["question{$i}_text"]);
     $ranking = isset($_POST["question{$i}_ranking"]) ? $_POST["question{$i}_ranking"] : null;
     $a_one = mysqli_real_escape_string($database, $_POST["question{$i}_a_one"]);
