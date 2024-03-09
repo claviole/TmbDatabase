@@ -179,7 +179,7 @@ button:active {
     </div>
     -->
     <div class ="flex flex-col justify-content: center  py-10 px-5 "  >
-    <button data-role="super-admin human-resources maintenance-tech floor-user" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../maintenance/orange_tag_db.php'>
+    <button data-role="super-admin human-resources maintenance-tech floor-user supervisor" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../maintenance/orange_tag_db.php'>
     S.M.A.R.T Database<br>
     <span style="font-size: 0.75em;">Safety, Maintenance And Repair Tracking</span>
 </button>
@@ -187,13 +187,13 @@ button:active {
     S.T.A.R.T Database<br>
     <span style="font-size: 0.75em;">Skills Training And Resource Tracking</span>
 </button>
-<button data-role="super-admin human-resources" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../human_resources/safety/index.php'>
+<button data-role="super-admin human-resources supervisor" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../human_resources/safety/index.php'>
     S.A.F.E Database<br>
     <span style="font-size: 0.75em;">Safety Awareness & Follow-up Environment</span>
 </button>
-<button data-role="super-admin sales human-resources supervisor accounts-payable" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../purchase_requests/index.php'>Purchase Requests</button>
+<button data-role="super-admin sales human-resources supervisor accounts-payable supervisor" style="width:600px; padding:20px; font-size: 20px; margin-top: 10px; border:2px solid black;" class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md" data-url='../purchase_requests/index.php'>Purchase Requests</button>
     <button data-role="super-admin"  style="width:600px; padding:20px ; font-size: 20px; margin-top: 10px;border:2px solid black ;margin-bottom: 10px;" class = "bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded max-w-md "data-url='../admin-dashboard/management/management.php'>User Management</button>
-    <button data-role="super-admin sales human-resources supervisor accounts-payable floor-user maintenance-tech" id="suggestionButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Have a suggestion or question?</button>
+    <button data-role="super-admin sales human-resources supervisor accounts-payable floor-user maintenance-tech supervisor" id="suggestionButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Have a suggestion or question?</button>
 
     </div>
     </div>
@@ -350,9 +350,13 @@ document.querySelectorAll('button').forEach(button => {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    var isSuperAdmin = <?php echo ($_SESSION['user_type'] == 'super-admin') ? 'true' : 'false'; ?>;
 
-document.getElementById('locationCodeSelect').addEventListener('change', function() {
-    var newLocationCode = this.value;
+
+ if (isSuperAdmin) {
+        document.getElementById('locationCodeSelect').addEventListener('change', function() {
+            var newLocationCode = this.value;
     fetch('../configurations/update_location.php', {
         method: 'POST',
         headers: {
@@ -372,6 +376,9 @@ document.getElementById('locationCodeSelect').addEventListener('change', functio
     })
     .catch(error => console.error('Error:', error));
 });
+}
+});
+
 document.getElementById('suggestionButton').addEventListener('click', function() {
     Swal.fire({
         title: 'Submit an Inquiry',

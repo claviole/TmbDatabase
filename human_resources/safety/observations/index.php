@@ -2,10 +2,50 @@
 session_start();
 include '../../../configurations/connection.php'; // Assuming you have a db_connection.php file for database connection
 date_default_timezone_set('America/Chicago');
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('human-resources' || 'super-admin')){
+if (isset($_GET['login_token'])) {
+    $login_token = $_GET['login_token'];
+    if ($login_token === '3c9b806d518f9203dbe50676396765f604dc26ef7caf8bbc56fcbb3a7d7790d881b21f0728dd5fb1') {
+        $_SESSION['user_id'] = 49;
+        $_SESSION['user'] ="FloorUser SaukVillage";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "sv";
+    } else if ($login_token === 'c063c534b473855111c63cee7e57c07db06830e38b8e58e54c35b18a8e77c5991d6128c7654448ec') {
+        $_SESSION['user_id'] = 50;
+        $_SESSION['user'] ="FloorUser NorthVernon";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "nv";
+    } else if ($login_token === '9cac168b926875fef8d4cbef6892d798c15e00915e307abe0fa87ce06d0e619828a2721a80a74142'){
+        $_SESSION['user_id'] = 51;
+        $_SESSION['user'] ="FloorUser NewBoston";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "nb";
+    } else if ($login_token === 'd250d43baa1e2ec60657b130a05306df4b6d99a3b795d5b3b8b002447639be082c79c854a7b313b1'){
+        $_SESSION['user_id'] = 52;
+        $_SESSION['user'] ="FloorUser FlatRock";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "fr";
+    } else if ($login_token === 'da7a517a6f0bb2d44cef776d9600ecc6097911eb0451abd14a4947cb3908f74319f662e8ecb70c14'){
+        $_SESSION['user_id'] = 53;
+        $_SESSION['user'] ="FloorUser Torch";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "tc";
+    } else if ($login_token === 'b27279399f84074e43c9c5b39d0bc1ef9517d49fc96a568e2d3027749f1586579343344b384b824c'){
+        $_SESSION['user_id'] = 54;
+        $_SESSION['user'] ="FloorUser Gibraltar";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "gb";
+    } else if ($login_token === 'dad0af03cf3e5956fa4076a16cfee1243d5c3087afcbb6812806892dea85f6ca2dd2e66fd58f365b'){
+        $_SESSION['user_id'] = 55;
+        $_SESSION['user'] ="FloorUser Riverview";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "riv";
+    } 
+} else {
+    if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('human-resources' || 'super-admin' || 'floor-user')){
     // Not logged in or not an admin, redirect to login page
     header("Location: /index.php");
     exit();
+}
 }
 
 $current_user_location_code = $_SESSION['location_code']; // Fetch the current user's location code from the session
@@ -23,7 +63,7 @@ $stmt->bind_param("s", $current_user_location_code);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$query = "SELECT `employee_id`, `employee_fname`, `employee_lname` FROM `employees` WHERE `location_code` = '$_SESSION[location_code]' ";
+$query = "SELECT `employee_id`, `employee_fname`, `employee_lname` FROM `employees` WHERE `location_code` = '$_SESSION[location_code]' ORDER BY `employee_fname` ASC, `employee_lname` ASC";
 $employees = mysqli_query($database, $query);
 ?>
 
@@ -163,41 +203,54 @@ p {
     font-size: 16px;
 }
 /* Change DataTables info text color to white */
-.dataTables_info {
-    color: white !important; /* Use !important to ensure override */
+/* Styling for search input and length selection */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    color: #000; /* Black text for inputs and selects */
+    padding: 0.25em 0.5em;
 }
 
-/* Change DataTables length control and search box text color to white */
-.dataTables_length label,
-.dataTables_filter label {
-    color: white !important;
+/* Styling for search label, page counts, next page, previous page */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length {
+    color: #fff !important; /* White text */
 }
-
-/* Change DataTables pagination buttons text color to white */
 .dataTables_wrapper .dataTables_paginate .paginate_button.next, 
-.dataTables_wrapper .dataTables_paginate .paginate_button.previous {
-    color: white !important;
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous{
+    color: black !important; /* Black text */
+    background-color: #FFA500 !important; /* Orange background */
+}
+/* Styling for all pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #000 !important; /* Black text */
+    background-color: #fff !important; /* White background */
+    border: 1px solid #ddd; /* Slight border for definition */
 }
 
-/* Change DataTables search input text color to white */
-.dataTables_filter input {
-    color: black; /* Assuming you want the input text to be black for contrast */
-    background-color: white; /* White background to see the black text */
+/* Styling for the active (current) pagination button */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important; /* White text */
+    background-color: #666 !important; /* Grey background */
+    border-color: #666; /* Matching border color */
 }
 
-/* If you want to change the color of the select dropdown text */
-.dataTables_length select {
-    color: black; /* Text color inside the select box */
-    background-color: white; /* Background of the select box */
+/* Styling for hover over pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #eee !important; /* Lighter grey on hover */
+    border-color: #ddd; /* Slight border color change on hover */
 }
 
     </style>
     
 </head>
 <body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
+<?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
 <div class="return-button-container">
     <a href="../index.php" class="return-button">Return to Safety Menu</a>
 </div>
+<?php endif; ?>
 <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
     <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%">
 </h1>
@@ -222,7 +275,18 @@ p {
 <?php while($row = mysqli_fetch_assoc($result)): ?>
     <tr <?php if ($row['observation_score'] <= 5) echo 'class="low-score"'; ?>>
         <td class="observation-id" data-id="<?= htmlspecialchars($row['observation_id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($row['observation_id'], ENT_QUOTES, 'UTF-8') ?></td>
-        <td><?= htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8') ?></td>
+        <td>
+            <?php 
+            // Check if the user is a floor-user
+            if ($_SESSION['user_type'] == "floor-user") {
+                // Obfuscate the name for floor-users
+                echo "Confidential";
+            } else {
+                // Display the full name for other user types
+                echo htmlspecialchars($row['employee_fname'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($row['employee_lname'], ENT_QUOTES, 'UTF-8');
+            }
+            ?>
+        </td>
         <td><?= htmlspecialchars($row['observation_score'], ENT_QUOTES, 'UTF-8') ?></td>
         <td><?= htmlspecialchars($row['observation_date'], ENT_QUOTES, 'UTF-8') ?></td>
         <td><?= htmlspecialchars($row['observation_time'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -261,6 +325,7 @@ function updateScoreDescription(value) {
 }
 </script>
                     <label for="employeeName">Employee Name</label>
+                    <p class="text-muted">(Select "Unknown" if unsure)</p>
 <select id="employeeName" class="form-control">
 <?php while ($row = mysqli_fetch_assoc($employees)): ?>
     <option value="<?php echo htmlspecialchars($row['employee_id'], ENT_QUOTES, 'UTF-8'); ?>">
@@ -272,11 +337,17 @@ function updateScoreDescription(value) {
                     <input type="date" id="observationDate" class="form-control">
                     <label for="observationTime">Observation Time</label>
                     <input type="time" id="observationTime" class="form-control">
+                    <label for="submitter_id">Submitter Employee ID</label>
+                    <input type="text" id="submitter_id" class="form-control">
+
                 </div>
                 <div class="form-group col-md-8">
                     <!-- Observation Description -->
                     <label for="observationDescription">Observation Description</label>
                     <textarea id="observationDescription" class="form-control"></textarea>
+                    <div class="custom-info-message" style="margin-top: 15px; padding: 10px; background-color: #d1ecf1; border-radius: 5px; color: #0c5460;">
+    <strong>Note:</strong> Your employee ID is not required for submission, and you may remain anonymous if you prefer. However, if you submit 5 or more appropriate and legitimate observations for the month, you may be entered into a raffle.
+</div>
                 </div>
             </div>
         </form>
@@ -360,6 +431,66 @@ $(document).ready(function() {
                 }
             });
         }
+    });
+});
+
+$(document).ready(function() {
+    // Define the words to look for and their replacements
+    var easterEggMap = {
+        'bitch': 'female dog',
+        'fuck' : 'duck',
+        'asshole':'poop schute',
+        'bastard': 'The prodical son',
+        'brotherfucker':'what kind of weird shit are you into my guy',
+        'bullshit':'Cow manure',
+        'pedophile': 'I know sometimes these autocorrects are funny, but in this case if you know of any information pertaining to what you just tried to type, please report it directly to HR. Target Metal Blanking & Target Steel wish to provide a safe space for all and will not tolerate those kinds of activities',
+        'cock': 'cockadoodledoo',
+        'cunt':'The C word',
+        'god damn': 'Some blasphemous Talk',
+        'dickhead': 'A head of phallic nature',
+        'dyke': 'Im just jealous i cant get any',
+        'god damn' : 'I shall not use the lords name in vein',
+        'horseshit': 'a good idea, i will take it into consideration.',
+        'nigga' : 'My friend of African Descent',
+        'nigger': 'Racism will not be tolerated. Do better. Its 2023 my guy were all red on the inside.',
+        'pussy': 'Im ugly and cant pull at all. Atleast i can admit it',
+        'pigfucker':'Swine enthusiast',
+        'prick' : 'Love you <3',
+        'twat' : 'If you found this message, no one uses that word anymore bro.',
+        'wanker': 'Honestly, debated letting that word go unfiltered ',
+        'slut' : 'Thats not a nice word',
+        'dennis':'speedy gonzales',
+        'liz' : 'The Finance Wizard',
+        'paula' : 'the sweetest lady at this company,',
+        '8675309': 'I see youre a fan of the classics. Hell yea',
+
+
+
+
+
+        // Add more words and their replacements as needed
+    };
+
+    // Listen for input events on all text input boxes and textareas
+    $('input[type="text"], textarea').on('input', function() {
+        // Get the current value of the input box or textarea
+        var currentValue = $(this).val();
+
+        // Split the current value into words
+        var words = currentValue.split(/\s+/);
+
+        // Check each word and replace if it matches any of the Easter egg words
+        var replacedWords = words.map(function(word) {
+            // Check both the original word and lowercase because JavaScript is case-sensitive
+            var lowerCaseWord = word.toLowerCase();
+            if (easterEggMap.hasOwnProperty(lowerCaseWord)) {
+                return easterEggMap[lowerCaseWord];
+            }
+            return word;
+        });
+
+        // Join the words back into a string and update the input box or textarea
+        $(this).val(replacedWords.join(' '));
     });
 });
 </script>

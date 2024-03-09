@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../../configurations/connection.php';
+include '../../../configurations/send_expense.php'; // Include the file where send_safety_audit function is defined
 
 // Check if the user is logged in and has the correct user type
 if (!isset($_SESSION['user']) || $_SESSION['user_type'] != 'human-resources' && $_SESSION['user_type'] != 'super-admin' && $_SESSION['user_type'] != 'supervisor') {
@@ -25,22 +26,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_stmt_execute($stmt);
     $checklist_id = mysqli_insert_id($database); // Get the last inserted ID
 
-   // Insert into the safety_checklist_answers table
-for ($i = 1; $i <= 27; $i++) { // Adjust the number based on your total questions
-    $question_text = mysqli_real_escape_string($database, $_POST["question{$i}_text"]);
-    $ranking = isset($_POST["question{$i}_ranking"]) ? $_POST["question{$i}_ranking"] : null;
-    $a_one = mysqli_real_escape_string($database, $_POST["question{$i}_a_one"]);
-    $a_two = mysqli_real_escape_string($database, $_POST["question{$i}_a_two"]);
-    $a_three = mysqli_real_escape_string($database, $_POST["question{$i}_a_three"]);
+    // Insert into the safety_checklist_answers table
+    for ($i = 1; $i <= 28; $i++) { // Adjust the number based on your total questions
+        $question_text = mysqli_real_escape_string($database, $_POST["question{$i}_text"]);
+        $ranking = isset($_POST["question{$i}_ranking"]) ? $_POST["question{$i}_ranking"] : null;
+        $a_one = mysqli_real_escape_string($database, $_POST["question{$i}_a_one"]);
+        $a_two = mysqli_real_escape_string($database, $_POST["question{$i}_a_two"]);
+        $a_three = mysqli_real_escape_string($database, $_POST["question{$i}_a_three"]);
 
-    $answers_query = "INSERT INTO safety_checklist_answers (checklist_id, question, ranking, a_one, a_two, a_three) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($database, $answers_query);
-    mysqli_stmt_bind_param($stmt, "isssss", $checklist_id, $question_text, $ranking, $a_one, $a_two, $a_three);
-    mysqli_stmt_execute($stmt);
-}
+        $answers_query = "INSERT INTO safety_checklist_answers (checklist_id, question, ranking, a_one, a_two, a_three) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($database, $answers_query);
+        mysqli_stmt_bind_param($stmt, "isssss", $checklist_id, $question_text, $ranking, $a_one, $a_two, $a_three);
+        mysqli_stmt_execute($stmt);
+    }
 
+    // Check if question27_a_one is "Yes" and call send_safety_audit function
+       // Check if question27_a_one is "Yes" and call send_safety_audit function
+       if (isset($_POST['question27_a_one']) && $_POST['question27_a_one'] == "yes") {
+        // Prepare the form data or any other data you want to include in the email
+        $formData = [
+            'safety_auditor' => $safety_auditor,
+            'date_completed' => $date_completed,
+            'facility' => $facility,
+            'department' => $department,
+            'additional_comments' => $additional_comments,
+            'checklist_id' => $checklist_id, // Include the checklist_id in the form data
+        ];
+        send_safety_audit($formData);
+    }
+s
     echo json_encode(['success' => true]);
-  
+
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
     exit();

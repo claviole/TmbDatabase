@@ -127,6 +127,7 @@ if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'super-admin'){
                     <option value="fr">Flatrock</option>
                     <option value="tc">Torch</option>
                     <option value="gb">Gibraltar</option>
+                    <option value="riv">Riverview</option>
                 </select>
             </div>
             <div class="flex items-center justify-between">

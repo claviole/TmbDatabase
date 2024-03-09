@@ -549,6 +549,13 @@ body {
                     <td><textarea name="question25_a_two"></textarea></td>
                     <td><textarea name="question25_a_three"></textarea></td>
                 </tr>
+                <tr>
+                    <input type="hidden" name="question26_text" value="Light curtain cards filled out?">
+                    <td>Light curtain cards filled out?</td>
+                    <td><input type="radio" name="question26_a_one" value="yes"> Yes <input type="radio" name="question26_a_one" value="no"> No</td>
+                </tr>
+
+                    
 
                 <!-- Add more rows as needed for each question -->
             </tbody>
@@ -566,16 +573,17 @@ body {
             </thead>
             <tbody>
                 <tr>
-                    <input type="hidden" name="question26_text" value="Were there any situations that pose an imminent danger or hazard to workers or environment?">
-                    <td>Were there any situations that pose an imminent danger or hazard to workers or environment?</td>
-                    <td><input type="radio" name="question26_a_one" value="yes"> Yes <input type="radio" name="question26_a_one" value="no"> No</td>
-                    <td><textarea name="question26_a_two"></textarea></td>
+                    <input type="hidden" name="question27_text" value="Were there any situations that pose an imminent danger or hazard to workers or environment?">
+                    <td>Were there any situations that pose an imminent danger or hazard to workers or environment?        (yes or no will automatically calculate based off your answers)</td>
+                    <td><input type="radio" name="question27_a_one" value="yes"> Yes <input type="radio" name="question27_a_one" value="no" checked> No</td>
+                    <td><textarea name="question27_a_two"></textarea></td>
                 </tr>
                 <tr>
-                    <input type="hidden" name="question27_text" value="Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?">
+                    <input type="hidden" name="question28_text" value="Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?">
                     <td>Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?</td>
-                    <td><input type="radio" name="question27_a_one value="yes"> Yes <input type="radio" name="question27_a_one" value="no"> No</td>
-                    <td><textarea name="question27_a_two"></textarea></td>
+                    <td><input type="radio" name="question28_a_one value="yes"> Yes <input type="radio" name="question28_a_one" value="no" disabled> No</td>
+                    <td><textarea name="question28_a_two"></textarea></td>
+                </tr>
             </tbody>
         </table>
         <div class="submit-button">
@@ -585,13 +593,17 @@ body {
     </form>
 </div>
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
-        // Check if all questions have a ranking selected
         let allRanked = true;
+        let question27YesChecked = document.querySelector('input[name="question27_a_one"][value="yes"]').checked;
+        let question27CommentFilled = document.querySelector('textarea[name="question27_a_two"]').value.trim() !== '';
+
+        // Check if all questions have a ranking selected
         document.querySelectorAll('tbody tr').forEach(function(row) {
             const radios = Array.from(row.querySelectorAll('input[type="radio"]'));
             const isRanked = radios.some(radio => radio.checked);
@@ -601,18 +613,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Additional check for question 27
+        if (question27YesChecked && !question27CommentFilled) {
+            Swal.fire({
+                title: 'Incomplete Form',
+                text: 'Please provide more information for question 27 as you have reported something that poses an imminent danger or hazard to workers or the facilities.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return; // Stop the form submission
+        }
+
         if (allRanked) {
-            // Use FormData to collect all form data
+            // Proceed with form submission if all checks pass
             let formData = new FormData(form);
 
-            // Use fetch API to submit the form data via POST to submit_audit.php
             fetch('submit_audit.php', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json()) // Assuming submit_audit.php returns JSON
+            .then(response => response.json())
             .then(data => {
-                // Check the response from submit_audit.php
                 if(data.success) {
                     Swal.fire({
                         title: 'Success!',
@@ -620,12 +641,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         icon: 'success'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Optionally, reload the form or redirect
                             window.location.href = '../index.php';
                         }
                     });
                 } else {
-                    // Handle failure
                     Swal.fire({
                         title: 'Error!',
                         text: 'There was a problem submitting the audit.',
@@ -644,6 +663,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonText: 'OK'
             });
         }
+    });
+
+    // Existing code for monitoring specific questions and updating question 27
+    // ...
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // List of question names to monitor
+    const questionsToMonitor = [
+        'question1_ranking', 'question2_ranking', 'question3_ranking',
+        'question4_ranking', 'question7_ranking', 'question10_ranking',
+        'question18_ranking', 'question22_ranking', 'question23_ranking',
+        'question24_ranking', 'question25_ranking'
+    ];
+
+    // Function to check the questions and update question 27
+    function updateQuestion27() {
+        let question27SetToYes = false;
+
+        // Check each question
+        for (let questionName of questionsToMonitor) {
+            // Find the radio button for "1" in each question group
+            const radioButton = document.querySelector(`input[name="${questionName}"][value="1"]`);
+            if (radioButton && radioButton.checked) {
+                question27SetToYes = true;
+                break; // Stop checking if we've found a "1"
+            }
+        }
+
+        // Find question 27's "Yes" radio button and set it
+        const question27YesButton = document.querySelector('input[name="question27_a_one"][value="yes"]');
+        if (question27SetToYes && question27YesButton) {
+            question27YesButton.checked = true;
+        }
+    }
+
+    // Attach the check function to change events for all monitored questions
+    questionsToMonitor.forEach(function(questionName) {
+        const radios = document.querySelectorAll(`input[name="${questionName}"]`);
+        radios.forEach(function(radio) {
+            radio.addEventListener('change', updateQuestion27);
+        });
     });
 });
 </script>

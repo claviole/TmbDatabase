@@ -12,11 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $month_of_expense = mysqli_real_escape_string($database, $_POST['month_of_expense']);
   
     $gl_code = mysqli_real_escape_string($database, $_POST['expense_type']);
+    $location_code= $_SESSION['location_code'];
 
     // Prepare an INSERT statement for the main expense report
-    $query = "INSERT INTO purchase_requests (employee_name, gl_code, expense_type, month_of_expense) VALUES (?, ?, ?, ?)";
+    $query = "INSERT INTO purchase_requests (employee_name, gl_code, expense_type, month_of_expense,location_code) VALUES (?, ?, ?, ?, ?)";
     if ($stmt = mysqli_prepare($database, $query)) {
-        mysqli_stmt_bind_param($stmt, "siss", $employee_name, $gl_code, $expense_type, $month_of_expense);
+        mysqli_stmt_bind_param($stmt, "sisss", $employee_name, $gl_code, $expense_type, $month_of_expense, $location_code);
         if (mysqli_stmt_execute($stmt)) {
             $expense_id = mysqli_stmt_insert_id($stmt);
             mysqli_stmt_close($stmt);

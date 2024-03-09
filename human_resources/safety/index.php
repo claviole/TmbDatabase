@@ -4,9 +4,9 @@ include '../../configurations/connection.php'; // Assuming you have a db_connect
 date_default_timezone_set('America/Chicago');
 
 
-if(!isset($_SESSION['user']) || $_SESSION['user_type'] != ('human-resources' || 'super-admin' ||'supervisor')){
-    // Not logged in or not an admin, redirect to login page
-    header("Location: ../../index.php");
+if(!isset($_SESSION['user']) || $_SESSION['user_type'] != 'human-resources' && $_SESSION['user_type'] != 'super-admin' && $_SESSION['user_type'] != 'supervisor'){
+    $returnUrl = urlencode($_SERVER['REQUEST_URI']); // Get the current page URL and encode it
+    header("Location: ../../login.php?redirect=$returnUrl"); // Redirect to login page with return URL
     exit();
 }
 ?>
@@ -192,5 +192,13 @@ function downloadAudit(checklistId) {
     // Navigate to the download_audit.php script with the checklist_id as a query parameter
     window.location.href = `download_audit.php?checklist_id=${checklistId}`;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const checklistId = urlParams.get('checklist_id');
+    if (checklistId) {
+        downloadAudit(checklistId);
+    }
+});
 </script>
 </html>

@@ -213,6 +213,35 @@ if(!isset($_SESSION['user']) ){
     #purchaseRequestsTable tbody tr:hover {
     cursor: pointer;
 }
+
+.filter-buttons {
+    margin-bottom: 20px !important; /* Adds space between the buttons and the table */
+    background-color: rgba(255, 255, 255, 0.9) !important; /* Semi-transparent white background */
+    padding: 10px !important; /* Padding around the buttons */
+    border-radius: 5px !important; /* Rounded corners for the button container */
+}
+
+.filter-button {
+    margin-right: 5px !important; /* Adds space between the buttons */
+    background-color: #007bff !important; /* Bootstrap primary color for the buttons */
+    color: white !important; /* White text for better readability */
+    border: 1px solid #0056b3 !important; /* Darker blue border for contrast */
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2) !important; /* Subtle shadow for depth */
+}
+
+.filter-button:hover {
+    background-color: #0056b3 !important; /* Darker blue on hover for visual feedback */
+}
+
+.filter-button-reset {
+    background-color: #dc3545 !important; /* Bootstrap danger color for contrast */
+    color: white !important; /* White text for better readability */
+    border: 1px solid #bd2130 !important; /* Darker red border for contrast */
+}
+
+.filter-button-reset:hover {
+    background-color: #bd2130 !important; /* Darker red on hover */
+}
     </style>
     
 </head>
@@ -251,6 +280,16 @@ if(!isset($_SESSION['user']) ){
    
     </h1>
     <div style="padding: 20px;">
+    <div class="filter-buttons">
+    <button class="btn btn-info filter-button" data-location="sv">Sauk Village</button>
+    <button class="btn btn-info filter-button" data-location="nv">North Vernon</button>
+    <button class="btn btn-info filter-button" data-location="nb">New Boston</button>
+    <button class="btn btn-info filter-button" data-location="fr">Flatrock</button>
+    <button class="btn btn-info filter-button" data-location="tc">Torch</button>
+    <button class="btn btn-info filter-button" data-location="gb">Gibraltar</button>
+    <button class="btn btn-info filter-button" data-location="rv">Riverview</button>
+    <button class="btn btn-secondary filter-button-reset">Reset Filter</button>
+</div>
     <table id="purchaseRequestsTable" class="display" style="width:100%">
         <thead>
             <tr>
@@ -263,22 +302,23 @@ if(!isset($_SESSION['user']) ){
             </tr>
         </thead>
         <tbody>
-            <!-- Data will be populated here using PHP -->
-            <?php
-            $query = "SELECT expense_id, expense_type, customer_name, customer_location, employee_name, approval_status FROM purchase_requests";
-            $result = mysqli_query($database, $query);
-            while($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>
-                        <td>" . htmlspecialchars($row['expense_id'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
-                        <td>" . htmlspecialchars($row['expense_type'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
-                        <td>" . htmlspecialchars($row['customer_name'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
-                        <td>" . htmlspecialchars($row['customer_location'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
-                        <td>" . htmlspecialchars($row['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
-                        <td>" . htmlspecialchars($row['approval_status'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
-                      </tr>";
-            }
-            ?>
-        </tbody>
+    <!-- Data will be populated here using PHP -->
+    <?php
+    $query = "SELECT expense_id, expense_type, customer_name, customer_location, employee_name, approval_status, location_code FROM purchase_requests";
+    $result = mysqli_query($database, $query);
+    while($row = mysqli_fetch_assoc($result)) {
+        echo "<tr>
+                <td>" . htmlspecialchars($row['expense_id'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                <td>" . htmlspecialchars($row['expense_type'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                <td>" . htmlspecialchars($row['customer_name'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                <td>" . htmlspecialchars($row['customer_location'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                <td>" . htmlspecialchars($row['employee_name'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                <td>" . htmlspecialchars($row['approval_status'] ?? '', ENT_QUOTES, 'UTF-8') . "</td>
+                <td>" . htmlspecialchars($row['location_code'] ?? '', ENT_QUOTES, 'UTF-8') . "</td> 
+              </tr>";
+    }
+    ?>
+</tbody>
     </table>
 </div>
     
@@ -326,10 +366,29 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 </body>
 
 <script>
-   $(document).ready( function () {
-    $('#purchaseRequestsTable').DataTable({
-        // DataTables options here
-        "scrollX": true // Enables horizontal scrolling
+$(document).ready(function() {
+    var table = $('#purchaseRequestsTable').DataTable({
+        "scrollX": true, // Your existing options
+        "columnDefs": [
+            {
+                "targets": [6], // Index of the location_code column
+                "visible": false, // This makes the column hidden
+            }
+        ]
+    });
+    var currentUserLocationCode = "<?php echo $_SESSION['location_code']; ?>";
+
+    // Apply the default filter
+    table.column(6).search(currentUserLocationCode).draw();
+      // Filter action
+      $('.filter-button').on('click', function() {
+        var locationCode = $(this).data('location');
+        table.columns(6).search(locationCode).draw(); // Assuming the 6th column (index 5) contains the location codes
+    });
+
+    // Reset filter
+    $('.filter-button-reset').on('click', function() {
+        table.columns(6).search('').draw();
     });
 });
 // Example using jQuery

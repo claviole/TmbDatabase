@@ -30,6 +30,7 @@ if($_POST){
                 switch ($_SESSION["user_type"]) {
                     case "sales":
                     case "super-admin":
+                    case "supervisor":
                     case "human-resources":
                         header("Location: super-admin/index.php");
                         break;

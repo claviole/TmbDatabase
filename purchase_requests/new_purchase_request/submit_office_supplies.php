@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $vendor_name = mysqli_real_escape_string($database, $_POST['vendor_name']);
     $month_of_expense = mysqli_real_escape_string($database, $_POST['month_of_expense']);
     $gl_code = mysqli_real_escape_string($database, $_POST['expense_type']);
+    $location_code= $_SESSION['location_code'];
     // Add other fields as necessary
     $query = "SELECT expense_name FROM expense_types WHERE gl_code = ?";
     $stmt = $database->prepare($query);
@@ -26,10 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // For example, set a default expense_type or throw an error
     }
     // Prepare an INSERT statement for the office supplies request
-    $query = "INSERT INTO purchase_requests (employee_name,gl_code,expense_type, customer_location, vendor_name, month_of_expense) VALUES (?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO purchase_requests (employee_name,gl_code,expense_type, customer_location, vendor_name, month_of_expense,location_code) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     if ($stmt = mysqli_prepare($database, $query)) {
-        mysqli_stmt_bind_param($stmt, "sissss", $employee_name, $gl_code, $expense_type, $customer_location, $vendor_name, $month_of_expense);
+        mysqli_stmt_bind_param($stmt, "sisssss", $employee_name, $gl_code, $expense_type, $customer_location, $vendor_name, $month_of_expense, $location_code);
         // After successfully inserting the office supplies request and obtaining $expense_id
 
         if (mysqli_stmt_execute($stmt)) {

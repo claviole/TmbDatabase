@@ -1,11 +1,53 @@
 <?php
 session_start();
 include '../configurations/connection.php'; 
-if(!isset($_SESSION['user']) ){
-    // Not logged in or not an admin, redirect to login page
-    header("Location: ../index.php");
-    exit();
+if (isset($_GET['login_token'])) {
+    $login_token = $_GET['login_token'];
+    if ($login_token === '3c9b806d518f9203dbe50676396765f604dc26ef7caf8bbc56fcbb3a7d7790d881b21f0728dd5fb1') {
+        $_SESSION['user_id'] = 49;
+        $_SESSION['user'] ="FloorUser SaukVillage";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "sv";
+    } else if ($login_token === 'c063c534b473855111c63cee7e57c07db06830e38b8e58e54c35b18a8e77c5991d6128c7654448ec') {
+        $_SESSION['user_id'] = 50;
+        $_SESSION['user'] ="FloorUser NorthVernon";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "nv";
+    } else if ($login_token === '9cac168b926875fef8d4cbef6892d798c15e00915e307abe0fa87ce06d0e619828a2721a80a74142'){
+        $_SESSION['user_id'] = 51;
+        $_SESSION['user'] ="FloorUser NewBoston";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "nb";
+    } else if ($login_token === 'd250d43baa1e2ec60657b130a05306df4b6d99a3b795d5b3b8b002447639be082c79c854a7b313b1'){
+        $_SESSION['user_id'] = 52;
+        $_SESSION['user'] ="FloorUser FlatRock";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "fr";
+    } else if ($login_token === 'da7a517a6f0bb2d44cef776d9600ecc6097911eb0451abd14a4947cb3908f74319f662e8ecb70c14'){
+        $_SESSION['user_id'] = 53;
+        $_SESSION['user'] ="FloorUser Torch";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "tc";
+    } else if ($login_token === 'b27279399f84074e43c9c5b39d0bc1ef9517d49fc96a568e2d3027749f1586579343344b384b824c'){
+        $_SESSION['user_id'] = 54;
+        $_SESSION['user'] ="FloorUser Gibraltar";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "gb";
+    } else if ($login_token === 'dad0af03cf3e5956fa4076a16cfee1243d5c3087afcbb6812806892dea85f6ca2dd2e66fd58f365b'){
+        $_SESSION['user_id'] = 55;
+        $_SESSION['user'] ="FloorUser Riverview";
+        $_SESSION['user_type'] = "floor-user";
+        $_SESSION['location_code'] = "riv";
+    } 
+} else {
+    if(!isset($_SESSION['user']) ){
+        // Not logged in or not an admin, redirect to login page
+        header("Location: ../index.php");
+        exit();
+    }
 }
+
+
 date_default_timezone_set('America/Chicago');
   // Query to get the total count of tickets
   $count_query = "SELECT COUNT(*) as total FROM `orange_tag`";
@@ -27,34 +69,40 @@ $safety_coordinators = mysqli_query($database, $query);
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
 // Query for open tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `ticket_status` = 'Open'  AND `priority` != 5";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $openTicketCount = $data['total'];
 
 // Query for priority 1 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 1 AND `ticket_status` = 'Open' ";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority1TicketCount = $data['total'];
 
 // Query for priority 2 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 2 AND `ticket_status` = 'Open' ";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority2TicketCount = $data['total'];
 
 // Query for priority 3 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 3 AND `ticket_status` = 'Open' ";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority3TicketCount = $data['total'];
 
 // Query for priority 4 tickets
-$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 4 AND `ticket_status` = 'Open' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 4 AND `ticket_status` = 'Open' ";
 $result = mysqli_query($database, $query);
 $data = mysqli_fetch_assoc($result);
 $priority4TicketCount = $data['total'];
+
+$query = "SELECT COUNT(*) as total FROM `orange_tag` WHERE `location_code` = '$current_user_location_code' AND `priority` = 5 AND `ticket_status` = 'Open' AND `orange_tag_due_date` BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)";
+$result = mysqli_query($database, $query);
+$data = mysqli_fetch_assoc($result);
+$priority5TicketCount = $data['total'];
+
 
 ?>
 
@@ -82,6 +130,11 @@ $(document).ready( function () {
 </script>
 
     <style>
+        :root {
+    --tmdb-red: #D50000; /* Adjust the red color based on your logo */
+    --tmdb-black: #212121; /* A shade of black */
+    --tmdb-grey: #F5F5F5; /* A light grey for backgrounds */
+}
         .return-button {
             display: inline-block;
             padding: 10px 20px;
@@ -197,8 +250,9 @@ $(document).ready( function () {
 }
 
 /* Styling for table headers */
+
 #orange_tag_table thead th {
-    background-color: #FFA500; /* Orange background */
+    background-color: #FFA500; /* Orange backgroun
     color: #000; /* Black text */
     padding: 10px;
     text-align: left;
@@ -280,6 +334,17 @@ body {
 .card {
     cursor: pointer; /* This will change the cursor to a pointer hand icon when hovering over the cards */
 }
+.notification-bar {
+    background-color: #ffffff; /* White background for a very clean look */
+    color: #5a5a5a; /* Soft dark grey for text, easy on the eyes */
+    padding: 12px 15px; /* Slightly more padding for a spacious feel */
+    text-align: center; /* Keeps text aligned to the center */
+    border-radius: 2px; /* Minimal border radius for a slight curve */
+    margin: 20px auto; /* Adds some space around the notification bar */
+    max-width: 80%; /* Limits the width for better readability on wide screens */
+    border: 1px solid #dddddd; /* Light grey border for a subtle definition */
+    font-size: 14px; /* Slightly smaller font for a refined look */
+}
     </style>
 
     <title>S.M.A.R.T.</title>
@@ -287,10 +352,11 @@ body {
 </head>
 <body>
 
-
-<div class="return-button-container">
-    <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
-</div>
+<?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
+    <div class="return-button-container">
+        <a href="../super-admin/index.php" class="return-button">Return to Dashboard</a>
+    </div>
+<?php endif; ?>
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;"> 
     <img src="<?php echo $companyHeaderImage; ?>" alt="company header" style="width: 30%; height: auto; margin-bottom: 10px;">
     <img src="/images/smart_logo.png" alt="smart logo" style="width: 30%; height: 30%;">
@@ -306,12 +372,18 @@ body {
     <div class="row">
         <div class="col-12">
         <button id="newTicketButton" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">New Maintenance Ticket</button>
-        <button id="viewClosedBtn" class="btn btn-secondary" onclick="viewClosedTickets()">View Closed</button>
-        <button id="viewOpenBtn" class="btn btn-secondary" onclick="viewOpenTickets()">View Open</button>
-        <button id="viewUnassignedBtn" class="btn btn-secondary" onclick="viewUnassignedTickets()">View Unassigned</button>
-        <button id="generateReportButton" class="btn btn-info" data-toggle="modal" data-target="#reportModal">Generate Report</button>
+        <?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
+    <button id="viewClosedBtn" class="btn btn-secondary">View Closed</button>
+    <button id="viewOpenBtn" class="btn btn-secondary">View Open</button>
+    <button id="viewUnassignedBtn" class="btn btn-secondary" >View Unassigned</button>
+    <button id="viewPMsBtn" class="btn btn-secondary">View PMs</button>
+    <button id="generateReportButton" class="btn btn-info" data-toggle="modal" data-target="#reportModal">Generate Report</button>
+<?php endif; ?>
+
   
         <button class="btn btn-info" data-toggle="modal" data-target="#howToModal" style="font-size: 24px; line-height: 1; padding: 0 10px;">?</button>
+
+            
 <!-- How to Use System Modal -->
 
 <div class="modal fade" id="howToModal" tabindex="-1" role="dialog" aria-labelledby="howToModalLabel" aria-hidden="true">
@@ -483,6 +555,11 @@ body {
         </div>
     </div>
 </div>
+<?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
+        <div class="notification-bar" style="background-color: #ffcc00; color: black; padding: 10px; text-align: center;">
+    There are <strong><?php echo $priority5TicketCount; ?></strong> PM's  due within the next week. Please Review the PM tab for more Information
+</div>
+<?php endif; ?>
     <div class="row mt-3">
         <div class="col-12">
            
@@ -508,7 +585,7 @@ body {
 
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
 
-$query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code' AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+$query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code'";
 $result = mysqli_query($database, $query);
 while ($row = mysqli_fetch_assoc($result)): ?>
     <tr class="<?php echo htmlspecialchars($row['ticket_status'], ENT_QUOTES, 'UTF-8'); ?>">
@@ -568,25 +645,28 @@ while ($row = mysqli_fetch_assoc($result)): ?>
             </div>
             <div class="modal-body">
             
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="ticket-details-tab" data-toggle="tab" href="#ticket-details" role="tab" aria-controls="ticket-details" aria-selected="true">Ticket Details</a>
                     </li>
+
+                    <?php if(in_array($_SESSION['user_type'], ['super-admin', 'maintenance-tech', 'supervisor'])): ?>
                     <li class="nav-item">
-                        <?php if($_SESSION['user_type'] == ('super-admin' || 'maintenance-tech' || 'supervisor')): ?>
                         <a class="nav-link" id="repairs-maintenance-tab" data-toggle="tab" href="#repairs-maintenance" role="tab" aria-controls="repairs-maintenance" aria-selected="false">Repairs/Maintenance</a>
-                        <?php endif; ?>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if(in_array($_SESSION['user_type'], ['super-admin', 'supervisor'])): ?>
                     <li class="nav-item">
-                        <?php if($_SESSION['user_type'] == ('super-admin'  || 'supervisor')): ?>
                         <a class="nav-link" id="follow-up-tab" data-toggle="tab" href="#follow-up" role="tab" aria-controls="follow-up" aria-selected="false">Follow Up</a>
-                        <?php endif; ?>
                     </li>
+                    <?php endif; ?>
+
+                    <?php if(in_array($_SESSION['user_type'], ['super-admin', 'supervisor'])): ?>
                     <li class="nav-item">
-                    <?php if($_SESSION['user_type'] == ('super-admin'  || 'supervisor')): ?>
                         <a class="nav-link" id="assign_technicians-tab" data-toggle="tab" href="#assign_technicians" role="tab" aria-controls="assign_technicians" aria-selected="false">Assign Technicians</a>
-                        <?php endif; ?>
                     </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                
@@ -634,6 +714,7 @@ while ($row = mysqli_fetch_assoc($result)): ?>
                                         <option value="2" title="Quality: Any issue that delays/obstructs products, processes, or deliverables of our customers expectations">2</option>
                                         <option value="3" title="Production:Any issue that causes a delay in meeting production goals or the delivery of product and services">3</option>
                                         <option value="4" title="Cost: Continuous improvement ideas that could decrease expenses,optimize utilization and maintain profitibility ">4</option>
+                                        <option value="5" title="PM: Preventative Maintenance">5</option>
                                     </select>
                                 </div>
                                 <?php
@@ -1433,20 +1514,56 @@ $(document).ready(function() {
     var table = $('#orange_tag_table').DataTable(); // Initialize your DataTable and keep a reference to it
 
     function viewClosedTickets() {
-        // Clear any existing search filters
-        table.search('').columns().search('');
-        // Filter for "Closed" status, assuming status is in a specific column
-        table.column(9).search('Closed', true, false).draw();
-    }
+    // Get the DataTable instance
+    var table = $('#orange_tag_table').DataTable();
 
-    function viewOpenTickets() {
-        // Clear any existing search filters
-        table.search('').columns().search('');
-        // Filter for "Open" status, assuming status is in a specific column
-        table.column(9).search('Open', true, false).draw();
-    }
+    // Clear any existing custom search filters
+    $.fn.dataTable.ext.search.pop();
 
+    // Clear global search and all column-specific searches
+    table.search('').columns().search('');
+
+    // Filter for "Closed" status, assuming status is in the 10th column (index 9)
+    table.column(9).search('Closed', true, false).draw();
+}
+    $('#viewPMsBtn').on('click', function() {
+    // Remove the custom search filter
+    $.fn.dataTable.ext.search.pop();
+
+    // Get the DataTable instance
+    var table = $('#orange_tag_table').DataTable();
+
+    // Clear global search and column-specific searches
+    table.search('').columns().search('');
+
+    // Apply new filter for priority 5 and redraw the table
+    table.column(5).search('5').draw();
+});
+    // Define a custom DataTables search function
+// Function to add custom search filter for viewing open tickets
+function addCustomSearchForOpenTickets() {
+    // First, remove any existing custom search to avoid duplicates
+    $.fn.dataTable.ext.search.pop();
+
+    // Then, add the custom search logic
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+            var status = data[9]; // Assuming status is in the 10th column (index 9)
+            var priority = data[5]; // Assuming priority is in the 6th column (index 5)
+            return status === 'Open' && priority !== '5';
+        }
+    );
+}
+
+function viewOpenTickets() {
+    var table = $('#orange_tag_table').DataTable();
+    table.columns().search(''); // Add this line to clear column-specific searches
+    addCustomSearchForOpenTickets(); // Add the custom search filter
+    table.draw(); // Redraw the table with the filter applied
+}
     function viewUnassigned() {
+        $.fn.dataTable.ext.search.pop();
+        table.columns().search(''); // Add this line to clear column-specific searches
         // Clear any existing search filters
         table.search('').columns().search('');
         // Search for rows where the 'repair-technician' column is empty
@@ -1464,6 +1581,7 @@ $(document).ready(function() {
     $('#viewOpenBtn').on('click', viewOpenTickets);
     $('#viewUnassignedBtn').on('click', viewUnassigned);
 });
+
 
 $(document).ready(function() {
     $('#ticket_type').change(function() {
@@ -1744,6 +1862,8 @@ $.fn.dataTable.ext.type.order['work-order-pre'] = function (data) {
     return parseInt(data.replace(/^[^\d]+/, ''), 10);
 };
 $(document).ready(function () {
+    var userType = <?php echo json_encode($_SESSION['user_type']); ?>;
+
     // Check if the DataTable instance exists and destroy it before reinitializing
     if ($.fn.DataTable.isDataTable('#orange_tag_table')) {
         $('#orange_tag_table').DataTable().destroy();
@@ -1760,29 +1880,133 @@ $(document).ready(function () {
             { width: '8%', targets: 2 },
             { width: '7%', targets: 3 },
             { width: '9%', targets: 4 },
-            { width: '7%', targets: 5},
+            { width: '7%', targets: 5 },
             { width: '5%', targets: 9 },
             // Other columnDefs as needed
-        ]
-    });
-});
+        ],
+        initComplete: function(settings, json) {
+            var api = this.api();
+            // Custom search logic to filter out rows that do not meet both conditions
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    var status = data[9]; // Assuming status is in the 10th column (index 9)
+                    var priority = data[5]; // Assuming priority is in the 6th column (index 5)
+                    return status === 'Open' && priority !== '5';
+                }
+            );
+            api.draw();
 
-function filterTable(priority) {
-    $('#orange_tag_table tbody tr').each(function() {
-        var row = $(this);
-        if (priority === 'all') {
-            row.show();
-        } else {
-            var ticketPriority = row.find('td').eq(5).text(); // Assuming the 6th column contains the priority
-            if (ticketPriority === priority) {
-                row.show();
-            } else {
-                row.hide();
+            // If the user type is 'floor-user', disable click events on table rows
+            if (userType === 'floor-user') {
+                $('#orange_tag_table tbody').off('click', 'tr').on('click', 'tr', function(event) {
+                    event.preventDefault(); // Prevent the default click action
+                    event.stopPropagation(); // Stop the event from propagating to other handlers
+                });
             }
         }
     });
+});
+
+function customFilterForOpenTickets() {
+    // Remove any previously added custom search functions to avoid conflicts
+    $.fn.dataTable.ext.search.pop();
+
+
+    // Add a new custom search function that checks for "Open" status and priority != 5
+    $.fn.dataTable.ext.search.push(
+        function(settings, data, dataIndex) {
+            var status = data[9]; // Assuming status is in the 10th column (index 9)
+            var priority = data[5]; // Assuming priority is in the 6th column (index 5)
+            // Check for "Open" status and priority not equal to 5
+            return status === 'Open' && (priority !== '5' || priority === 'all');
+        }
+    );
 }
 
+// Adjust the filterTable function
+function filterTable(priority) {
+    var table = $('#orange_tag_table').DataTable(); // Get the DataTable instance
+
+    // Clear any existing custom filters
+    $.fn.dataTable.ext.search.pop();
+
+    table.columns().search(''); // Add this line to clear column-specific searches
+
+    if (priority === 'all') {
+        // Apply the custom filter for "Open" tickets
+        customFilterForOpenTickets();
+    } else {
+        // Apply a standard filter for the specified priority, ensuring status is "Open"
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                var status = data[9]; // Adjust based on your table's structure
+                var ticketPriority = data[5]; // Adjust based on your table's structure
+                return status === 'Open' && ticketPriority === priority;
+            }
+        );
+    }
+    table.draw(); // Redraw the table with the filter applied
+}
+
+$(document).ready(function() {
+    // Define the words to look for and their replacements
+    var easterEggMap = {
+        'bitch': 'female dog',
+        'fuck' : 'duck',
+        'asshole':'poop schute',
+        'bastard': 'The prodical son',
+        'brotherfucker':'what kind of weird shit are you into my guy',
+        'bullshit':'Cow manure',
+        'pedophile': 'I know sometimes these autocorrects are funny, but in this case if you know of any information pertaining to what you just tried to type, please report it directly to HR. Target Metal Blanking & Target Steel wish to provide a safe space for all and will not tolerate those kinds of activities',
+        'cock': 'cockadoodledoo',
+        'cunt':'The C word',
+        'god damn': 'Some blasphemous Talk',
+        'dickhead': 'A head of phallic nature',
+        'dyke': 'Im just jealous i cant get any',
+        'god damn' : 'I shall not use the lords name in vein',
+        'horseshit': 'a good idea, i will take it into consideration.',
+        'nigga' : 'My friend of African Descent',
+        'nigger': 'Racism will not be tolerated. Do better. Its 2023 my guy were all red on the inside.',
+        'pussy': 'Im ugly and cant pull at all. Atleast i can admit it',
+        'pigfucker':'Swine enthusiast',
+        'prick' : 'Love you <3',
+        'twat' : 'If you found this message, no one uses that word anymore bro.',
+        'wanker': 'Honestly, debated letting that word go unfiltered ',
+        'slut' : 'Thats not a nice word',
+        'dennis':'speedy gonzales',
+        'liz' : 'The Finance Wizard',
+        'paula' : 'the sweetest lady at this company,',
+        '8675309': 'I see youre a fan of the classics. Hell yea',
+
+
+
+
+
+        // Add more words and their replacements as needed
+    };
+
+    // Listen for input events on all text input boxes and textareas
+    $('input[type="text"], textarea').on('input', function() {
+        // Get the current value of the input box or textarea
+        var currentValue = $(this).val();
+
+        // Split the current value into words
+        var words = currentValue.split(/\s+/);
+
+        // Check each word and replace if it matches any of the Easter egg words
+        var replacedWords = words.map(function(word) {
+            // Check both the original word and lowercase because JavaScript is case-sensitive
+            var lowerCaseWord = word.toLowerCase();
+            if (easterEggMap.hasOwnProperty(lowerCaseWord)) {
+                return easterEggMap[lowerCaseWord];
+            }
+            return word;
+        });
+
+        // Join the words back into a string and update the input box or textarea
+        $(this).val(replacedWords.join(' '));
+    });
+});
 </script>
 </body>
 </html>

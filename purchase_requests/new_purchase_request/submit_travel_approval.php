@@ -11,13 +11,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $travel_start_date = mysqli_real_escape_string($database, $_POST['travel_start_date']);
     $travel_end_date = mysqli_real_escape_string($database, $_POST['travel_end_date']);
     $additional_comments = mysqli_real_escape_string($database, $_POST['additional_comments']);
+    $location_code = $_SESSION['location_code'];
 
     // Prepare an INSERT statement for the main expense record
-    $query = "INSERT INTO purchase_requests (employee_name, expense_type, travel_start_date, travel_end_date, additional_comments, approval_status) VALUES (?, ?, ?, ?, ?, 'pending')";
+    $query = "INSERT INTO purchase_requests (employee_name, expense_type, travel_start_date, travel_end_date, additional_comments,location_code, approval_status) VALUES (?, ?, ?, ?, ?, ?, 'pending')";
 
     if ($stmt = mysqli_prepare($database, $query)) {
         // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "sssss", $employee_name, $expense_type, $travel_start_date, $travel_end_date, $additional_comments);
+        mysqli_stmt_bind_param($stmt, "ssssss", $employee_name, $expense_type, $travel_start_date, $travel_end_date, $additional_comments, $location_code);
 
         // Attempt to execute the prepared statement
         if (mysqli_stmt_execute($stmt)) {
