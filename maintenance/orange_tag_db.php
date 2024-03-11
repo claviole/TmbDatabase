@@ -104,6 +104,7 @@ $data = mysqli_fetch_assoc($result);
 $priority5TicketCount = $data['total'];
 
 
+
 ?>
 
 <!DOCTYPE html>
@@ -430,6 +431,9 @@ body {
             <button class="btn btn-primary btn-block" onclick="generateReport('openTags')">All Open Work-orders</button>
         </div>
         <div class="col-md-6 mb-2">
+            <button class="btn btn-primary btn-block" onclick="generateReport('smartSummary')">SMART Summary</button>
+        </div>
+        <div class="col-md-6 mb-2">
             <button id="TagsByTech" class="btn btn-primary btn-block">Work-orders by Technician</button>
         </div>
         <div class="col-md-6 mb-2">
@@ -559,6 +563,32 @@ body {
         <div class="notification-bar" style="background-color: #ffcc00; color: black; padding: 10px; text-align: center;">
     There are <strong><?php echo $priority5TicketCount; ?></strong> PM's  due within the next week. Please Review the PM tab for more Information
 </div>
+<?php endif; ?>
+<?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
+    <?php
+    // Place this PHP code block where you want to display the notification, after the database connection is established
+
+    // Query to select tickets with follow_up_necessary marked
+    $followUpQuery = "SELECT orange_tag_id FROM orange_tag WHERE follow_up_necessary = 'on' AND location_code = ?";
+    $stmt = mysqli_prepare($database, $followUpQuery);
+    mysqli_stmt_bind_param($stmt, "s", $_SESSION['location_code']);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $followUpTickets = [];
+    while ($ticket = mysqli_fetch_assoc($result)) {
+        $followUpTickets[] = $ticket['orange_tag_id'];
+    }
+    mysqli_stmt_close($stmt);
+
+    // Check if there are any tickets that require follow-up
+    if (!empty($followUpTickets)) {
+        $ticketNumbers = implode(', ', $followUpTickets);
+        echo "<div class='notification-bar' style='background-color: #ff9800; color: black; padding: 10px; text-align: center;'>
+                Tickets #{$ticketNumbers} are in need of review.
+              </div>";
+    }
+    ?>
 <?php endif; ?>
     <div class="row mt-3">
         <div class="col-12">
@@ -1711,6 +1741,9 @@ function logChange(formId, fieldId, value, orangeTagId) {
 function generateReport(reportType) {
     if (reportType === 'openTags') {
         window.open('generate_open_tags_report.php', '_blank');
+    }
+    else if(reportType === 'smartSummary') {
+        window.open('smart_summary_report.php', '_blank');
     }
 }
 function openTechSelectionModal() {

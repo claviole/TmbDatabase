@@ -66,17 +66,21 @@ $location_code = $_SESSION['location_code'];
 
 .form-container th {
     background-color: #007bff;
+    width: auto;
     color: white;
     position: sticky;
     top: 0;
 }
 
 .form-container td {
+    width: auto;
     background-color: #FFFFFF;
+    text-wrap: normal;
 }
 
 .form-container label {
-    margin-right: 10px;
+    max-width: 2px;
+    margin-right: 5px;
 }
 
 input[type="radio"] {
@@ -107,41 +111,21 @@ input[type="submit"]:hover {
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-    .form-container table, .form-container thead, .form-container tbody, .form-container th, .form-container td, .form-container tr { 
-        display: block; 
+@media (max-width: 600px) {
+    .form-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
     }
-    .form-container thead tr { 
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
+
+    .form-container table {
+        min-width: 600px; /* Set a minimum width for the table */
     }
-    .form-container tr { border: 1px solid #ccc; }
-    .form-container td { 
-        border: none;
-        border-bottom: 1px solid #eee; 
-        position: relative;
-        padding-left: 50%; 
-        text-align: right;
+
+    /* Adjust font sizes and padding for smaller screens */
+    .form-container th, 
+    .form-container td {
+        font-size: 12px; /* Reduce font size */
+        padding: 8px; /* Reduce padding */
     }
-    .form-container td:before { 
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
-        width: 45%; 
-        padding-right: 10px; 
-        white-space: nowrap;
-        text-align: left;
-        font-weight: bold;
-    }
-    /* Label the data */
-    .form-container td:nth-of-type(1):before { content: "Area of Inspection"; }
-    .form-container td:nth-of-type(2):before { content: "Ranking"; }
-    .form-container td:nth-of-type(3):before { content: "Source of Danger or Hazard"; }
-    .form-container td:nth-of-type(4):before { content: "Reported to Whom and When"; }
-    .form-container td:nth-of-type(5):before { content: "Corrective Action Plan"; }
 }
 .additional-info textarea {
     width: 100%;
@@ -177,6 +161,41 @@ body {
 
 .highlight {
     background-color: #ffcccc; /* Light red color */
+}
+/* Style the select boxes */
+.form-container select {
+    width: 100%; /* Full width */
+    padding: 8px 12px; /* Padding for aesthetics */
+    margin: 8px 0; /* Margin for spacing */
+    display: inline-block; /* For proper alignment */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding and border in the width */
+    -webkit-appearance: none; /* Remove default styling specific to WebKit browsers */
+    -moz-appearance: none; /* Remove default styling specific to Mozilla browsers */
+    appearance: none; /* Remove default arrow for all browsers */
+    background-color: #f8f8f8; /* Background color */
+    font-size: 16px; /* Text size */
+    line-height: 1.5; /* Line height for text */
+    color: #333; /* Text color */
+}
+
+/* Style the select boxes with a custom arrow */
+.form-container select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="12px" height="12px" viewBox="0 0 4 5" xmlns="http://www.w3.org/2000/svg"><path fill="%23333" d="M2 0L0 2h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 12px;
+}
+
+/* Change the background color of select boxes on hover */
+.form-container select:hover {
+    background-color: #e8e8e8;
+}
+
+/* Change the border color of select boxes on focus */
+.form-container select:focus {
+    border-color: #aaa;
 }
     </style>
     
@@ -228,10 +247,13 @@ body {
                     <input type="hidden" name="question1_text" value="No Trip Hazards. Walkways are clear">
                     <td>No Trip Hazards. Walkways are clear</td>
                     <td>
-                        <label><input type="radio" name="question1_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question1_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question1_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question1_ranking" value="NA"> N/A</label>
+                        <select name="question1_ranking">
+                        <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question1_a_one"></textarea></td>
                     <td><textarea name="question1_a_two"></textarea></td>
@@ -241,10 +263,13 @@ body {
                     <input type="hidden" name="question2_text" value="Aisles and Walkways are Adequately Lit">
                     <td>Aisles and Walkways are Adequately Lit</td>
                     <td>
-                        <label><input type="radio" name="question2_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question2_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question2_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question2_ranking" value="NA"> N/A</label>
+                    <select name="question2_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question2_a_one"></textarea></td>
                     <td><textarea name="question2_a_two"></textarea></td>
@@ -254,10 +279,13 @@ body {
                     <input type="hidden" name="question3_text" value="Clear Access to Exits & Fire Extinguishers">
                     <td>Clear Access to Exits & Fire Extinguishers</td>
                     <td>
-                        <label><input type="radio" name="question3_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question3_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question3_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question3_ranking" value="NA"> N/A</label>
+                    <select name="question3_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question3_a_one"></textarea></td>
                     <td><textarea name="question3_a_two"></textarea></td>
@@ -267,10 +295,13 @@ body {
                     <input type="hidden" name="question4_text" value="Fire Extinguishers: Easily Accessible. Inspection Dates are within past month.">
                     <td>Fire Extinguishers Easily Accessible. Inspection Dates are within past month.</td>
                     <td>
-                        <label><input type="radio" name="question4_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question4_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question4_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question4_ranking" value="NA"> N/A</label>
+                    <select name="question4_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question4_a_one"></textarea></td>
                     <td><textarea name="question4_a_two"></textarea></td>
@@ -280,10 +311,14 @@ body {
                     <input type="hidden" name="question5_text" value="Emergency Site Maps are Strategically Posted">
                     <td>Emergency Site Maps are Strategically Posted</td>
                     <td>
-                        <label><input type="radio" name="question5_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question5_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question5_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question5_ranking" value="NA"> N/A</label>
+                        <select name="question5_ranking">
+                        <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
+                       
                     </td>
                     <td><textarea name="question5_a_one"></textarea></td>
                     <td><textarea name="question5_a_two"></textarea></td>
@@ -293,10 +328,13 @@ body {
                     <input type="hidden" name="question6_text" value="General Housekeeping: Floors vacuumed, surfaces are dusted, and work stations are organized.">
                     <td>General Housekeeping: Floors vacuumed, surfaces are dusted, and work stations are organized.</td>
                     <td>
-                        <label><input type="radio" name="question6_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question6_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question6_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question6_ranking" value="NA"> N/A</label>
+                    <select name="question6_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question6_a_one"></textarea></td>
                     <td><textarea name="question6_a_two"></textarea></td>
@@ -306,10 +344,13 @@ body {
                     <input type="hidden" name="question7_text" value="Electrical Panels are closed.">
                     <td>Electrical Panels are closed.</td>
                     <td>
-                        <label><input type="radio" name="question7_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question7_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question7_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question7_ranking" value="NA"> N/A</label>
+                    <select name="question7_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question7_a_one"></textarea></td>
                     <td><textarea name="question7_a_two"></textarea></td>
@@ -319,10 +360,13 @@ body {
                     <input type="hidden" name="question8_text" value="Unnecessary/ Outdated Signs, Displays, Notices, & Alerts have been removed">
                     <td>Unnecessary/ Outdated Signs, Displays, Notices, & Alerts have been removed</td>
                     <td>
-                        <label><input type="radio" name="question8_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question8_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question8_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question8_ranking" value="NA"> N/A</label>
+                    <select name="question8_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question8_a_one"></textarea></td>
                     <td><textarea name="question8_a_two"></textarea></td>
@@ -332,10 +376,13 @@ body {
                     <input type="hidden" name="question9_text" value="Visitor Sign In Log (lobby area) is posted and being used.">
                     <td>Visitor Sign In Log (lobby area) is posted and being used.</td>
                     <td>
-                        <label><input type="radio" name="question9_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question9_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question9_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question9_ranking" value="NA"> N/A</label>
+                    <select name="question9_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question9_a_one"></textarea></td>
                     <td><textarea name="question9_a_two"></textarea></td>
@@ -345,10 +392,13 @@ body {
                     <input type="hidden" name="question10_text" value="PPE stocked and available">
                     <td>PPE stocked and available</td>
                     <td>
-                        <label><input type="radio" name="question10_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question10_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question10_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question10_ranking" value="NA"> N/A</label>
+                    <select name="question10_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question10_a_one"></textarea></td>
                     <td><textarea name="question10_a_two"></textarea></td>
@@ -358,10 +408,13 @@ body {
                     <input type="hidden" name="question11_text" value="Spill Kits - Complete Inventory (note date of last inspection)">
                     <td>"Spill Kits - Complete Inventory (note date of last inspection)"</td>
                     <td>
-                        <label><input type="radio" name="question11_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question11_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question11_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question11_ranking" value="NA"> N/A</label>
+                    <select name="question11_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question11_a_one"></textarea></td>
                     <td><textarea name="question11_a_two"></textarea></td>
@@ -371,10 +424,13 @@ body {
                     <input type="hidden" name="question12_text" value="Load Limits Posted on Cranes and hooks / grabbers">
                     <td>Load Limits Posted on Cranes and Hooks / Grabbers</td>
                     <td>
-                        <label><input type="radio" name="question12_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question12_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question12_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question12_ranking" value="NA"> N/A</label>
+                    <select name="question12_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question12_a_one"></textarea></td>
                     <td><textarea name="question12_a_two"></textarea></td>
@@ -384,10 +440,13 @@ body {
                     <input type="hidden" name="question13_text" value="Storage/Elevated Platforms have 42 inch safety rails">
                     <td>Storage/Elevated Platforms have 42" safety rails</td>
                     <td>
-                        <label><input type="radio" name="question13_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question13_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question13_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question13_ranking" value="NA"> N/A</label>
+                    <select name="question13_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question13_a_one"></textarea></td>
                     <td><textarea name="question13_a_two"></textarea></td>
@@ -397,10 +456,13 @@ body {
                     <input type="hidden" name="question14_text" value="Dumpsters Over Flowing / Leaking">
                     <td>Dumpsters Over Flowing / Leaking </td>
                     <td>
-                        <label><input type="radio" name="question14_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question14_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question14_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question14_ranking" value="NA"> N/A</label>
+                    <select name="question14_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question14_a_one"></textarea></td>
                     <td><textarea name="question14_a_two"></textarea></td>
@@ -410,10 +472,13 @@ body {
                     <input type="hidden" name="question15_text" value="Seasonal Concerns">
                     <td>Seasonal Concerns</td>
                     <td>
-                        <label><input type="radio" name="question15_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question15_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question15_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question15_ranking" value="NA"> N/A</label>
+                    <select name="question15_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question15_a_one"></textarea></td>
                     <td><textarea name="question15_a_two"></textarea></td>
@@ -423,10 +488,13 @@ body {
                     <input type="hidden" name="question16_text" value="Dock Doors Closed or Safety Chains provided">
                     <td>Dock Doors Closed or Safety Chains provided</td>
                     <td>
-                        <label><input type="radio" name="question16_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question16_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question16_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question16_ranking" value="NA"> N/A</label>
+                    <select name="question16_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question16_a_one"></textarea></td>
                     <td><textarea name="question16_a_two"></textarea></td>
@@ -436,10 +504,13 @@ body {
                     <input type="hidden" name="question17_text" value="Safety Mats Provided at Workstations. Condition of Mats?">
                     <td>Safety Mats Provided at Workstations. Condition of Mats?</td>
                     <td>
-                        <label><input type="radio" name="question17_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question17_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question17_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question17_ranking" value="NA"> N/A</label>
+                    <select name="question17_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question17_a_one"></textarea></td>
                     <td><textarea name="question17_a_two"></textarea></td>
@@ -449,10 +520,13 @@ body {
                     <input type="hidden" name="question18_text" value="Electrical Panels have 36 inches of Clearance?">
                     <td>Electrical Panels have 36" Clearance?</td>
                     <td>
-                        <label><input type="radio" name="question18_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question18_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question18_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question18_ranking" value="NA"> N/A</label>
+                    <select name="question18_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question18_a_one"></textarea></td>
                     <td><textarea name="question18_a_two"></textarea></td>
@@ -462,10 +536,13 @@ body {
                     <input type="hidden" name="question19_text" value="Pre-Shift Check Sheets - Completed & Accurate">
                     <td>Pre-Shift Check Sheets - Completed & Accurate</td>
                     <td>
-                        <label><input type="radio" name="question19_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question19_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question19_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question19_ranking" value="NA"> N/A</label>
+                    <select name="question19_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question19_a_one"></textarea></td>
                     <td><textarea name="question19_a_two"></textarea></td>
@@ -475,10 +552,13 @@ body {
                     <input type="hidden" name="question20_text" value="Propane storage cage locked & proper distance away from building">
                     <td>Propane storage cage locked & proper distance away from building</td>
                     <td>
-                        <label><input type="radio" name="question20_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question20_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question20_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question20_ranking" value="NA"> N/A</label>
+                    <select name="question20_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question20_a_one"></textarea></td>
                     <td><textarea name="question20_a_two"></textarea></td>
@@ -488,10 +568,13 @@ body {
                     <input type="hidden" name="question21_text" value="SDS labels on Proprietary Containers">
                     <td>SDS labels on Proprietary Containers</td>
                     <td>
-                        <label><input type="radio" name="question21_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question21_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question21_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question21_ranking" value="NA"> N/A</label>
+                    <select name="question21_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question21_a_one"></textarea></td>
                     <td><textarea name="question21_a_two"></textarea></td>
@@ -501,10 +584,13 @@ body {
                     <input type="hidden" name="question22_text" value="Extinguishers Fully Charged">
                     <td>Extinguishers Fully Charged</td>
                     <td>
-                        <label><input type="radio" name="question22_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question22_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question22_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question22_ranking" value="NA"> N/A</label>
+                    <select name="question22_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question22_a_one"></textarea></td>
                     <td><textarea name="question22_a_two"></textarea></td>
@@ -514,10 +600,13 @@ body {
                     <input type="hidden" name="question23_text" value="First Aid Supplies Stocked">
                     <td>First Aid Supplies Stocked</td>
                     <td>
-                        <label><input type="radio" name="question23_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question23_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question23_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question23_ranking" value="NA"> N/A</label>
+                    <select name="question23_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question23_a_one"></textarea></td>
                     <td><textarea name="question23_a_two"></textarea></td>
@@ -527,10 +616,13 @@ body {
                     <input type="hidden" name="question24_text" value="Trauma Kit Stocked">
                     <td>Trauma Kit Stocked </td>
                     <td>
-                        <label><input type="radio" name="question24_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question24_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question24_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question24_ranking" value="NA"> N/A</label>
+                    <select name="question24_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question24_a_one"></textarea></td>
                     <td><textarea name="question24_a_two"></textarea></td>
@@ -540,10 +632,13 @@ body {
                     <input type="hidden" name="question25_text" value="Emergency Contact Numbers Posted (Ambulance, Cab, Medical Provider, Ext)">
                     <td>Emergency Contact Numbers Posted (Ambulance, Cab, Medical Provider, Ext).</td>
                     <td>
-                        <label><input type="radio" name="question25_ranking" value="1"> 1</label>
-                        <label><input type="radio" name="question25_ranking" value="2"> 2</label>
-                        <label><input type="radio" name="question25_ranking" value="3"> 3</label>
-                        <label><input type="radio" name="question25_ranking" value="NA"> N/A</label>
+                    <select name="question3_ranking">
+                    <option value="" selected disabled>Select an rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="NA">N/A</option>
+                        </select>
                     </td>
                     <td><textarea name="question25_a_one"></textarea></td>
                     <td><textarea name="question25_a_two"></textarea></td>
@@ -552,7 +647,14 @@ body {
                 <tr>
                     <input type="hidden" name="question26_text" value="Light curtain cards filled out?">
                     <td>Light curtain cards filled out?</td>
-                    <td><input type="radio" name="question26_a_one" value="yes"> Yes <input type="radio" name="question26_a_one" value="no"> No</td>
+                    <td>
+    <select name="question26_a_one">
+        <option value="" selected disabled>Select an option</option>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+    </select>
+    
+</td>
                 </tr>
 
                     
@@ -572,18 +674,30 @@ body {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <input type="hidden" name="question27_text" value="Were there any situations that pose an imminent danger or hazard to workers or environment?">
-                    <td>Were there any situations that pose an imminent danger or hazard to workers or environment?        (yes or no will automatically calculate based off your answers)</td>
-                    <td><input type="radio" name="question27_a_one" value="yes"> Yes <input type="radio" name="question27_a_one" value="no" checked> No</td>
-                    <td><textarea name="question27_a_two"></textarea></td>
-                </tr>
-                <tr>
-                    <input type="hidden" name="question28_text" value="Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?">
-                    <td>Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?</td>
-                    <td><input type="radio" name="question28_a_one value="yes"> Yes <input type="radio" name="question28_a_one" value="no" disabled> No</td>
-                    <td><textarea name="question28_a_two"></textarea></td>
-                </tr>
+            <tr>
+    <input type="hidden" name="question27_text" value="Were there any situations that pose an imminent danger or hazard to workers or environment?">
+    <td>Were there any situations that pose an imminent danger or hazard to workers or environment? (yes or no will automatically calculate based off your answers)</td>
+    <td>
+        <select name="question27_a_one">
+            <option value="" selected disabled>Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </td>
+    <td><textarea name="question27_a_two"></textarea></td>
+</tr>
+<tr>
+    <input type="hidden" name="question28_text" value="Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?">
+    <td>Were these situations reported to the Supervisor or Committee or Emergency Response Team for immediate attention?</td>
+    <td>
+        <select name="question28_a_one">
+            <option value="" selected disabled>Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </td>
+    <td><textarea name="question28_a_two"></textarea></td>
+</tr>
             </tbody>
         </table>
         <div class="submit-button">
@@ -595,18 +709,26 @@ body {
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
+    const questionsToMonitor = [
+        'question1_ranking', 'question2_ranking', 'question3_ranking',
+        'question4_ranking', 'question7_ranking', 'question10_ranking',
+        'question18_ranking', 'question22_ranking', 'question23_ranking',
+        'question24_ranking', 'question25_ranking'
+    ];
     const form = document.querySelector('form');
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
         let allRanked = true;
-        let question27YesChecked = document.querySelector('input[name="question27_a_one"][value="yes"]').checked;
+        // Update to use select for question27_a_one
+        let question27SelectedValue = document.querySelector('select[name="question27_a_one"]').value;
+        let question27YesChecked = question27SelectedValue === 'yes';
         let question27CommentFilled = document.querySelector('textarea[name="question27_a_two"]').value.trim() !== '';
 
         // Check if all questions have a ranking selected
         document.querySelectorAll('tbody tr').forEach(function(row) {
-            const radios = Array.from(row.querySelectorAll('input[type="radio"]'));
-            const isRanked = radios.some(radio => radio.checked);
+            const selects = Array.from(row.querySelectorAll('select'));
+            const isRanked = selects.some(select => select.value !== '');
             if (!isRanked) {
                 allRanked = false;
                 row.classList.add('highlight'); // Highlight the row
@@ -665,46 +787,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Existing code for monitoring specific questions and updating question 27
-    // ...
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    // List of question names to monitor
-    const questionsToMonitor = [
-        'question1_ranking', 'question2_ranking', 'question3_ranking',
-        'question4_ranking', 'question7_ranking', 'question10_ranking',
-        'question18_ranking', 'question22_ranking', 'question23_ranking',
-        'question24_ranking', 'question25_ranking'
-    ];
-
     // Function to check the questions and update question 27
     function updateQuestion27() {
         let question27SetToYes = false;
 
+        // List of question names to monitor
+        const questionsToMonitor = [
+            'question1_ranking', 'question2_ranking', 'question3_ranking',
+            'question4_ranking', 'question7_ranking', 'question10_ranking',
+            'question18_ranking', 'question22_ranking', 'question23_ranking',
+            'question24_ranking', 'question25_ranking'
+        ];
+
         // Check each question
         for (let questionName of questionsToMonitor) {
-            // Find the radio button for "1" in each question group
-            const radioButton = document.querySelector(`input[name="${questionName}"][value="1"]`);
-            if (radioButton && radioButton.checked) {
+            // Find the select element for each question
+            const selectElement = document.querySelector(`select[name="${questionName}"]`);
+            if (selectElement && selectElement.value === '1') {
                 question27SetToYes = true;
                 break; // Stop checking if we've found a "1"
             }
         }
 
-        // Find question 27's "Yes" radio button and set it
-        const question27YesButton = document.querySelector('input[name="question27_a_one"][value="yes"]');
-        if (question27SetToYes && question27YesButton) {
-            question27YesButton.checked = true;
+        // Update question 27's select box based on the check
+        const question27SelectBox = document.querySelector('select[name="question27_a_one"]');
+        if (question27SetToYes) {
+            question27SelectBox.value = 'yes';
+        } else {
+            question27SelectBox.value = 'no';
         }
     }
 
     // Attach the check function to change events for all monitored questions
     questionsToMonitor.forEach(function(questionName) {
-        const radios = document.querySelectorAll(`input[name="${questionName}"]`);
-        radios.forEach(function(radio) {
-            radio.addEventListener('change', updateQuestion27);
-        });
+        const selectElement = document.querySelector(`select[name="${questionName}"]`);
+        if (selectElement) {
+            selectElement.addEventListener('change', updateQuestion27);
+        }
     });
 });
 </script>

@@ -153,21 +153,18 @@ button:active {
     </style>
     
 </head>
-<body style="background-image: url('<?php echo $backgroundImage;?>'); background-size: cover;">
-
-    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
-        <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%"> 
-        <!--
-        <?php if ($_SESSION['user_type'] == 'super-admin') { ?>
-        <div class="notification<?php echo $awaiting_approval_count > 0 ? ' flashing' : ''; ?>">
-    <a href="quote_approvals/quote_approval.php" style="color: inherit; text-decoration: none;">
-        Quotes Awaiting Approval: <?php echo $awaiting_approval_count; ?>
-    </a>
-    <?php } ?>
-        -->
+<body style="background-image: url('<?php echo $backgroundImage; ?>'); background-size: cover;">
+<div class="return-button-container">
+<button onclick="window.location.href='logout.php';" class="return-button">
+    Log Out
+</button>
 </div>
-     
+    <h1 style="display: flex; justify-content: center; align-items: flex-start;"> 
+        <img src="<?php echo $companyHeaderImage; ?>" alt="company header" width="30%" height="20%" >
     </h1>
+       
+
+
     
     <div class ="flex justify-center">
         <!-- 
@@ -233,9 +230,7 @@ echo "Welcome, " . htmlspecialchars($_SESSION['user'], ENT_QUOTES, 'UTF-8') . " 
 </div>
 <div class="text-white font-bold py-2 px-4 rounded max-w-md" style="position: absolute; top: 0; right: 0;">
 
-<form action="logout.php" method="post" style="position: absolute; top: 0; right: 0; width: 100px;" class="inline-flex w-full items-center  justify-center rounded-md border border-transparent bg-[#ffffff] px-6 py-4 text-sm font-bold text-black transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
-    <input type="submit" value="Log Out">
-</form>
+
 </div>
 
 

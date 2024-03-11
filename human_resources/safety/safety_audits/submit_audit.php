@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
         send_safety_audit($formData);
     }
-s
+
     echo json_encode(['success' => true]);
 
 } else {
