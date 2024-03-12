@@ -185,13 +185,14 @@ button:active {
                 <input type="text" id="truck_number" name="truck_number" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
             <div class="mb-4">
-                <label for="weight" class="block text-gray-700 text-sm font-bold mb-2">Weight:</label>
-                <input type="text" id="weight" name="weight" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-
+                <label for="part_number" class="block text-gray-700 text-sm font-bold mb-2">Part Number:</label>
+                <input type="text" id="part_number" name="part_number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <p class="text-gray-600 text-xs mt-1">Examples Include: "PT#RM2023-206988-ERMA:REAR DOOR INNER", "RM2022 202382 ERMA", "L1MB-S01605-272" etc.</p>
+            </div>
             <div class="mb-6">
                 <label for="phone_number" class="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
                 <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="123-456-7890" oninput="formatPhoneNumber(this)">            </div>
-
+            <div class="mb-6">
             <div class="flex items-center justify-between">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Check in

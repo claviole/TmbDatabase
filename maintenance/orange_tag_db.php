@@ -590,6 +590,30 @@ body {
     }
     ?>
 <?php endif; ?>
+<?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
+    <?php
+    // Query to select tickets not assigned to any technicians, with due dates within 6 months, excluding priority 5 tickets
+    $unassignedTicketsQuery = "SELECT orange_tag_id FROM orange_tag WHERE (repair_technician IS NULL OR repair_technician = '') AND location_code = ? AND priority <> 5 AND orange_tag_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 MONTH)";
+    $stmt = mysqli_prepare($database, $unassignedTicketsQuery);
+    mysqli_stmt_bind_param($stmt, "s", $_SESSION['location_code']);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $unassignedTickets = [];
+    while ($ticket = mysqli_fetch_assoc($result)) {
+        $unassignedTickets[] = $ticket['orange_tag_id'];
+    }
+    mysqli_stmt_close($stmt);
+
+    // Check if there are any unassigned tickets meeting the criteria
+    if (!empty($unassignedTickets)) {
+        $ticketNumbers = implode(', ', $unassignedTickets);
+        echo "<div class='notification-bar' style='background-color: #f44336; color: white; padding: 10px; text-align: center;'>
+                Tickets #{$ticketNumbers} are not assigned to any technicians and are due within the next 6 months and must be assigned.
+              </div>";
+    }
+    ?>
+<?php endif; ?>
     <div class="row mt-3">
         <div class="col-12">
            

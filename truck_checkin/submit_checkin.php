@@ -9,13 +9,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $truckNumber = $database->real_escape_string($_POST['truck_number']);
     $phoneNumber = $database->real_escape_string($_POST['phone_number']);
     $arrivalDate = $database->real_escape_string($_POST['arrival_date']);
-    $weight = $database->real_escape_string($_POST['weight']);
+    $part_number = $database->real_escape_string($_POST['part_number']);
 
     // SQL query to insert data
-    $query = "INSERT INTO trucking (location_code, load_number,`weight`, truck_number, phone_number, arrival_date) VALUES (?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO trucking (location_code, load_number,`part_number`, truck_number, phone_number, arrival_date) VALUES (?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $database->prepare($query)) {
-        $stmt->bind_param("sissss", $locationCode, $loadNumber,$weight, $truckNumber, $phoneNumber, $arrivalDate);
+        $stmt->bind_param("sissss", $locationCode, $loadNumber,$part_number, $truckNumber, $phoneNumber, $arrivalDate);
         if ($stmt->execute()) {
             echo "Success";
         } else {

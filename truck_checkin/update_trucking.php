@@ -7,7 +7,7 @@ include '../configurations/connection.php'; // Include your database connection 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['trucking_id'])) {
     $truckingId = $_POST['trucking_id'];
     $loadNumber = $_POST['load_number'];
-    $weight = $_POST['weight'];
+    $part_number = $_POST['part_number'];
     $bay_location = $_POST['bay_location'];
     $truckNumber = $_POST['truck_number'];
     $phoneNumber = $_POST['phone_number'];
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['trucking_id'])) {
     // Prepare SQL query to update the trucking record
     $sql = "UPDATE trucking SET 
                 load_number = ?, 
-                `weight` = ?,
+                part_number = ?,
                 `bay_location` = ?, 
                 truck_number = ?, 
                 phone_number = ?, 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['trucking_id'])) {
     // Bind parameters
     $stmt->bind_param("issssssssi", 
         $loadNumber, 
-        $weight,
+        $part_number,
         $bay_location, 
         $truckNumber, 
         $phoneNumber, 

@@ -10,7 +10,7 @@ $currentUserLocationCode = $_SESSION['location_code']; // Example
 $status = isset($_GET['status']) ? $_GET['status'] : 'pending';
 
 // Adjust your SQL query based on the status
-$sql = "SELECT trucking_id, load_number, phone_number, `weight`, truck_number, arrival_date, appointment_date, appointment_time, `status` FROM trucking WHERE location_code = ? AND status = ?";
+$sql = "SELECT trucking_id, load_number, phone_number, part_number, truck_number, arrival_date, appointment_date, appointment_time, `status` FROM trucking WHERE location_code = ? AND `status` = ?";
 $stmt = $database->prepare($sql);
 $stmt->bind_param("ss", $currentUserLocationCode, $status);
 $stmt->execute();
@@ -20,18 +20,68 @@ $checkIns = [];
 while ($row = $result->fetch_assoc()) {
     $checkIns[] = $row;
 }
-$checkedIn="checked in";
-$sql = "SELECT trucking_id, bay_location,current_location, load_number, phone_number, `weight`, truck_number, arrival_date, appointment_date, appointment_time, `status` FROM trucking WHERE location_code = ? AND status = ?";
+$checkedInStatus = 'checked in';
+$sql = "SELECT trucking_id, bay_location, current_location, load_number, phone_number, part_number, truck_number, arrival_date, appointment_date, appointment_time, `status` FROM trucking WHERE location_code = ? AND `status` = ?";
 $stmt = $database->prepare($sql);
-$stmt->bind_param("ss", $currentUserLocationCode, $checkedIn);
+$stmt->bind_param("ss", $currentUserLocationCode, $checkedInStatus);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$checkedIn = [];
+$checkedInTrucks = [];
 while ($row = $result->fetch_assoc()) {
-    $checkedIn[] = $row;
+    $checkedInTrucks[] = $row;
 }
 
+// Define bay priorities based on the layout
+$baysPriority = [
+    'Drive 1 Bay 3' => 3,
+    'Drive 1 Bay 2' => 2,
+    'Drive 1 Bay 1' => 1, // Highest priority for Drive 1
+    'Drive 2 Bay 3' => 3,
+    'Drive 2 Bay 2' => 2,
+    'Drive 2 Bay 1' => 1, // Highest priority for Drive 2
+];
+
+// Determine bay availability (assuming each bay can hold 2 trucks)
+$baysAvailability = array_fill_keys(array_keys($baysPriority), 2);
+
+foreach ($checkedInTrucks as $truck) {
+    if ($truck['current_location']) {
+        $baysAvailability[$truck['current_location']]--;
+    }
+}
+
+// Sort trucks by bay priority, availability, and appointment time
+usort($checkedInTrucks, function($a, $b) use ($baysPriority, $baysAvailability) {
+    // Check if either truck is awaiting entry, indicating they are not yet assigned to a bay
+    $aAwaitingEntry = $a['current_location'] === 'Awaiting Entry';
+    $bAwaitingEntry = $b['current_location'] === 'Awaiting Entry';
+
+    // Trucks not awaiting entry (already assigned to a bay) should be sorted to the end
+    if (!$aAwaitingEntry && $bAwaitingEntry) {
+        return 1; // $a goes after $b
+    } elseif ($aAwaitingEntry && !$bAwaitingEntry) {
+        return -1; // $a goes before $b
+    }
+
+    // If both are awaiting entry or both are not, proceed with existing sorting logic
+    $priorityA = $baysPriority[$a['bay_location']] ?? 0;
+    $priorityB = $baysPriority[$b['bay_location']] ?? 0;
+
+    if ($priorityA !== $priorityB) {
+        return $priorityB - $priorityA;
+    }
+
+    $availabilityA = $baysAvailability[$a['bay_location']] ?? 0;
+    $availabilityB = $baysAvailability[$b['bay_location']] ?? 0;
+
+    if ($availabilityA !== $availabilityB) {
+        return $availabilityB - $availabilityA;
+    }
+
+    // Finally, sort by appointment time if all else is equal
+    return strtotime($a['appointment_time']) - strtotime($b['appointment_time']);
+});
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -135,10 +185,11 @@ while ($row = $result->fetch_assoc()) {
     color: white;
 }
 
-.table tr:hover {
-    background-color: var(--tmdb-grey);
+/* Directly target the table tag within the DataTables wrapper */
+.dataTables_wrapper table tbody tr:hover {
+    background-color: var(--tmdb-grey) !important; /* Use !important cautiously */
+    cursor: pointer; /* Change cursor to indicate clickable */
 }
-
 .button {
     background-color: var(--tmdb-red);
     color: white;
@@ -224,7 +275,7 @@ while ($row = $result->fetch_assoc()) {
                 Truck Number
             </th>
         <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                Weight
+                Part Number
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                 Arrival Date
@@ -236,7 +287,7 @@ while ($row = $result->fetch_assoc()) {
                     <tr data-check-in='<?php echo json_encode($checkIn); ?>'>
     <td><?php echo htmlspecialchars($checkIn['load_number']); ?></td>
     <td><?php echo htmlspecialchars($checkIn['truck_number']); ?></td>
-    <td><?php echo htmlspecialchars($checkIn['weight']); ?></td>
+    <td><?php echo htmlspecialchars($checkIn['part_number']); ?></td>
     <td><?php echo htmlspecialchars($checkIn['arrival_date']); ?></td>
                 </tr>
                 <?php endforeach; ?>
@@ -274,15 +325,15 @@ while ($row = $result->fetch_assoc()) {
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-    <?php foreach ($checkedIn as $checkedIns): ?>
-        <tr data-check-in='<?php echo htmlspecialchars(json_encode($checkedIns), ENT_QUOTES, 'UTF-8'); ?>'>
-            <td><?php echo htmlspecialchars($checkedIns['load_number']); ?></td>
-            <td><?php echo htmlspecialchars($checkedIns['truck_number']); ?></td>
-            <td><?php echo htmlspecialchars($checkedIns['bay_location']); ?></td>
-            <td><?php echo htmlspecialchars($checkedIns['arrival_date']); ?></td>
-            <td><?php echo htmlspecialchars($checkedIns['appointment_date']); ?></td>
-            <td><?php echo htmlspecialchars($checkedIns['appointment_time']); ?></td>
-            <td><?php echo htmlspecialchars($checkedIns['current_location']); ?></td>
+    <?php foreach ($checkedInTrucks as $truck): ?>
+        <tr data-check-in='<?php echo htmlspecialchars(json_encode($truck), ENT_QUOTES, 'UTF-8'); ?>'>
+            <td><?php echo htmlspecialchars($truck['load_number']); ?></td>
+            <td><?php echo htmlspecialchars($truck['truck_number']); ?></td>
+            <td><?php echo htmlspecialchars($truck['bay_location']); ?></td>
+            <td><?php echo htmlspecialchars($truck['arrival_date']); ?></td>
+            <td><?php echo htmlspecialchars($truck['appointment_date']); ?></td>
+            <td><?php echo htmlspecialchars($truck['appointment_time']); ?></td>
+            <td><?php echo htmlspecialchars($truck['current_location']); ?></td>
         </tr>
     <?php endforeach; ?>
 </tbody>
@@ -315,8 +366,8 @@ while ($row = $result->fetch_assoc()) {
                                 </div>
                                 <!-- ... other fields ... -->
                                 <div class="mb-4">
-                                    <label for="modal_weight" class="block text-sm font-medium text-gray-700">Weight:</label>
-                                    <input type="text" id="modal_weight" name="weight" class="mt-1 p-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full">
+                                    <label for="modal_part_number" class="block text-sm font-medium text-gray-700">Part Number:</label>
+                                    <input type="text" id="modal_part_number" name="part_number" class="mt-1 p-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full">
                                 </div>
 
                                 <div class="mb-4">
@@ -419,7 +470,7 @@ while ($row = $result->fetch_assoc()) {
                 "type": 'date-time'
             }
         ],
-        "order": [[3, 'asc'], [4, 'asc']], // Sort by appointment date, then by time
+        "order": [], // Sort by appointment date, then by time
         "initComplete": function(settings, json) {
             $('.dataTables_wrapper').removeClass('form-inline');
             $('table.dataTable thead').addClass('bg-red-600 text-white');
@@ -431,22 +482,25 @@ while ($row = $result->fetch_assoc()) {
             var closestRow;
 
             $('#checkedInTable tbody tr').each(function() {
-                var dateStr = $(this).find('td').eq(3).text(); // Appointment date
-                var timeStr = $(this).find('td').eq(4).text(); // Appointment time
-                var dateTimeStr = dateStr + ' ' + timeStr;
-                var dateTime = new Date(dateTimeStr).getTime();
+                var currentLocation = $(this).find('td').eq(6).text(); // Assuming the current location is in the 7th column (zero-based index 6)
+                if (currentLocation === "Awaiting Entry") {
+                    var dateStr = $(this).find('td').eq(3).text(); // Appointment date
+                    var timeStr = $(this).find('td').eq(4).text(); // Appointment time
+                    var dateTimeStr = dateStr + ' ' + timeStr;
+                    var dateTime = new Date(dateTimeStr).getTime();
 
-                // Calculate the absolute difference from now
-                var timeDiff = Math.abs(dateTime - now);
+                    // Calculate the absolute difference from now
+                    var timeDiff = Math.abs(dateTime - now);
 
-                // If this is the first iteration or the time difference is smaller than the current closest, update the closest values
-                if (closestAppointmentTime === null || timeDiff < closestAppointmentTime) {
-                    closestAppointmentTime = timeDiff;
-                    closestRow = this;
+                    // If this is the first iteration or the time difference is smaller than the current closest, update the closest values
+                    if (closestAppointmentTime === null || timeDiff < closestAppointmentTime) {
+                        closestAppointmentTime = timeDiff;
+                        closestRow = this;
+                    }
                 }
             });
 
-            // Apply the flashing class to the closest appointment row
+            // Apply the flashing class to the closest appointment row with "Awaiting Entry" status
             if (closestRow) {
                 $(closestRow).addClass('flashing');
             }
@@ -467,7 +521,7 @@ while ($row = $result->fetch_assoc()) {
                 var rowNode = table.row.add([
                     checkIn.load_number,
                     checkIn.truck_number,
-                    checkIn.weight,
+                    checkIn.part_number,
                     checkIn.arrival_date,
                     // Add or remove fields as necessary based on the status
                 ]).draw().node();
@@ -520,7 +574,7 @@ function showCheckInForm(checkInData) {
     $('#modal_trucking_id').val(checkInData.trucking_id);
     $('#modal_load_number').val(checkInData.load_number);
     // Repeat for other fields
-    $('#modal_weight').val(checkInData.weight);
+    $('#modal_part_number').val(checkInData.part_number);
     $('#modal_truck_number').val(checkInData.truck_number);
     $('#modal_phone_number').val(checkInData.phone_number);
     $('#modal_appointment_date').val(checkInData.appointment_date);
@@ -539,7 +593,7 @@ function submitModalForm() {
     var formData = {
         trucking_id: $('#modal_trucking_id').val(),
         load_number: $('#modal_load_number').val(),
-        weight: $('#modal_weight').val(),
+        part_number: $('#modal_part_number').val(),
         truck_number: $('#modal_truck_number').val(),
         phone_number: $('#modal_phone_number').val(),
         appointment_date: $('#modal_appointment_date').val(),
@@ -592,7 +646,8 @@ $.ajax({
     processData: false,  // tell jQuery not to process the data
     contentType: false,  // tell jQuery not to set contentType
     success: function(response) {
-        console.log('Success', response);
+        location.reload(); // Reload the page to reflect the changes
+
     },
     error: function(xhr, status, error) {
         console.error('Error', xhr, status, error);
@@ -603,27 +658,96 @@ $.ajax({
 // Click event for the "Checked In" table rows
 $('#checkedInTable tbody').on('click', 'tr', function() {
     var checkInDataAttr = $(this).attr('data-check-in');
-    console.log(checkInDataAttr); // Let's see what we actually have here
 
     try {
         var checkInData = JSON.parse(checkInDataAttr);
-        Swal.fire({
-            title: 'Approve Truck Entry',
-            text: `Approve entry for Load Number: ${checkInData.load_number}?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Approve Entry'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                approveTruckEntry(checkInData.trucking_id, checkInData.phone_number, checkInData.bay_location);
+
+        // Check the current location of the truck first
+        if (checkInData.current_location !== "Awaiting Entry") {
+            // If the current location is not "Awaiting Entry", ask if they would like to depart the load
+            Swal.fire({
+                title: 'Depart Load',
+                text: "Would you like to depart this load?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, depart it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Call a function to update the current location and status to "Departed"
+                    departTruck(checkInData.trucking_id);
+                }
+            });
+        } else {
+            // If the current location is "Awaiting Entry", check if there are any trucks waiting to check in
+            var waitingTrucksCount = $('#checkInsTable tbody tr:visible').length;
+
+            if (waitingTrucksCount > 0) {
+                // If there are trucks waiting to check in, prompt the user
+                Swal.fire({
+                    title: 'Pending Check-Ins',
+                    text: "There are trucks waiting to check in. Please ensure all trucks are checked in before approving more entries.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'View Waiting Trucks',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If the user wants to view waiting trucks, switch to the "Arrived" tab
+                        $('#tab1').click(); // Simulate a click on the "Arrived" tab to show the waiting trucks
+                    }
+                });
+            } else {
+                // If there are no trucks waiting to check in, proceed with the approval process
+                Swal.fire({
+                    title: 'Approve Truck Entry',
+                    text: `Approve entry for Load Number: ${checkInData.load_number}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Approve Entry'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        approveTruckEntry(checkInData.trucking_id, checkInData.phone_number, checkInData.bay_location);
+                        location.reload(); // Reload the page to reflect the changes
+                    }
+                });
             }
-        });
+        }
     } catch (e) {
         console.error("Error parsing JSON from data attribute:", e);
     }
 });
+// Function to update the truck's current location and status to "Departed"
+function departTruck(truckingId) {
+    var formData = new FormData();
+    formData.append('trucking_id', truckingId);
+    // Since you're setting the status and current_location to 'Departed' in the PHP script,
+    // you don't need to append them here unless they might vary.
+    // formData.append('current_location', 'Departed');
+    // formData.append('status', 'Departed');
+
+    $.ajax({
+        type: "POST",
+        url: "depart_truck.php", // Make sure this is the correct relative or absolute path to your PHP script
+        data: formData,
+        processData: false, // Don't process the files
+        contentType: false, // Let the browser set the content type for FormData
+        success: function(response) {
+            console.log('Departure successful', response);
+            location.reload(); // Reload the page to reflect the changes
+        },
+        error: function(xhr, status, error) {
+            console.error('Departure failed', xhr, status, error);
+        }
+    });
+}
+ // 20000 milliseconds = 20 seconds
     </script>
 </body>
 </html>
