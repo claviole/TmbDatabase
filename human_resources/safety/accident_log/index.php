@@ -32,11 +32,7 @@ $employees = mysqli_query($database, $query);
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-<script>
-$(document).ready(function() {
-    $('#accidentTable').DataTable();
-});
-</script>
+
     <title>Accident Log</title>
     <style>
         .return-button {
@@ -684,6 +680,47 @@ formData.append('date_sent_to_clinic', document.querySelector('#dateSentToClinic
         console.error('Error updating accident:', error);
     });
 }
+$(document).ready(function() {
+    // Initialize the DataTable
+    var table = $('#accidentTable').DataTable({
+        // ... other DataTable options ...
+        "initComplete": function(settings, json) {
+            // HTML for the year filter dropdown
+            var yearFilterHtml = '<label for="yearFilter">Year: <select id="yearFilter" class="form-control"><option value="">Select Year</option></select></label>';
+
+            // Insert the year filter dropdown next to the DataTable's "Show # entries" dropdown
+            $(yearFilterHtml).appendTo(".dataTables_length");
+
+            // Populate year filter dropdown based on the data in the accident date column
+            this.api().columns(4).every(function() {
+                var column = this;
+                var select = $('#yearFilter');
+                column.data().unique().sort().each(function(d, j) {
+                    var year = d.split('-')[0]; // Extract year from date
+                    if (select.find('option[value="' + year + '"]').length === 0) {
+                        select.append('<option value="' + year + '">' + year + '</option>');
+                    }
+                });
+            });
+        }
+    });
+
+    // Custom search function to filter by year
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        var selectedYear = $('#yearFilter').val();
+        var accidentDate = data[4]; // Use the correct column index for the accident date
+        if (selectedYear) {
+            var year = accidentDate.split('-')[0];
+            return year === selectedYear;
+        }
+        return true; // Show all rows if no year is selected
+    });
+
+    // Event handler for when the year filter changes
+    $('#yearFilter').on('change', function() {
+        table.draw(); // Redraw the table to apply the search filter
+    });
+});
     </script>
 </body>
 </html>
