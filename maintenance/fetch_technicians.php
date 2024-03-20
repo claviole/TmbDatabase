@@ -24,6 +24,15 @@ while ($row = $result->fetch_assoc()) {
     );
 }
 
+// Assuming the current user's ID and username are stored in $_SESSION
+$currentUser = array(
+    'id' => $_SESSION['user_id'], // Adjust this according to how user ID is stored
+    'username' => $_SESSION['user'] // Adjust this according to how username is stored
+);
+
+// Add the current user to the technicians array
+array_unshift($technicians, $currentUser); // Adds the current user at the beginning of the array
+
 header('Content-Type: application/json');
 echo json_encode($technicians);
 ?>

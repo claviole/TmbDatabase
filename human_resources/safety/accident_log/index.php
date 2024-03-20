@@ -684,6 +684,7 @@ $(document).ready(function() {
     // Initialize the DataTable
     var table = $('#accidentTable').DataTable({
         // ... other DataTable options ...
+        "order": [[0, 'desc']],
         "initComplete": function(settings, json) {
             // HTML for the year filter dropdown
             var yearFilterHtml = '<label for="yearFilter">Year: <select id="yearFilter" class="form-control"><option value="">Select Year</option></select></label>';

@@ -58,7 +58,7 @@ date_default_timezone_set('America/Chicago');
     $tag_author= $_SESSION['user'];
 
 // Fetch the data from the database
-$query = "SELECT * FROM employees WHERE job_title IN (14,18,19,22,23,24,25,26,27,31,33,38) AND `status` = 'active' AND `location_code`= '{$_SESSION['location_code']}'"; 
+$query = "SELECT * FROM employees WHERE job_title IN (56,66,68) AND `status` = 'active' AND `location_code`= '{$_SESSION['location_code']}'"; 
 $supervisors = mysqli_query($database, $query);
 
 $query = "SELECT * FROM employees WHERE job_title = 25 AND `status` = 'active' AND `location_code`= '{$_SESSION['location_code']}'"; 
@@ -614,6 +614,33 @@ body {
     }
     ?>
 <?php endif; ?>
+
+<?php if ($_SESSION['user_type'] !== 'floor-user'): ?>
+    <?php
+    // Existing code for unassigned tickets notification...
+
+    // Query to select open tickets that are past due
+    $pastDueTicketsQuery = "SELECT orange_tag_id FROM orange_tag WHERE ticket_status = 'Open' AND orange_tag_due_date < CURDATE() AND location_code = ? AND priority <> 5";
+    $stmt = mysqli_prepare($database, $pastDueTicketsQuery);
+    mysqli_stmt_bind_param($stmt, "s", $_SESSION['location_code']);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    $pastDueTickets = [];
+    while ($ticket = mysqli_fetch_assoc($result)) {
+        $pastDueTickets[] = $ticket['orange_tag_id'];
+    }
+    mysqli_stmt_close($stmt);
+
+    // Check if there are any past due tickets meeting the criteria
+    if (!empty($pastDueTickets)) {
+        $ticketNumbers = implode(', ', $pastDueTickets);
+        echo "<div class='notification-bar' style='background-color: #ff9800; color: white; padding: 10px; text-align: center;'>
+                Tickets #{$ticketNumbers} are Open and past due. Please finish immediately or update the due date and alert technicians.
+              </div>";
+    }
+    ?>
+<?php endif; ?>
     <div class="row mt-3">
         <div class="col-12">
            
@@ -638,8 +665,17 @@ body {
 
 
 $current_user_location_code = $_SESSION['location_code']; // Assuming the location code of the current user is stored in the session
+$current_user_type = $_SESSION['user_type']; // Assuming the user type of the current user is stored in the session
+$current_user_id = $_SESSION['user_id']; // Assuming the user ID of the current user is stored in the session
 
-$query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code'";
+// Modify the query based on the user type
+if ($current_user_type == 'maintenance-tech') {
+    // For maintenance-tech, select tickets where repair_technician column contains the current user's ID
+    $query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code' AND FIND_IN_SET('$current_user_id', repair_technician)";
+} else {
+    // For other user types, select all tickets for the location
+    $query = "SELECT * FROM orange_tag WHERE location_code = '$current_user_location_code'";
+}
 $result = mysqli_query($database, $query);
 while ($row = mysqli_fetch_assoc($result)): ?>
     <tr class="<?php echo htmlspecialchars($row['ticket_status'], ENT_QUOTES, 'UTF-8'); ?>">
@@ -655,14 +691,20 @@ while ($row = mysqli_fetch_assoc($result)): ?>
         $technicians = explode(',', $row['repair_technician']);
         foreach ($technicians as $technician) {
             if (!empty($technician)) {
-                $tech_query = "SELECT `username` FROM `Users` WHERE `id` = $technician"; // Ensure 'id' is the correct column name
-                $tech_result = mysqli_query($database, $tech_query);
-                if ($tech_result) {
-                    $tech_data = mysqli_fetch_assoc($tech_result);
-                    echo htmlspecialchars($tech_data['username'], ENT_QUOTES, 'UTF-8') . '<br>';
+                if ($current_user_type == 'floor-user') {
+                    // If the user type is 'floor-user', display **** instead of the technician name
+                    echo '****<br>';
                 } else {
-                    // Handle error, e.g., log it or echo a message
-                    echo "Error fetching technician data: " . htmlspecialchars(mysqli_error($database), ENT_QUOTES, 'UTF-8');
+                    // For other user types, fetch and display the technician's username
+                    $tech_query = "SELECT `username` FROM `Users` WHERE `id` = $technician"; // Ensure 'id' is the correct column name
+                    $tech_result = mysqli_query($database, $tech_query);
+                    if ($tech_result) {
+                        $tech_data = mysqli_fetch_assoc($tech_result);
+                        echo htmlspecialchars($tech_data['username'], ENT_QUOTES, 'UTF-8') . '<br>';
+                    } else {
+                        // Handle error, e.g., log it or echo a message
+                        echo "Error fetching technician data: " . htmlspecialchars(mysqli_error($database), ENT_QUOTES, 'UTF-8');
+                    }
                 }
             }
         }
@@ -1930,6 +1972,7 @@ $(document).ready(function () {
     $('#orange_tag_table').DataTable({
         autoWidth: false,
         pageLength: 25,
+        
         columnDefs: [
             { type: 'orange-tag', targets: 0 }, // Apply custom sorting to the orange tag column
             { type: 'work-order', targets: 6 },

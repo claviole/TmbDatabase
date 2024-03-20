@@ -653,6 +653,8 @@ body {
         <option value="yes">Yes</option>
         <option value="no">No</option>
     </select>
+                    </td>
+                    <td><textarea name="question26_a_two"></textarea></td>
     
 </td>
                 </tr>

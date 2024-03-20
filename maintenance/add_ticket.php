@@ -1,6 +1,7 @@
 <?php
 // Include your database connection file here
 include '../configurations/connection.php';
+include '../configurations/send_expense.php';
 session_start();
 if(!isset($_SESSION['user'])){
     // Not logged in or not an admin, redirect to login page
@@ -54,7 +55,12 @@ mysqli_stmt_bind_param($stmt, 'sssssisssssssssssssssssssssssss', $orange_tag_id,
 
 // Attempt to execute the prepared statement
 if (mysqli_stmt_execute($stmt)) {
+    
     echo "Ticket added successfully";
+    if ($location_code === 'sv') {
+        // Assuming $orange_tag_id is the ticket number you want to send in the email
+        sendEmailForLocationSV($orange_tag_id);
+    }
 } else {
     echo "Error: " . mysqli_stmt_error($stmt);
 }

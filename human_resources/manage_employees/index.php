@@ -234,7 +234,7 @@ $location_code = $_SESSION['location_code'];
     <table class="table employee-table" id="employeeTable">
             <thead>
                 <tr>
-                    <th>Employee ID</th>
+                    <th>Sync Employee ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Date Hired</th>
